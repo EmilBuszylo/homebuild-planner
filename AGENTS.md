@@ -9,7 +9,8 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - Use **pnpm** for installs and scripts (`packageManager` in @package.json); do not switch the repo to npm/yarn without an explicit user request.
 - Do not commit secrets: `.env.local` for Supabase keys; never expose the **Secret** key in client code or `NEXT_PUBLIC_*` vars.
 - Before using external packages or tools (Supabase, Next.js, shadcn, etc.), check the **current** official docs for this repo’s versions; do not copy deprecated patterns from training data (e.g. legacy `anon` / `service_role` key names if docs now use **Publishable** and **Secret** keys).
-- **Database schema lives in git:** define models in `prisma/schema.prisma`, ship changes via Prisma migrations (`pnpm prisma migrate dev`). Never treat the Supabase dashboard as the source of truth for domain tables.
+- **Database schema lives in git:** define models in `prisma/schema.prisma`, ship changes via versioned SQL under `prisma/migrations/`. Never treat the Supabase dashboard as the source of truth for domain tables.
+- **Local `migrate dev` is owner-only:** only the repo owner runs `pnpm db:migrate` / `prisma migrate dev` against their database. Agents must **not** run it. If the next step needs migrations applied locally (new tables, changed schema, or verifying Prisma against a live DB), **stop**, list the exact commands for the owner, ask them to run migrations and confirm, then **wait for explicit permission** before continuing any code or verification that assumes the DB is migrated.
 - MVP scope: orientacyjne estimates only — no binding quotes, no permit automation, no multi-user workspaces (@context/foundation/prd.md Non-Goals).
 
 ## Project structure
@@ -30,7 +31,9 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - `pnpm build` — production build; run before claiming deploy readiness.
 - `pnpm start` — serve production build locally.
 - `pnpm lint` — ESLint via @eslint.config.mjs and `eslint-config-next`.
-- After Prisma is installed: `pnpm prisma migrate dev`, `pnpm prisma generate`, `pnpm prisma studio` (local inspection only).
+- Prisma: `pnpm db:generate` / `prisma generate` — agents may run. `pnpm db:migrate` / `prisma migrate dev` and `pnpm db:studio` — **owner only**; agents stop and request these when required (see Hard rules). Vercel/production applies pending migrations via `prisma migrate deploy` in `pnpm build` when env is configured.
+- **Local Postgres (Docker):** @docker-compose.yml — Postgres 16 on host port **55432** (`homebuild` / `homebuild` / `homebuild_planner`). `pnpm db:docker:up` starts the DB; `pnpm db:docker:down` stops the container, removes the volume and compose images. Point `DATABASE_URL` and `DIRECT_URL` in `.env.local` at `127.0.0.1:55432` (see @.env.example); no pooler locally.
+- **First / production deploy:** follow @context/deployment/deploy-plan.md (Vercel env + GitHub Actions; `prisma migrate deploy` runs automatically in `pnpm build` on Vercel).
 - No test runner or `*.test.*` files yet — do not invent a test stack; add tests only when the user asks.
 
 ## Coding style
@@ -44,7 +47,7 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 
 - Styling entry: @src/app/globals.css; shadcn config: @components.json.
 - Supabase Auth env (see @.env.local): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Server-only: `SUPABASE_SECRET_KEY` where the current Supabase server SDK requires it — **not** legacy `anon` / `service_role` names unless docs explicitly require them.
-- Database env: `DATABASE_URL` — Postgres connection string (Supabase project settings → ORM/Prisma); server-only, never `NEXT_PUBLIC_*`.
+- Database env (server-only, never `NEXT_PUBLIC_*`): `DATABASE_URL` — Supabase **transaction pooler** (port 6543, `?pgbouncer=true`) for Prisma Client at runtime; `DIRECT_URL` — **direct** Postgres (port 5432) for `pnpm db:migrate` / `prisma studio`. Set both in @.env.local and Vercel project env before migrate or deploy.
 - **Auth:** Server Actions + Supabase Auth SDK per @context/foundation/lessons.md. **Domain data:** API routes + **Prisma Client** per the same file; do not query domain tables via `@supabase/supabase-js`.
 - Deeper product rules: @context/foundation/prd.md, stack notes: @context/foundation/tech-stack.md.
 

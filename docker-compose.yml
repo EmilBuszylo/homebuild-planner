@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: home-build-planner-db
+    ports:
+      - "55432:5432"
+    environment:
+      POSTGRES_USER: homebuild
+      POSTGRES_PASSWORD: homebuild
+      POSTGRES_DB: homebuild_planner
+    volumes:
+      - home_build_planner_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homebuild -d homebuild_planner"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  home_build_planner_pgdata:
