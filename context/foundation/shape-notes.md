@@ -168,7 +168,7 @@ Wynik reguly uzytkownik otrzymuje jako zestaw etapow z orientacyjnymi kosztami i
 
 ## Forward: tech-stack
 
-- Preferowany stack na obecnym etapie: Next.js + React, deployment na Vercel, Tailwind + shadcn/ui, Supabase (baza i auth).
+- Preferowany stack na obecnym etapie: Next.js + React, deployment na Vercel, Tailwind + shadcn/ui, Supabase (Postgres + auth), Prisma ORM (schema i migracje w repo).
 
 ## Forward: technical-roadmap
 
