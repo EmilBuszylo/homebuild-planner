@@ -131,3 +131,12 @@ export function AuthSubmitField({
 }: React.ComponentProps<typeof Field>) {
   return <Field className={className}>{children}</Field>;
 }
+
+export function AuthServerError({ message }: { message: string | null }) {
+  if (!message) return null;
+  return (
+    <p role="alert" className="text-sm text-destructive text-center">
+      {message}
+    </p>
+  );
+}

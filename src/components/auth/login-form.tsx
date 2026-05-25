@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 
@@ -9,6 +10,7 @@ import {
   AuthFormGroup,
   AuthFormHeader,
   AuthPasswordField,
+  AuthServerError,
   AuthSubmitField,
   AuthTextField,
 } from "@/components/auth/auth-form-layout";
@@ -19,11 +21,15 @@ import {
   type LoginFormValues,
 } from "@/lib/validations/auth";
 import { createZodResolver } from "@/lib/validations/zod-resolver";
+import { login } from "@/app/(auth)/actions";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<LoginFormValues>({
     resolver: createZodResolver(loginSchema),
     defaultValues: {
@@ -33,8 +39,13 @@ export function LoginForm({
   });
 
   function onSubmit(values: LoginFormValues) {
-    // UI-only: Supabase auth wired in a later change
-    console.log("login", values);
+    setServerError(null);
+    startTransition(async () => {
+      const result = await login(values);
+      if (result?.error) {
+        setServerError(result.error);
+      }
+    });
   }
 
   return (
@@ -65,8 +76,11 @@ export function LoginForm({
           label="Hasło"
           autoComplete="current-password"
         />
+        <AuthServerError message={serverError} />
         <AuthSubmitField>
-          <Button type="submit">Zaloguj</Button>
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? "Logowanie..." : "Zaloguj"}
+          </Button>
         </AuthSubmitField>
         <AuthFormFooter>
           Nie masz konta? <Link href={routes.register}>Zarejestruj się</Link>

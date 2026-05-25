@@ -315,28 +315,28 @@ Add route-protection logic to the middleware (redirect unauthenticated users awa
 
 #### Automated
 
-- [x] 1.1 `pnpm build` passes with zero type errors
-- [x] 1.2 `pnpm lint` passes
-- [x] 1.3 Supabase client utilities and middleware files exist
+- [x] 1.1 `pnpm build` passes with zero type errors — 33bf751
+- [x] 1.2 `pnpm lint` passes — 33bf751
+- [x] 1.3 Supabase client utilities and middleware files exist — 33bf751
 
 #### Manual
 
-- [x] 1.4 `pnpm dev` starts; `/logowanie` renders login form without errors
+- [x] 1.4 `pnpm dev` starts; `/logowanie` renders login form without errors — 33bf751
 
 ### Phase 2: Auth Server Actions + Form Integration
 
 #### Automated
 
-- [ ] 2.1 `pnpm build` passes with zero type errors
-- [ ] 2.2 `pnpm lint` passes
+- [x] 2.1 `pnpm build` passes with zero type errors
+- [x] 2.2 `pnpm lint` passes
 
 #### Manual
 
-- [ ] 2.3 Register a new user → redirects to `/dashboard`
-- [ ] 2.4 Log in with credentials → redirects to `/dashboard`
-- [ ] 2.5 Wrong password → inline error
-- [ ] 2.6 Duplicate email → inline error
-- [ ] 2.7 Submit button shows pending state
+- [x] 2.3 Register a new user → redirects to `/dashboard`
+- [x] 2.4 Log in with credentials → redirects to `/dashboard`
+- [x] 2.5 Wrong password → inline error
+- [x] 2.6 Duplicate email → inline error
+- [x] 2.7 Submit button shows pending state
 
 ### Phase 3: Route Protection + Dashboard Stub
 
