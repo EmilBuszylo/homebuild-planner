@@ -342,14 +342,14 @@ Add route-protection logic to the middleware (redirect unauthenticated users awa
 
 #### Automated
 
-- [x] 3.1 `pnpm build` passes with zero type errors
-- [x] 3.2 `pnpm lint` passes
-- [x] 3.3 Dashboard page and (app) layout files exist
+- [x] 3.1 `pnpm build` passes with zero type errors — 17da227
+- [x] 3.2 `pnpm lint` passes — 17da227
+- [x] 3.3 Dashboard page and (app) layout files exist — 17da227
 
 #### Manual
 
-- [x] 3.4 `/panel` unauthenticated → redirects to `/logowanie`
-- [x] 3.5 Login → redirects to `/panel`, shows email
-- [x] 3.6 `/logowanie` while authenticated → redirects to `/panel`
-- [x] 3.7 Sign-out → redirects to `/logowanie`, session cleared
-- [x] 3.8 Session persists across tab close/reopen
+- [x] 3.4 `/panel` unauthenticated → redirects to `/logowanie` — 17da227
+- [x] 3.5 Login → redirects to `/panel`, shows email — 17da227
+- [x] 3.6 `/logowanie` while authenticated → redirects to `/panel` — 17da227
+- [x] 3.7 Sign-out → redirects to `/logowanie`, session cleared — 17da227
+- [x] 3.8 Session persists across tab close/reopen — 17da227

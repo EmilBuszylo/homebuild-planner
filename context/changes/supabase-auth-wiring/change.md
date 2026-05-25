@@ -1,7 +1,7 @@
 ---
 change_id: supabase-auth-wiring
 title: Podpięcie Supabase Auth end-to-end
-status: implementing
+status: implemented
 created: 2026-05-25
 updated: 2026-05-25
 archived_at: null
