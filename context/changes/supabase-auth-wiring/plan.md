@@ -327,29 +327,29 @@ Add route-protection logic to the middleware (redirect unauthenticated users awa
 
 #### Automated
 
-- [x] 2.1 `pnpm build` passes with zero type errors
-- [x] 2.2 `pnpm lint` passes
+- [x] 2.1 `pnpm build` passes with zero type errors — 12de45d
+- [x] 2.2 `pnpm lint` passes — 12de45d
 
 #### Manual
 
-- [x] 2.3 Register a new user → redirects to `/dashboard`
-- [x] 2.4 Log in with credentials → redirects to `/dashboard`
-- [x] 2.5 Wrong password → inline error
-- [x] 2.6 Duplicate email → inline error
-- [x] 2.7 Submit button shows pending state
+- [x] 2.3 Register a new user → redirects to `/dashboard` — 12de45d
+- [x] 2.4 Log in with credentials → redirects to `/dashboard` — 12de45d
+- [x] 2.5 Wrong password → inline error — 12de45d
+- [x] 2.6 Duplicate email → inline error — 12de45d
+- [x] 2.7 Submit button shows pending state — 12de45d
 
 ### Phase 3: Route Protection + Dashboard Stub
 
 #### Automated
 
-- [ ] 3.1 `pnpm build` passes with zero type errors
-- [ ] 3.2 `pnpm lint` passes
-- [ ] 3.3 Dashboard page and (app) layout files exist
+- [x] 3.1 `pnpm build` passes with zero type errors
+- [x] 3.2 `pnpm lint` passes
+- [x] 3.3 Dashboard page and (app) layout files exist
 
 #### Manual
 
-- [ ] 3.4 `/panel` unauthenticated → redirects to `/logowanie`
-- [ ] 3.5 Login → redirects to `/panel`, shows email
-- [ ] 3.6 `/logowanie` while authenticated → redirects to `/panel`
-- [ ] 3.7 Sign-out → redirects to `/logowanie`, session cleared
-- [ ] 3.8 Session persists across tab close/reopen
+- [x] 3.4 `/panel` unauthenticated → redirects to `/logowanie`
+- [x] 3.5 Login → redirects to `/panel`, shows email
+- [x] 3.6 `/logowanie` while authenticated → redirects to `/panel`
+- [x] 3.7 Sign-out → redirects to `/logowanie`, session cleared
+- [x] 3.8 Session persists across tab close/reopen

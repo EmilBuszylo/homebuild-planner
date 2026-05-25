@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/logowanie", destination: "/login" },
       { source: "/rejestracja", destination: "/register" },
+      { source: "/panel", destination: "/dashboard" },
     ];
   },
 };
