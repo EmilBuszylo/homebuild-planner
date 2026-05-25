@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { loginSchema, registerServerSchema } from "@/lib/validations/auth";
 
 export type AuthResult = {
   error?: string;
@@ -27,11 +28,16 @@ export async function login(values: {
   email: string;
   password: string;
 }): Promise<AuthResult> {
+  const parsed = loginSchema.safeParse(values);
+  if (!parsed.success) {
+    return { error: "Nieprawidłowe dane logowania." };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
-    email: values.email,
-    password: values.password,
+    email: parsed.data.email,
+    password: parsed.data.password,
   });
 
   if (error) {
@@ -45,11 +51,16 @@ export async function register(values: {
   email: string;
   password: string;
 }): Promise<AuthResult> {
+  const parsed = registerServerSchema.safeParse(values);
+  if (!parsed.success) {
+    return { error: "Nieprawidłowe dane rejestracji." };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({
-    email: values.email,
-    password: values.password,
+    email: parsed.data.email,
+    password: parsed.data.password,
   });
 
   if (error) {
