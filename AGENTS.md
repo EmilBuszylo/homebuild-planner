@@ -36,6 +36,15 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - **First / production deploy:** follow @context/deployment/deploy-plan.md (Vercel env + GitHub Actions; `prisma migrate deploy` runs automatically in `pnpm build` on Vercel).
 - No test runner or `*.test.*` files yet — do not invent a test stack; add tests only when the user asks.
 
+## UI copy and routing
+
+- **File and folder names:** English (`login-form.tsx`, `(auth)/register`).
+- **UI copy:** Polish (buttons, validation messages, link labels).
+- **Public URLs:** Use Polish paths in links (`/logowanie`, `/rejestracja` via @src/lib/routes.ts); English segments `/login` and `/register` work directly. Polish → English mapping is in `rewrites` in @next.config.ts (browser bar stays on the Polish path when entered as `/logowanie` or `/rejestracja`).
+- **Route groups:** `(auth)` | `(marketing)` | `(app)` — parentheses are omitted from URLs. New auth pages under `src/app/(auth)/`; landing under `(marketing)/` when migrated from root `page.tsx`; app panel under `(app)/` later.
+- **Forms:** shadcn Field + `react-hook-form` + `zod`; shared schemas in `src/lib/validations/`. Auth UI is client-only validation until Supabase Auth is wired.
+- **Auth MVP scope:** email + password only — no OAuth (e.g. GitHub), no “forgot password”, no magic link. When using shadcn blocks (e.g. login-02) as layout reference, copy structure and styling only; do not ship block extras that are out of scope.
+
 ## Coding style
 
 - TypeScript strict mode; React Server Components by default (`components.json` has `"rsc": true`).
