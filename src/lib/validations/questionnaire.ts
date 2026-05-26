@@ -63,5 +63,5 @@ export const questionnaireInputsSchema = z.object({
 export type InvestmentState = z.infer<typeof investmentStateSchema>;
 export type BuildStandard = z.infer<typeof buildStandardSchema>;
 export type InsulationLevel = z.infer<typeof insulationLevelSchema>;
-export type QuestionnaireResponse = z.infer<typeof questionnaireResponseSchema>;
+export type QuestionnaireResponseInput = z.infer<typeof questionnaireResponseSchema>;
 export type QuestionnaireInputs = z.infer<typeof questionnaireInputsSchema>;

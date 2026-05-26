@@ -83,7 +83,6 @@ model ConstructionStage {
 
 model StageCostModifier {
   id                   String @id @default(cuid())
-  stageId              String
   triggerQuestionSlug  String
   triggerValue         String
   costAdjustmentPerM2  Float  @default(0)
@@ -91,6 +90,7 @@ model StageCostModifier {
   description          String?
 
   stage ConstructionStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  stageId              String
 
   @@index([stageId])
 }
@@ -124,11 +124,11 @@ model Plan {
 
 model PlanVersion {
   id            String   @id @default(cuid())
-  planId        String
   versionNumber Int
   createdAt     DateTime @default(now())
 
   plan         Plan                    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId       String
   responses    QuestionnaireResponse[]
   stageResults PlanStageResult[]
 
@@ -137,18 +137,17 @@ model PlanVersion {
 
 model QuestionnaireResponse {
   id            String @id @default(cuid())
-  planVersionId String
   questionSlug  String
   value         String
 
   planVersion PlanVersion @relation(fields: [planVersionId], references: [id], onDelete: Cascade)
+  planVersionId String
 
   @@unique([planVersionId, questionSlug])
 }
 
 model PlanStageResult {
   id            String @id @default(cuid())
-  planVersionId String
   stageSlug     String
   estimatedCost Float
   startDay      Int
@@ -156,6 +155,7 @@ model PlanStageResult {
   sortOrder     Int
 
   planVersion PlanVersion @relation(fields: [planVersionId], references: [id], onDelete: Cascade)
+  planVersionId String
 
   @@index([planVersionId])
 }

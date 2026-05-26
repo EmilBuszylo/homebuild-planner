@@ -686,6 +686,7 @@ async function seedModifiers() {
         stageId: stage.id,
         triggerQuestionSlug: m.triggerQuestionSlug,
         triggerValue: m.triggerValue,
+        description: m.description,
       },
     });
 
