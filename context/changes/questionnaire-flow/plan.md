@@ -348,30 +348,30 @@ Wire the form submission to a Route Handler that creates the Plan, PlanVersion, 
 
 #### Automated
 
-- [x] 1.1 `pnpm build` passes with new pages
-- [x] 1.2 `pnpm lint` passes
+- [x] 1.1 `pnpm build` passes with new pages — 99a57b3
+- [x] 1.2 `pnpm lint` passes — 99a57b3
 
 #### Manual
 
-- [x] 1.3 `/ankieta` renders placeholder while logged in
-- [x] 1.4 `/ankieta` redirects to `/logowanie` while logged out
-- [x] 1.5 `/moj-plan/test-id` shows stub or redirects to dashboard
-- [x] 1.6 shadcn components installed: radio-group, select, progress
+- [x] 1.3 `/ankieta` renders placeholder while logged in — 99a57b3
+- [x] 1.4 `/ankieta` redirects to `/logowanie` while logged out — 99a57b3
+- [x] 1.5 `/moj-plan/test-id` shows stub or redirects to dashboard — 99a57b3
+- [x] 1.6 shadcn components installed: radio-group, select, progress — 99a57b3
 
 ### Phase 2: Questionnaire Form UI
 
 #### Automated
 
-- [ ] 2.1 `pnpm build` passes with new components
-- [ ] 2.2 `pnpm lint` passes
+- [x] 2.1 `pnpm build` passes with new components
+- [x] 2.2 `pnpm lint` passes
 
 #### Manual
 
-- [ ] 2.3 Step 1 renders three radio groups with validation
-- [ ] 2.4 Step navigation works (forward with validation, backward preserving state)
-- [ ] 2.5 Progress bar reflects current step
-- [ ] 2.6 Summary step shows all answers with human-readable labels
-- [ ] 2.7 Optional fields show "(opcjonalne)" with defaults
+- [x] 2.3 Step 1 renders three radio groups with validation
+- [x] 2.4 Step navigation works (forward with validation, backward preserving state)
+- [x] 2.5 Progress bar reflects current step
+- [x] 2.6 Summary step shows all answers with human-readable labels
+- [x] 2.7 Optional fields show "(opcjonalne)" with defaults
 
 ### Phase 3: API & Persistence
 
