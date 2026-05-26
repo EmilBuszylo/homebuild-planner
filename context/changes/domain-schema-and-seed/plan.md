@@ -410,21 +410,21 @@ Polish validation messages, following the pattern in `src/lib/validations/auth.t
 
 #### Manual
 
-- [ ] 1.3 Owner runs `pnpm db:migrate` — migration applies cleanly
-- [ ] 1.4 Owner verifies tables in `pnpm db:studio`
+- [x] 1.3 Owner runs `pnpm db:migrate` — migration applies cleanly
+- [x] 1.4 Owner verifies tables in `pnpm db:studio`
 
 ### Phase 2: Seed Script & Construction Knowledge Base
 
 #### Automated
 
-- [ ] 2.1 `pnpm build:ci` passes
-- [ ] 2.2 TypeScript compilation of `prisma/seed.ts` succeeds
+- [x] 2.1 `pnpm build:ci` passes
+- [x] 2.2 TypeScript compilation of `prisma/seed.ts` succeeds
 
 #### Manual
 
-- [ ] 2.3 Owner runs `pnpm db:seed` — completes without errors
-- [ ] 2.4 Owner verifies row counts in `pnpm db:studio`
-- [ ] 2.5 Owner re-runs `pnpm db:seed` — idempotency verified
+- [x] 2.3 Owner runs `pnpm db:seed` — completes without errors
+- [x] 2.4 Owner verifies row counts in `pnpm db:studio`
+- [x] 2.5 Owner re-runs `pnpm db:seed` — idempotency verified
 
 ### Phase 3: Shared Domain Types & Validation Schemas
 

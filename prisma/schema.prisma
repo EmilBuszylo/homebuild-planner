@@ -105,6 +105,8 @@ model User {
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  plans Plan[]
 }
 
 model Plan {
