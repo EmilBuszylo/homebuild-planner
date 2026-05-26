@@ -14,10 +14,148 @@ model DbHealth {
   checkedAt DateTime @default(now()) @updatedAt
 }
 
+// ---------------------------------------------------------------------------
+// Domain enums
+// ---------------------------------------------------------------------------
+
+/// What the user has already built. Ordered from earliest to latest state.
+enum InvestmentState {
+  FROM_SCRATCH
+  FOUNDATIONS
+  OPEN_SHELL
+  CLOSED_SHELL
+  DEVELOPER
+}
+
+enum BuildStandard {
+  ECONOMY
+  STANDARD
+  PREMIUM
+}
+
+enum InsulationLevel {
+  STANDARD
+  ENHANCED
+  PASSIVE
+}
+
+enum QuestionType {
+  TEXT
+  NUMBER
+  DATE
+  SINGLE_CHOICE
+  BOOLEAN
+}
+
+// ---------------------------------------------------------------------------
+// Knowledge-base models (seeded, read-only at runtime)
+// ---------------------------------------------------------------------------
+
+model QuestionDefinition {
+  id         String       @id @default(cuid())
+  slug       String       @unique
+  label      String
+  type       QuestionType
+  required   Boolean
+  sortOrder  Int
+  options    Json?
+  validation Json?
+  unit       String?
+}
+
+model ConstructionStage {
+  id               String           @id @default(cuid())
+  slug             String           @unique
+  name             String
+  description      String?
+  category         String
+  sortOrder        Int
+  completedByState InvestmentState?
+  predecessorSlugs String[]
+  costPerM2Economy  Float
+  costPerM2Standard Float
+  costPerM2Premium  Float
+  durationMinDays  Int
+  durationMaxDays  Int
+
+  costModifiers StageCostModifier[]
+}
+
+model StageCostModifier {
+  id                   String @id @default(cuid())
+  triggerQuestionSlug  String
+  triggerValue         String
+  costAdjustmentPerM2  Float  @default(0)
+  fixedCostAdjustment  Float  @default(0)
+  description          String?
+
+  stage ConstructionStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  stageId              String
+
+  @@index([stageId])
+}
+
+// ---------------------------------------------------------------------------
+// User-data models
+// ---------------------------------------------------------------------------
+
 /// Identity anchor for domain data. PK is the Supabase Auth UUID, set explicitly on registration.
 model User {
   id        String   @id
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  plans Plan[]
+}
+
+model Plan {
+  id        String   @id @default(cuid())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  versions PlanVersion[]
+
+  @@index([userId])
+}
+
+model PlanVersion {
+  id            String   @id @default(cuid())
+  versionNumber Int
+  createdAt     DateTime @default(now())
+
+  plan         Plan                    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId       String
+  responses    QuestionnaireResponse[]
+  stageResults PlanStageResult[]
+
+  @@unique([planId, versionNumber])
+}
+
+model QuestionnaireResponse {
+  id            String @id @default(cuid())
+  questionSlug  String
+  value         String
+
+  planVersion PlanVersion @relation(fields: [planVersionId], references: [id], onDelete: Cascade)
+  planVersionId String
+
+  @@unique([planVersionId, questionSlug])
+}
+
+model PlanStageResult {
+  id            String @id @default(cuid())
+  stageSlug     String
+  estimatedCost Float
+  startDay      Int
+  durationDays  Int
+  sortOrder     Int
+
+  planVersion PlanVersion @relation(fields: [planVersionId], references: [id], onDelete: Cascade)
+  planVersionId String
+
+  @@index([planVersionId])
 }

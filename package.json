@@ -14,8 +14,12 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
+    "db:seed": "prisma db seed",
     "db:docker:up": "docker compose up -d --wait",
     "db:docker:down": "docker compose down -v --rmi all --remove-orphans"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -44,6 +48,7 @@
     "eslint-config-next": "16.2.6",
     "prisma": "^6.19.0",
     "tailwindcss": "^4",
+    "tsx": "^4.22.3",
     "typescript": "^5"
   }
 }
