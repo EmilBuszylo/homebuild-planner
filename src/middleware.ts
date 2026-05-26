@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { updateSession } from "@/lib/supabase/middleware";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/panel"];
+const PROTECTED_PREFIXES = ["/dashboard", "/panel", "/questionnaire", "/ankieta", "/plan", "/moj-plan"];
 const AUTH_PATHS = ["/login", "/register", "/logowanie", "/rejestracja"];
 
 export async function middleware(request: NextRequest) {
