@@ -1,7 +1,7 @@
 ---
 change_id: user-model-sync
 title: Model User w Prisma zsynchronizowany z Supabase Auth
-status: done
+status: impl_reviewed
 created: 2026-05-26
 updated: 2026-05-26
 archived_at: null

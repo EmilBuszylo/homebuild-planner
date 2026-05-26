@@ -70,7 +70,7 @@ export async function register(values: {
   }
 
   const supabaseUser = data.user;
-  if (!supabaseUser) {
+  if (!supabaseUser?.email) {
     return { error: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie." };
   }
 
@@ -78,7 +78,7 @@ export async function register(values: {
     await prisma.user.create({
       data: {
         id: supabaseUser.id,
-        email: supabaseUser.email!,
+        email: supabaseUser.email,
       },
     });
   } catch (err) {
