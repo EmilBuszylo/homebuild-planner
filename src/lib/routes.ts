@@ -4,4 +4,6 @@ export const routes = {
   register: "/rejestracja",
   dashboard: "/panel",
   home: "/",
+  questionnaire: "/ankieta",
+  plan: (planId: string) => `/moj-plan/${planId}` as const,
 } as const;
