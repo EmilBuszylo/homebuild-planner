@@ -191,12 +191,12 @@ Import to add: `prisma` from `@/lib/prisma`.
 
 #### Automated
 
-- [ ] 2.1 `pnpm build:ci` passes
-- [ ] 2.2 `pnpm lint` passes
+- [x] 2.1 `pnpm build:ci` passes
+- [x] 2.2 `pnpm lint` passes
 
 #### Manual
 
-- [ ] 2.3 Register a new user → User record appears in Prisma Studio
-- [ ] 2.4 Login → dashboard shows email from Prisma User
-- [ ] 2.5 Sign out → sign back in → dashboard works
-- [ ] 2.6 Register same email → appropriate error
+- [x] 2.3 Register a new user → User record appears in Prisma Studio
+- [x] 2.4 Login → dashboard shows email from Prisma User
+- [x] 2.5 Sign out → sign back in → dashboard works
+- [x] 2.6 Register same email → appropriate error

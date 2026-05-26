@@ -1,7 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 
+import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { loginSchema, registerServerSchema } from "@/lib/validations/auth";
 
@@ -58,13 +60,49 @@ export async function register(values: {
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
   });
 
   if (error) {
     return { error: translateAuthError(error.message) };
+  }
+
+  const supabaseUser = data.user;
+  if (!supabaseUser) {
+    return { error: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie." };
+  }
+
+  try {
+    await prisma.user.create({
+      data: {
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+      },
+    });
+  } catch (err) {
+    const secretKey = process.env.SUPABASE_SECRET_KEY;
+    if (secretKey) {
+      try {
+        const admin = createAdminClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          secretKey,
+        );
+        await admin.auth.admin.deleteUser(supabaseUser.id);
+      } catch (cleanupErr) {
+        console.error("Failed to clean up Supabase user after Prisma error:", cleanupErr);
+      }
+    } else {
+      console.error(
+        "SUPABASE_SECRET_KEY not set — cannot clean up orphaned Supabase user:",
+        supabaseUser.id,
+      );
+    }
+    console.error("Prisma user creation failed:", err);
+    return {
+      error: "Nie udało się utworzyć konta. Spróbuj ponownie.",
+    };
   }
 
   redirect("/dashboard");
