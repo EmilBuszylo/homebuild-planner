@@ -83,7 +83,7 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
       <StepProgress currentStep={currentStep} totalSteps={TOTAL_STEPS} />
 
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(e) => e.preventDefault()}
         noValidate
         className="space-y-8"
       >
@@ -111,6 +111,7 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
           totalSteps={TOTAL_STEPS}
           onBack={handleBack}
           onNext={handleNext}
+          onSubmit={() => form.handleSubmit(onSubmit)()}
           isSubmitting={form.formState.isSubmitting}
         />
       </form>

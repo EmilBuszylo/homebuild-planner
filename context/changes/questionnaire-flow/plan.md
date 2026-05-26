@@ -362,23 +362,23 @@ Wire the form submission to a Route Handler that creates the Plan, PlanVersion, 
 
 #### Automated
 
-- [x] 2.1 `pnpm build` passes with new components
-- [x] 2.2 `pnpm lint` passes
+- [x] 2.1 `pnpm build` passes with new components — 9ca05bd
+- [x] 2.2 `pnpm lint` passes — 9ca05bd
 
 #### Manual
 
-- [x] 2.3 Step 1 renders three radio groups with validation
-- [x] 2.4 Step navigation works (forward with validation, backward preserving state)
-- [x] 2.5 Progress bar reflects current step
-- [x] 2.6 Summary step shows all answers with human-readable labels
-- [x] 2.7 Optional fields show "(opcjonalne)" with defaults
+- [x] 2.3 Step 1 renders three radio groups with validation — 9ca05bd
+- [x] 2.4 Step navigation works (forward with validation, backward preserving state) — 9ca05bd
+- [x] 2.5 Progress bar reflects current step — 9ca05bd
+- [x] 2.6 Summary step shows all answers with human-readable labels — 9ca05bd
+- [x] 2.7 Optional fields show "(opcjonalne)" with defaults — 9ca05bd
 
 ### Phase 3: API & Persistence
 
 #### Automated
 
-- [ ] 3.1 `pnpm build` passes
-- [ ] 3.2 `pnpm lint` passes
+- [x] 3.1 `pnpm build` passes
+- [x] 3.2 `pnpm lint` passes
 
 #### Manual
 
