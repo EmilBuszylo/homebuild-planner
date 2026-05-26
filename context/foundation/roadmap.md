@@ -3,7 +3,7 @@ project: home-build-planner
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-05-25
+updated: 2026-05-26
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -27,8 +27,9 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | supabase-auth-wiring | (foundation) Supabase Auth podpięte; logowanie i rejestracja działają end-to-end | — | FR-001, FR-002 | ready |
-| F-02 | domain-schema-and-seed | (foundation) Modele domenowe (ankieta, plan, etapy, wyceny) w Prisma + seed lokalnej bazy wiedzy o etapach budowy | F-01 | FR-003, FR-008 | proposed |
+| F-01 | supabase-auth-wiring | (foundation) Supabase Auth podpięte; logowanie i rejestracja działają end-to-end | — | FR-001, FR-002 | done |
+| F-01b | user-model-sync | (foundation) Model User w Prisma zsynchronizowany z Supabase Auth; rejestracja tworzy rekord User | F-01 | FR-001 | ready |
+| F-02 | domain-schema-and-seed | (foundation) Modele domenowe (ankieta, plan, etapy, wyceny) w Prisma + seed lokalnej bazy wiedzy o etapach budowy | F-01, F-01b | FR-003, FR-008 | proposed |
 | S-01 | questionnaire-flow | Użytkownik przechodzi ankietę krok po kroku, zatwierdza odpowiedzi | F-01, F-02 | US-01, FR-003, FR-004 | proposed |
 | S-02 | plan-generation | System generuje kosztorys etapów i timeline na podstawie odpowiedzi z ankiety (lokalna baza wiedzy) | S-01 | US-01, FR-006, FR-008 | proposed |
 | S-03 | first-plan-e2e | Użytkownik wypełnia ankietę i widzi kosztorys + timeline (north star) | S-02 | US-01, FR-003, FR-006, FR-008 | proposed |
@@ -40,7 +41,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
-| A | Auth i dane | `F-01` → `F-02` | Fundament: auth + schemat domenowy — odblokują ankietę i generowanie. |
+| A | Auth i dane | `F-01` → `F-01b` → `F-02` | Fundament: auth + model użytkownika + schemat domenowy — odblokują ankietę i generowanie. |
 | B | Rdzeń wartości | `S-01` → `S-02` → `S-03` → `S-05` | Główna ścieżka do gwiazdy przewodniej i edycji; `S-05` parallel with `S-04`. |
 | C | Doprecyzowanie | `S-04` | Internet refinement — po north star; parallel with `S-05`. |
 | D | Limity i koszty | `S-06` | Blocked na decyzję o limicie przeliceń (Open Question #2). |
@@ -70,6 +71,20 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Supabase Auth SDK zmienia nazwy kluczy między wersjami; przed implementacją należy sprawdzić aktualne docs pod kątem Publishable/Secret key naming.
+- **Status:** done
+- **Retro gap:** F-01 nie zawierał modelu `User` w Prisma — auth działa, ale dane domenowe nie mają do czego się podpiąć relacyjnie. Wyodrębniono F-01b aby zamknąć lukę przed F-02.
+
+### F-01b: Model User zsynchronizowany z Supabase Auth
+
+- **Outcome:** (foundation) Model `User` w `prisma/schema.prisma` z Supabase Auth UUID jako PK (`id`). Rejestracja (`register` Server Action) tworzy rekord User w transakcji z `signUp`. Istniejące modele domenowe (Plan, itd.) mają FK relację do User zamiast gołego `userId String`.
+- **Change ID:** user-model-sync
+- **PRD refs:** FR-001
+- **Unlocks:** F-02 — modele domenowe mogą mieć relacje do User; S-01–S-05 — każdy slice operuje na danych powiązanych z użytkownikiem
+- **Prerequisites:** F-01
+- **Parallel with:** —
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Tworzenie rekordu User musi być atomowe z `signUp` — jeśli jedno się powiedzie a drugie nie, zostanie osierocony użytkownik w Supabase bez rekordu w bazie domenowej. Rozwiązanie: try/catch z cleanup lub Supabase DB trigger jako fallback.
 - **Status:** ready
 
 ### F-02: Schemat domenowy i seed bazy wiedzy
@@ -78,7 +93,7 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Change ID:** domain-schema-and-seed
 - **PRD refs:** FR-003, FR-008, Business Logic (wejścia: stan inwestycji, ocieplenie, standard, metraż, data, kondygnacje, poddasze, garaż)
 - **Unlocks:** S-01 (ankieta potrzebuje schematu pytań), S-02 (generowanie potrzebuje danych seed)
-- **Prerequisites:** F-01
+- **Prerequisites:** F-01, F-01b
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:**
@@ -169,8 +184,9 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
-| F-01 | supabase-auth-wiring | Podpięcie Supabase Auth end-to-end | yes | Run `/10x-plan supabase-auth-wiring` |
-| F-02 | domain-schema-and-seed | Schemat domenowy Prisma + seed bazy wiedzy etapów | no | Wymaga F-01 |
+| F-01 | supabase-auth-wiring | Podpięcie Supabase Auth end-to-end | done | — |
+| F-01b | user-model-sync | Model User w Prisma + sync z Supabase Auth | yes | Run `/10x-plan user-model-sync` |
+| F-02 | domain-schema-and-seed | Schemat domenowy Prisma + seed bazy wiedzy etapów | no | Wymaga F-01, F-01b |
 | S-01 | questionnaire-flow | Przepływ ankiety krok po kroku | no | Wymaga F-01, F-02 |
 | S-02 | plan-generation | Generowanie kosztorysu i timeline z lokalnej bazy | no | Wymaga S-01 |
 | S-03 | first-plan-e2e | Kompletna ścieżka: ankieta → kosztorys + timeline | no | Wymaga S-02; north star |
@@ -193,3 +209,4 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 
 ## Done
 
+- **F-01** supabase-auth-wiring — Supabase Auth podpięte end-to-end (formularze, Server Actions, middleware, dashboard stub). Retro: brak modelu User wyodrębniony do F-01b.
