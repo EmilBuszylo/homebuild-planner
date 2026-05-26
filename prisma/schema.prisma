@@ -13,3 +13,11 @@ model DbHealth {
   id        Int      @id @default(1)
   checkedAt DateTime @default(now()) @updatedAt
 }
+
+/// Identity anchor for domain data. PK is the Supabase Auth UUID, set explicitly on registration.
+model User {
+  id        String   @id
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

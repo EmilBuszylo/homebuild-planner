@@ -29,3 +29,10 @@
 - **Problem**: An agent running `pnpm db:migrate` / `prisma migrate dev` against the owner’s database without coordination can apply the wrong migration, block on prompts, or proceed with code/tests while the DB is still on an old schema.
 - **Rule**: Only the repo owner runs local `pnpm db:migrate` / `prisma migrate dev`. Agents may edit `schema.prisma` and add migration SQL under `prisma/migrations/`, but if execution requires migrations to be applied locally first, the agent must **stop**, state the required commands clearly, ask the owner to run them and confirm success, and **not continue** until the owner explicitly allows it. Do not run `migrate dev`, `db push`, or `db:studio` on the owner’s behalf.
 - **Applies to**: frame, plan, plan-review, implement, impl-review, all
+
+## Group FK scalar fields directly below their relation line in Prisma schema
+
+- **Context**: Any Prisma model definition in `prisma/schema.prisma` with relations.
+- **Problem**: When FK fields (e.g., `planId`) are separated from their relation declaration, the schema becomes harder to read and the connection between the FK and relation is non-obvious.
+- **Rule**: Always place the FK scalar field directly below the relation field it belongs to. E.g., `plan Plan @relation(fields: [planId], ...)` on one line, followed by `planId String` on the next. Group related fields together — don't scatter FKs among unrelated columns.
+- **Applies to**: plan, implement, impl-review

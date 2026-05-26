@@ -33,3 +33,11 @@ export const registerSchema = z
   });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;
+
+export const registerServerSchema = z.object({
+  email: z
+    .string()
+    .min(1, "E-mail jest wymagany")
+    .email("Podaj poprawny adres e-mail"),
+  password: passwordSchema,
+});

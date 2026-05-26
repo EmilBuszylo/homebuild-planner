@@ -2,5 +2,6 @@
 export const routes = {
   login: "/logowanie",
   register: "/rejestracja",
+  dashboard: "/panel",
   home: "/",
 } as const;

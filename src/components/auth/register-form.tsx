@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 
@@ -9,6 +10,7 @@ import {
   AuthFormGroup,
   AuthFormHeader,
   AuthPasswordField,
+  AuthServerError,
   AuthSubmitField,
   AuthTextField,
 } from "@/components/auth/auth-form-layout";
@@ -19,6 +21,7 @@ import {
   type RegisterFormValues,
 } from "@/lib/validations/auth";
 import { createZodResolver } from "@/lib/validations/zod-resolver";
+import { register } from "@/app/(auth)/actions";
 
 const PASSWORD_HINT =
   "Min. 8 znaków, wielka i mała litera, cyfra oraz znak specjalny.";
@@ -27,6 +30,9 @@ export function RegisterForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<RegisterFormValues>({
     resolver: createZodResolver(registerSchema),
     defaultValues: {
@@ -37,8 +43,16 @@ export function RegisterForm({
   });
 
   function onSubmit(values: RegisterFormValues) {
-    // UI-only: Supabase auth wired in a later change
-    console.log("register", values);
+    setServerError(null);
+    startTransition(async () => {
+      const result = await register({
+        email: values.email,
+        password: values.password,
+      });
+      if (result?.error) {
+        setServerError(result.error);
+      }
+    });
   }
 
   return (
@@ -77,8 +91,11 @@ export function RegisterForm({
           label="Powtórz hasło"
           autoComplete="new-password"
         />
+        <AuthServerError message={serverError} />
         <AuthSubmitField>
-          <Button type="submit">Załóż konto</Button>
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? "Zakładanie konta..." : "Załóż konto"}
+          </Button>
         </AuthSubmitField>
         <AuthFormFooter>
           Masz już konto? <Link href={routes.login}>Zaloguj się</Link>
