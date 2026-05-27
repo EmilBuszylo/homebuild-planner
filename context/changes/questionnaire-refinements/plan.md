@@ -355,13 +355,13 @@ Update `TOTAL_STEPS` if step count changes (it stays at 4: 3 content + 1 summary
 
 #### Automated
 
-- [x] 2.1 `pnpm build` passes
-- [x] 2.2 `pnpm lint` passes
+- [x] 2.1 `pnpm build` passes — 898ad87
+- [x] 2.2 `pnpm lint` passes — 898ad87
 
 #### Manual
 
-- [x] 2.3 Step 1 shows 4 questions including starting_state with cross-validation
-- [x] 2.4 Step 2 shows 5 questions including balcony_count
-- [x] 2.5 Step 3 shows terrace_door_count replacing boolean
-- [x] 2.6 Summary shows all 13 answers correctly
-- [x] 2.7 Submit creates 13 QuestionnaireResponse rows in DB
+- [x] 2.3 Step 1 shows 4 questions including starting_state with cross-validation — 898ad87
+- [x] 2.4 Step 2 shows 5 questions including balcony_count — 898ad87
+- [x] 2.5 Step 3 shows terrace_door_count replacing boolean — 898ad87
+- [x] 2.6 Summary shows all 13 answers correctly — 898ad87
+- [x] 2.7 Submit creates 13 QuestionnaireResponse rows in DB — 898ad87
