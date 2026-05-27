@@ -239,12 +239,12 @@ Final copy pass, optional metadata alignment, and manual regression on auth entr
 
 #### Automated
 
-- [x] 1.1 `pnpm lint` passes
-- [x] 1.2 `pnpm build` passes
+- [x] 1.1 `pnpm lint` passes — 9f466f7
+- [x] 1.2 `pnpm build` passes — 9f466f7
 
 #### Manual
 
-- [x] 1.3 Sticky header and guest/authed CTA variants verified
+- [x] 1.3 Sticky header and guest/authed CTA variants verified — 9f466f7
 
 ### Phase 2: Landing sections (hero, benefits, trust)
 
