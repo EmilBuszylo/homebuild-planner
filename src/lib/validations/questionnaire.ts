@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { investmentStateOrder } from "@/lib/investment-state";
+
 /** Wszystkie wartości enum w DB (kolejność etapów budowy). */
 export const investmentStateSchema = z.enum([
   "FROM_SCRATCH",
@@ -42,14 +44,6 @@ export const insulationLevelSchema = z.enum([
   "ENHANCED",
   "PASSIVE",
 ]);
-
-const investmentStateOrder: Record<InvestmentState, number> = {
-  FROM_SCRATCH: 0,
-  FOUNDATIONS: 1,
-  OPEN_SHELL: 2,
-  CLOSED_SHELL: 3,
-  DEVELOPER: 4,
-};
 
 export function isStartingStateBeforeTarget(
   starting: StartingState,
