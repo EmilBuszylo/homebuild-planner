@@ -1,9 +1,15 @@
 "use client";
 
 import type { Control } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 
+import {
+  getAllowedStartingStates,
+  getAllowedTargetStates,
+} from "@/lib/investment-state";
 import type { QuestionDefinition } from "@/lib/types/domain";
 import type { QuestionnaireInputs } from "@/lib/validations/questionnaire";
+
 import { QuestionField } from "./question-renderers";
 
 const STEP_TITLES = [
@@ -13,10 +19,38 @@ const STEP_TITLES = [
 ];
 
 export const STEP_FIELDS: Record<number, (keyof QuestionnaireInputs)[]> = {
-  0: ["investment_state", "build_standard", "insulation_level"],
-  1: ["area", "floors", "has_attic", "garage_spots"],
-  2: ["window_count", "exterior_door_count", "has_terrace_doors", "key_date"],
+  0: ["investment_state", "starting_state", "build_standard", "insulation_level"],
+  1: ["area", "floors", "has_attic", "garage_spots", "balcony_count"],
+  2: ["window_count", "exterior_door_count", "terrace_door_count", "key_date"],
 };
+
+type QuestionOption = { value: string; label: string };
+
+function filterStateQuestionOptions(
+  question: QuestionDefinition,
+  startingState: string | undefined,
+  targetState: string | undefined,
+): QuestionDefinition {
+  const options = (question.options as QuestionOption[] | null) ?? [];
+
+  if (question.slug === "investment_state" && startingState) {
+    const allowed = new Set<string>(getAllowedTargetStates(startingState));
+    return {
+      ...question,
+      options: options.filter((o) => allowed.has(o.value)),
+    };
+  }
+
+  if (question.slug === "starting_state" && targetState) {
+    const allowed = new Set<string>(getAllowedStartingStates(targetState));
+    return {
+      ...question,
+      options: options.filter((o) => allowed.has(o.value)),
+    };
+  }
+
+  return question;
+}
 
 interface StepContentProps {
   stepIndex: number;
@@ -29,10 +63,18 @@ export function StepContent({
   questions,
   control,
 }: StepContentProps) {
+  const startingState = useWatch({ control, name: "starting_state" });
+  const targetState = useWatch({ control, name: "investment_state" });
+
   const slugs = STEP_FIELDS[stepIndex] ?? [];
   const stepQuestions = slugs
     .map((slug) => questions.find((q) => q.slug === slug))
-    .filter((q): q is QuestionDefinition => q !== undefined);
+    .filter((q): q is QuestionDefinition => q !== undefined)
+    .map((question) =>
+      stepIndex === 0
+        ? filterStateQuestionOptions(question, startingState, targetState)
+        : question,
+    );
 
   return (
     <div className="space-y-6">

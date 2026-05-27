@@ -36,3 +36,15 @@
 - **Problem**: When FK fields (e.g., `planId`) are separated from their relation declaration, the schema becomes harder to read and the connection between the FK and relation is non-obvious.
 - **Rule**: Always place the FK scalar field directly below the relation field it belongs to. E.g., `plan Plan @relation(fields: [planId], ...)` on one line, followed by `planId String` on the next. Group related fields together — don't scatter FKs among unrelated columns.
 - **Applies to**: plan, implement, impl-review
+
+## Questionnaire cross-field rules: never put Zod `.refine()` on the React Hook Form resolver schema
+
+- **Context**: Multi-step questionnaire with dependent fields (e.g. `starting_state` must be strictly before `investment_state` on the construction timeline). Validation uses Zod + `createZodResolver` + per-step `form.trigger(fields)`.
+- **Problem**: A single schema with `.refine()` for cross-field rules is wired as the RHF resolver. `form.trigger()` on a subset of fields can still surface the refine error on `starting_state` even when the pair is valid, or leave a stale error after the user fixes the selection. Regressions recurred when refactoring shared `investmentStateOrder` or reusing one schema for form and API.
+- **Rule**:
+  1. **`questionnaireFormSchema`** — field-level Zod only; **no** `.refine()`. This is the **only** schema passed to `createZodResolver`.
+  2. **`questionnaireInputsSchema`** — `questionnaireFormSchema.refine(...)` for **API** (`POST /api/plans`) and explicit `safeParse` immediately before submit.
+  3. **UI** — filter radio options so invalid pairs cannot be chosen (`getAllowedTargetStates` / `getAllowedStartingStates` in `src/lib/investment-state.ts`). Remember: different labels can share one enum value (e.g. target „Stan zero (fundamenty)” and start „Fundamenty gotowe” are both `FOUNDATIONS` → invalid for strict `<`).
+  4. **Auto-correct** — if an invalid pair appears (defaults, stale state), `useEffect` resets target to the first allowed value for the chosen start; do not rely only on `clearErrors` + manual `setError` in `handleNext`.
+  5. **Before merging** — manually test matrix on step 1: `FROM_SCRATCH` → `DEVELOPER`, `FOUNDATIONS` → `OPEN_SHELL`, and confirm `FOUNDATIONS` + `FOUNDATIONS` is impossible in UI.
+- **Applies to**: frame, plan, implement, impl-review, plan-review
