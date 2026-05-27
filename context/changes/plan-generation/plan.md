@@ -296,11 +296,11 @@ Replace placeholder plan page with stacked cost table + calendar timeline fed by
 
 #### Automated
 
-- [ ] 3.1 `pnpm lint` passes
-- [ ] 3.2 `pnpm build` passes
+- [x] 3.1 `pnpm lint` passes — 7494d35
+- [x] 3.2 `pnpm build` passes — 7494d35
 
 #### Manual
 
-- [ ] 3.3 Plan page shows stacked table + calendar timeline after submit
-- [ ] 3.4 Partial target and full DEVELOPER scenarios display expected stages
-- [ ] 3.5 Total row and disclaimer visible; sum matches stages
+- [x] 3.3 Plan page shows stacked table + calendar timeline after submit — 7494d35
+- [x] 3.4 Partial target and full DEVELOPER scenarios display expected stages — 7494d35
+- [x] 3.5 Total row and disclaimer visible; sum matches stages — 7494d35

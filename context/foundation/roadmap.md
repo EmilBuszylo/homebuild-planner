@@ -32,7 +32,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 | F-02 | domain-schema-and-seed | (foundation) Modele domenowe (ankieta, plan, etapy, wyceny) w Prisma + seed lokalnej bazy wiedzy o etapach budowy | F-01, F-01b | FR-003, FR-008 | proposed |
 | S-01 | questionnaire-flow | Użytkownik przechodzi ankietę krok po kroku, zatwierdza odpowiedzi | F-01, F-02 | US-01, FR-003, FR-004 | done |
 | S-01b | questionnaire-refinements | Ankieta uwzględnia realne mechanizmy wyceny: ocieplenie jako mnożnik %, stan docelowy + startowy, drzwi tarasowe × ilość, balkony | S-01 | FR-003, FR-004, FR-008 | done |
-| S-02 | plan-generation | System generuje kosztorys etapów i timeline na podstawie odpowiedzi z ankiety (lokalna baza wiedzy) | S-01, S-01b | US-01, FR-006, FR-008 | proposed |
+| S-02 | plan-generation | System generuje kosztorys etapów i timeline na podstawie odpowiedzi z ankiety (lokalna baza wiedzy) | S-01, S-01b | US-01, FR-006, FR-008 | done |
 | S-03 | first-plan-e2e | Użytkownik wypełnia ankietę i widzi kosztorys + timeline (north star) | S-02 | US-01, FR-003, FR-006, FR-008 | proposed |
 | S-04 | internet-refinement | System doprecyzowuje wyceny danymi z internetu | S-03 | FR-009 | proposed |
 | S-05 | edit-and-recalculate | Użytkownik edytuje odpowiedzi ankiety i uruchamia ponowne przeliczenie | S-03 | US-01, FR-005 | proposed |
@@ -146,7 +146,7 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Unknowns:**
   - Jaka forma prezentacji wyniku na MVP — tabela + timeline czy jeden widok? (PRD Open Question #1) — Owner: user. Block: no (można startować od jednego czytelnego wariantu).
 - **Risk:** Wynik musi pojawić się w ≤ 100 s (NFR). Przy lokalnej bazie nie powinno być problemu, ale warto weryfikować na realnym seeedzie.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Pierwsza kompletna ścieżka (north star)
 
@@ -208,7 +208,7 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 | F-02 | domain-schema-and-seed | Schemat domenowy Prisma + seed bazy wiedzy etapów | no | Wymaga F-01, F-01b |
 | S-01 | questionnaire-flow | Przepływ ankiety krok po kroku | done | — |
 | S-01b | questionnaire-refinements | Korekta pytań ankiety pod realne mechanizmy wyceny | done | — |
-| S-02 | plan-generation | Generowanie kosztorysu i timeline z lokalnej bazy | no | Wymaga S-01, S-01b |
+| S-02 | plan-generation | Generowanie kosztorysu i timeline z lokalnej bazy | done | — |
 | S-03 | first-plan-e2e | Kompletna ścieżka: ankieta → kosztorys + timeline | no | Wymaga S-02; north star |
 | S-04 | internet-refinement | Doprecyzowanie wycen danymi z internetu | no | Wymaga S-03 |
 | S-05 | edit-and-recalculate | Edycja odpowiedzi i ponowne przeliczenie | no | Wymaga S-03; parallel with S-04 |
