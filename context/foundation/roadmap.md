@@ -36,7 +36,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 | S-03 | first-plan-e2e | Użytkownik wypełnia ankietę i widzi kosztorys + timeline (north star) | S-02 | US-01, FR-003, FR-006, FR-008 | done |
 | S-03b | marketing-landing | Użytkownik widzi pełny landing marketingowy (hero, korzyści, CTA) zamiast minimalnej strony startowej | S-03 | — | done |
 | S-04 | internet-refinement | System doprecyzowuje wyceny danymi z internetu | S-03 | FR-009 | proposed |
-| S-05 | edit-and-recalculate | Użytkownik edytuje odpowiedzi ankiety i uruchamia ponowne przeliczenie | S-03 | US-01, FR-005 | proposed |
+| S-05 | edit-and-recalculate | Użytkownik edytuje odpowiedzi ankiety i uruchamia ponowne przeliczenie | S-03 | US-01, FR-005 | done |
 | S-06 | rate-limit-enforcement | System ogranicza liczbę przeliceń na użytkownika zgodnie z ustalonym limitem | S-05 | FR-005, NFR (limit przeliceń) | blocked |
 
 ## Streams
@@ -197,7 +197,7 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Przeliczenie musi działać w ≤ 100 s (NFR). Jeśli S-04 (internet) jest włączone, przeliczenie będzie wolniejsze — ale S-05 może działać na samej lokalnej bazie.
-- **Status:** proposed
+- **Status:** done
 
 ### S-06: Limit przeliceń na użytkownika
 
@@ -225,7 +225,7 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 | S-03 | first-plan-e2e | Kompletna ścieżka: ankieta → kosztorys + timeline | done | — |
 | S-03b | marketing-landing | Pełny landing marketingowy | done | — |
 | S-04 | internet-refinement | Doprecyzowanie wycen danymi z internetu | no | Wymaga S-03 |
-| S-05 | edit-and-recalculate | Edycja odpowiedzi i ponowne przeliczenie | no | Wymaga S-03; parallel with S-04 |
+| S-05 | edit-and-recalculate | Edycja odpowiedzi i ponowne przeliczenie | done | — |
 | S-06 | rate-limit-enforcement | Limit przeliceń na użytkownika | no | Blocked: brak ustalonego limitu (OQ #2) |
 
 ## Open Roadmap Questions

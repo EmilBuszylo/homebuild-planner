@@ -1,7 +1,7 @@
 ---
 change_id: edit-and-recalculate
 title: Edit and recalculate
-status: implementing
+status: implemented
 created: 2026-05-27
 updated: 2026-05-27
 archived_at: null
@@ -11,4 +11,4 @@ archived_at: null
 
 S-05 (FR-005): edycja ankiety + `POST .../recalculate` → nowa `PlanVersion`, GET wyników bez zmian (najnowsza wersja). Wejście: panel + strona planu. Limity przeliczeń → S-06. Historia wersji w UI poza MVP.
 
-Implemented 2026-05-27 on branch `feature/s-05-edit-and-recalculate`. Manual E2E deferred to final review by owner.
+Implemented 2026-05-27. Commits on `feature/s-05-edit-and-recalculate`: p1 `dc4005f`, p2 `c66c0a2`, p3 `0931d17`, epilogue `c21bb78`. Manual E2E deferred to final review by owner.

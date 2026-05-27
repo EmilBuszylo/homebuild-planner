@@ -235,37 +235,37 @@ None. Optional: owner may delete test plans with orphaned v1 — not required.
 
 #### Automated
 
-- [x] 1.1 `pnpm lint` passes
-- [x] 1.2 `pnpm build` passes
+- [x] 1.1 `pnpm lint` passes — dc4005f
+- [x] 1.2 `pnpm build` passes — dc4005f
 
 #### Manual
 
-- [x] 1.3 Recalculate POST creates new PlanVersion with results in DB
-- [x] 1.4 Create POST still 409 when plan exists
-- [x] 1.5 GET results returns latest version after recalc
+- [x] 1.3 Recalculate POST creates new PlanVersion with results in DB — dc4005f
+- [x] 1.4 Create POST still 409 when plan exists — dc4005f
+- [x] 1.5 GET results returns latest version after recalc — dc4005f
 
 ### Phase 2: Questionnaire edit mode
 
 #### Automated
 
-- [x] 2.1 `pnpm lint` passes
-- [x] 2.2 `pnpm build` passes
+- [x] 2.1 `pnpm lint` passes — c66c0a2
+- [x] 2.2 `pnpm build` passes — c66c0a2
 
 #### Manual
 
-- [x] 2.3 `/ankieta` prefills latest answers when plan exists
-- [x] 2.4 Submit recalc updates plan page totals
-- [x] 2.5 First-time user create path still works
+- [x] 2.3 `/ankieta` prefills latest answers when plan exists — c66c0a2
+- [x] 2.4 Submit recalc updates plan page totals — c66c0a2
+- [x] 2.5 First-time user create path still works — c66c0a2
 
 ### Phase 3: Entry points & end-to-end verification
 
 #### Automated
 
-- [x] 3.1 `pnpm lint` passes
-- [x] 3.2 `pnpm build` passes
+- [x] 3.1 `pnpm lint` passes — 0931d17
+- [x] 3.2 `pnpm build` passes — 0931d17
 
 #### Manual
 
-- [x] 3.3 Panel and plan page edit links work end-to-end
-- [x] 3.4 New user create regression passes
-- [x] 3.5 Recalc completes within 100s
+- [x] 3.3 Panel and plan page edit links work end-to-end — 0931d17
+- [x] 3.4 New user create regression passes — 0931d17
+- [x] 3.5 Recalc completes within 100s — 0931d17
