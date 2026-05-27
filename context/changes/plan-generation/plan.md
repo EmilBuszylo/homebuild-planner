@@ -283,14 +283,14 @@ Replace placeholder plan page with stacked cost table + calendar timeline fed by
 
 #### Automated
 
-- [x] 2.1 `pnpm lint` passes
-- [x] 2.2 `pnpm build` passes
+- [x] 2.1 `pnpm lint` passes — e63064a
+- [x] 2.2 `pnpm build` passes — e63064a
 
 #### Manual
 
-- [x] 2.3 POST questionnaire creates `PlanStageResult` rows in same transaction
-- [x] 2.4 GET `/api/plans/[planId]/results` returns correct payload; forbidden for other users
-- [x] 2.5 Generation failure rolls back plan creation
+- [x] 2.3 POST questionnaire creates `PlanStageResult` rows in same transaction — e63064a
+- [x] 2.4 GET `/api/plans/[planId]/results` returns correct payload; forbidden for other users — e63064a
+- [x] 2.5 Generation failure rolls back plan creation — e63064a
 
 ### Phase 3: Results UI
 
