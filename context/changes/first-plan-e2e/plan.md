@@ -283,34 +283,34 @@ None. Users with plans created before S-02 without `PlanStageResult` will still 
 
 #### Automated
 
-- [x] 1.1 `pnpm lint` passes
-- [x] 1.2 `pnpm build` passes
+- [x] 1.1 `pnpm lint` passes — 90b77d8
+- [x] 1.2 `pnpm build` passes — 90b77d8
 
 #### Manual
 
-- [x] 1.3 Logged-out `/` shows Polish intro and auth CTAs
-- [x] 1.4 After login/register, address bar shows `/panel`
-- [x] 1.5 Logged-in visit to `/logowanie` redirects to `/panel`
+- [x] 1.3 Logged-out `/` shows Polish intro and auth CTAs — 90b77d8
+- [x] 1.4 After login/register, address bar shows `/panel` — 90b77d8
+- [x] 1.5 Logged-in visit to `/logowanie` redirects to `/panel` — 90b77d8
 
 ### Phase 2: Smart panel hub
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint` passes
-- [ ] 2.2 `pnpm build` passes
+- [x] 2.1 `pnpm lint` passes
+- [x] 2.2 `pnpm build` passes
 
 #### Manual
 
-- [ ] 2.3 New user: panel → anketa → submit → plan without manual URLs
-- [ ] 2.4 User with plan: panel link opens correct results
-- [ ] 2.5 `/ankieta` with existing plan redirects to plan
+- [x] 2.3 New user: panel → anketa → submit → plan without manual URLs
+- [x] 2.4 User with plan: panel link opens correct results
+- [x] 2.5 `/ankieta` with existing plan redirects to plan
 
 ### Phase 3: App shell, polish & north-star verification
 
 #### Automated
 
-- [ ] 3.1 `pnpm lint` passes
-- [ ] 3.2 `pnpm build` passes
+- [x] 3.1 `pnpm lint` passes
+- [x] 3.2 `pnpm build` passes
 
 #### Manual
 
