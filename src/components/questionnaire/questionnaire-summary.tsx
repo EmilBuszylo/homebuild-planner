@@ -16,15 +16,25 @@ type QuestionOption = { value: string; label: string };
 const STEP_GROUPS: { name: string; slugs: (keyof QuestionnaireInputs)[] }[] = [
   {
     name: "Stan i standard budowy",
-    slugs: ["investment_state", "build_standard", "insulation_level"],
+    slugs: [
+      "investment_state",
+      "starting_state",
+      "build_standard",
+      "insulation_level",
+    ],
   },
   {
     name: "Parametry budynku",
-    slugs: ["area", "floors", "has_attic", "garage_spots"],
+    slugs: ["area", "floors", "has_attic", "garage_spots", "balcony_count"],
   },
   {
     name: "Okna, drzwi i termin",
-    slugs: ["window_count", "exterior_door_count", "has_terrace_doors", "key_date"],
+    slugs: [
+      "window_count",
+      "exterior_door_count",
+      "terrace_door_count",
+      "key_date",
+    ],
   },
 ];
 

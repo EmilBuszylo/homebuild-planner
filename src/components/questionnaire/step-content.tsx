@@ -13,9 +13,9 @@ const STEP_TITLES = [
 ];
 
 export const STEP_FIELDS: Record<number, (keyof QuestionnaireInputs)[]> = {
-  0: ["investment_state", "build_standard", "insulation_level"],
-  1: ["area", "floors", "has_attic", "garage_spots"],
-  2: ["window_count", "exterior_door_count", "has_terrace_doors", "key_date"],
+  0: ["investment_state", "starting_state", "build_standard", "insulation_level"],
+  1: ["area", "floors", "has_attic", "garage_spots", "balcony_count"],
+  2: ["window_count", "exterior_door_count", "terrace_door_count", "key_date"],
 };
 
 interface StepContentProps {

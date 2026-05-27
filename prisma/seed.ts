@@ -10,20 +10,32 @@ const prisma = new PrismaClient();
 // Question definitions
 // ---------------------------------------------------------------------------
 
+const investmentStateOptions = [
+  { value: "FROM_SCRATCH", label: "Od zera (działka)" },
+  { value: "FOUNDATIONS", label: "Fundamenty gotowe" },
+  { value: "OPEN_SHELL", label: "Stan surowy otwarty" },
+  { value: "CLOSED_SHELL", label: "Stan surowy zamknięty" },
+  { value: "DEVELOPER", label: "Stan deweloperski" },
+] as const;
+
 const questions = [
   {
     slug: "investment_state",
-    label: "Stan inwestycji",
+    label: "Stan docelowy budowy",
     type: QuestionType.SINGLE_CHOICE,
     required: true,
     sortOrder: 1,
-    options: [
-      { value: "FROM_SCRATCH", label: "Od zera (działka)" },
-      { value: "FOUNDATIONS", label: "Fundamenty gotowe" },
-      { value: "OPEN_SHELL", label: "Stan surowy otwarty" },
-      { value: "CLOSED_SHELL", label: "Stan surowy zamknięty" },
-      { value: "DEVELOPER", label: "Stan deweloperski" },
-    ],
+    options: [...investmentStateOptions],
+    validation: null,
+    unit: null,
+  },
+  {
+    slug: "starting_state",
+    label: "Aktualny stan budowy",
+    type: QuestionType.SINGLE_CHOICE,
+    required: true,
+    sortOrder: 2,
+    options: [...investmentStateOptions],
     validation: null,
     unit: null,
   },
@@ -32,7 +44,7 @@ const questions = [
     label: "Standard wykończenia",
     type: QuestionType.SINGLE_CHOICE,
     required: true,
-    sortOrder: 2,
+    sortOrder: 3,
     options: [
       { value: "ECONOMY", label: "Ekonomiczny" },
       { value: "STANDARD", label: "Standardowy" },
@@ -46,11 +58,11 @@ const questions = [
     label: "Poziom ocieplenia",
     type: QuestionType.SINGLE_CHOICE,
     required: true,
-    sortOrder: 3,
+    sortOrder: 4,
     options: [
-      { value: "STANDARD", label: "Standardowy (15–20 cm)" },
-      { value: "ENHANCED", label: "Wzmocniony (20–25 cm)" },
-      { value: "PASSIVE", label: "Pasywny (25–35 cm)" },
+      { value: "STANDARD", label: "Standardowy" },
+      { value: "ENHANCED", label: "Wzmocniony" },
+      { value: "PASSIVE", label: "Pasywny" },
     ],
     validation: null,
     unit: null,
@@ -60,20 +72,10 @@ const questions = [
     label: "Powierzchnia użytkowa",
     type: QuestionType.NUMBER,
     required: true,
-    sortOrder: 4,
+    sortOrder: 5,
     options: null,
     validation: { min: 50, max: 500 },
     unit: "m²",
-  },
-  {
-    slug: "key_date",
-    label: "Planowana data rozpoczęcia budowy",
-    type: QuestionType.DATE,
-    required: true,
-    sortOrder: 5,
-    options: null,
-    validation: null,
-    unit: null,
   },
   {
     slug: "floors",
@@ -106,11 +108,21 @@ const questions = [
     unit: "szt.",
   },
   {
+    slug: "balcony_count",
+    label: "Liczba balkonów",
+    type: QuestionType.NUMBER,
+    required: false,
+    sortOrder: 9,
+    options: null,
+    validation: { min: 0, max: 4 },
+    unit: "szt.",
+  },
+  {
     slug: "window_count",
     label: "Liczba okien",
     type: QuestionType.NUMBER,
     required: true,
-    sortOrder: 9,
+    sortOrder: 10,
     options: null,
     validation: { min: 1, max: 30 },
     unit: "szt.",
@@ -120,17 +132,27 @@ const questions = [
     label: "Liczba drzwi zewnętrznych",
     type: QuestionType.NUMBER,
     required: true,
-    sortOrder: 10,
+    sortOrder: 11,
     options: null,
     validation: { min: 1, max: 5 },
     unit: "szt.",
   },
   {
-    slug: "has_terrace_doors",
-    label: "Drzwi tarasowe",
-    type: QuestionType.BOOLEAN,
+    slug: "terrace_door_count",
+    label: "Liczba drzwi tarasowych",
+    type: QuestionType.NUMBER,
     required: false,
-    sortOrder: 11,
+    sortOrder: 12,
+    options: null,
+    validation: { min: 0, max: 5 },
+    unit: "szt.",
+  },
+  {
+    slug: "key_date",
+    label: "Planowana data rozpoczęcia budowy",
+    type: QuestionType.DATE,
+    required: true,
+    sortOrder: 13,
     options: null,
     validation: null,
     unit: null,
@@ -419,22 +441,75 @@ type ModifierInput = {
 };
 
 const modifiers: ModifierInput[] = [
-  // Insulation level → insulation stage
+  // Insulation level — percentage uplift on insulation-related stages (economy-tier pre-computed)
   {
     stageSlug: "insulation",
     triggerQuestionSlug: "insulation_level",
     triggerValue: "ENHANCED",
-    costAdjustmentPerM2: 40,
+    costAdjustmentPerM2: 15,
     fixedCostAdjustment: 0,
-    description: "Wzmocnione ocieplenie (20–25 cm) — dodatkowy materiał i robocizna",
+    description:
+      "[PERCENT:15] Wzmocnione ocieplenie — podwyższony standard izolacji",
+  },
+  {
+    stageSlug: "foundations",
+    triggerQuestionSlug: "insulation_level",
+    triggerValue: "ENHANCED",
+    costAdjustmentPerM2: 60,
+    fixedCostAdjustment: 0,
+    description:
+      "[PERCENT:15] Wzmocnione ocieplenie — izolacja fundamentów i posadzki",
+  },
+  {
+    stageSlug: "roof_structure",
+    triggerQuestionSlug: "insulation_level",
+    triggerValue: "ENHANCED",
+    costAdjustmentPerM2: 30,
+    fixedCostAdjustment: 0,
+    description: "[PERCENT:15] Wzmocnione ocieplenie — ocieplenie stropu/dachu",
+  },
+  {
+    stageSlug: "heating",
+    triggerQuestionSlug: "insulation_level",
+    triggerValue: "ENHANCED",
+    costAdjustmentPerM2: 18,
+    fixedCostAdjustment: 0,
+    description:
+      "[PERCENT:15] Wzmocnione ocieplenie — wyższe wymagania instalacji grzewczej",
   },
   {
     stageSlug: "insulation",
     triggerQuestionSlug: "insulation_level",
     triggerValue: "PASSIVE",
-    costAdjustmentPerM2: 90,
+    costAdjustmentPerM2: 30,
     fixedCostAdjustment: 0,
-    description: "Ocieplenie pasywne (25–35 cm) — znacznie grubsza izolacja",
+    description: "[PERCENT:30] Ocieplenie pasywne — standard izolacji pasywnej",
+  },
+  {
+    stageSlug: "foundations",
+    triggerQuestionSlug: "insulation_level",
+    triggerValue: "PASSIVE",
+    costAdjustmentPerM2: 120,
+    fixedCostAdjustment: 0,
+    description:
+      "[PERCENT:30] Ocieplenie pasywne — izolacja fundamentów i posadzki",
+  },
+  {
+    stageSlug: "roof_structure",
+    triggerQuestionSlug: "insulation_level",
+    triggerValue: "PASSIVE",
+    costAdjustmentPerM2: 60,
+    fixedCostAdjustment: 0,
+    description: "[PERCENT:30] Ocieplenie pasywne — ocieplenie stropu/dachu",
+  },
+  {
+    stageSlug: "heating",
+    triggerQuestionSlug: "insulation_level",
+    triggerValue: "PASSIVE",
+    costAdjustmentPerM2: 36,
+    fixedCostAdjustment: 0,
+    description:
+      "[PERCENT:30] Ocieplenie pasywne — rekuperacja i pompa ciepła",
   },
 
   // Windows — per-unit pricing by build standard (S-02 multiplies by window_count)
@@ -489,30 +564,58 @@ const modifiers: ModifierInput[] = [
     description: "[PER_UNIT:exterior_door_count] Drzwi zewnętrzne — standard premium",
   },
 
-  // Terrace doors — fixed cost, conditional on has_terrace_doors (economy=balkonowe, standard=smart, premium=HS)
+  // Terrace doors — per-unit pricing by build standard
   {
     stageSlug: "windows_doors",
-    triggerQuestionSlug: "has_terrace_doors",
-    triggerValue: "true",
+    triggerQuestionSlug: "build_standard",
+    triggerValue: "ECONOMY",
     costAdjustmentPerM2: 0,
     fixedCostAdjustment: 3000,
-    description: "[FIXED:build_standard=ECONOMY] Drzwi tarasowe — balkonowe zwykłe",
+    description:
+      "[PER_UNIT:terrace_door_count] Drzwi tarasowe — balkonowe zwykłe",
   },
   {
     stageSlug: "windows_doors",
-    triggerQuestionSlug: "has_terrace_doors",
-    triggerValue: "true",
+    triggerQuestionSlug: "build_standard",
+    triggerValue: "STANDARD",
     costAdjustmentPerM2: 0,
     fixedCostAdjustment: 8000,
-    description: "[FIXED:build_standard=STANDARD] Drzwi tarasowe — przesuwne system smart",
+    description:
+      "[PER_UNIT:terrace_door_count] Drzwi tarasowe — przesuwne system smart",
   },
   {
     stageSlug: "windows_doors",
-    triggerQuestionSlug: "has_terrace_doors",
-    triggerValue: "true",
+    triggerQuestionSlug: "build_standard",
+    triggerValue: "PREMIUM",
     costAdjustmentPerM2: 0,
     fixedCostAdjustment: 15000,
-    description: "[FIXED:build_standard=PREMIUM] Drzwi tarasowe — przesuwne system HS",
+    description: "[PER_UNIT:terrace_door_count] Drzwi tarasowe — przesuwne system HS",
+  },
+
+  // Balconies — per-unit pricing by build standard
+  {
+    stageSlug: "floor_slabs",
+    triggerQuestionSlug: "build_standard",
+    triggerValue: "ECONOMY",
+    costAdjustmentPerM2: 0,
+    fixedCostAdjustment: 8000,
+    description: "[PER_UNIT:balcony_count] Balkon — standard ekonomiczny",
+  },
+  {
+    stageSlug: "floor_slabs",
+    triggerQuestionSlug: "build_standard",
+    triggerValue: "STANDARD",
+    costAdjustmentPerM2: 0,
+    fixedCostAdjustment: 14000,
+    description: "[PER_UNIT:balcony_count] Balkon — standard standardowy",
+  },
+  {
+    stageSlug: "floor_slabs",
+    triggerQuestionSlug: "build_standard",
+    triggerValue: "PREMIUM",
+    costAdjustmentPerM2: 0,
+    fixedCostAdjustment: 22000,
+    description: "[PER_UNIT:balcony_count] Balkon — standard premium",
   },
 
   // Insulation level → garage gate (fixed cost)
@@ -587,20 +690,31 @@ const modifiers: ModifierInput[] = [
     description: "Dwa dodatkowe stropy międzykondygnacyjne",
   },
 
-  // Insulation → heating (passive houses need different heating)
-  {
-    stageSlug: "heating",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "PASSIVE",
-    costAdjustmentPerM2: 60,
-    fixedCostAdjustment: 0,
-    description: "Rekuperacja i pompa ciepła wymagane w standardzie pasywnym",
-  },
 ];
 
 // ---------------------------------------------------------------------------
 // Seed functions
 // ---------------------------------------------------------------------------
+
+async function cleanupObsoleteSeedData() {
+  console.log("Cleaning up obsolete seed data...");
+  await prisma.questionDefinition
+    .delete({ where: { slug: "has_terrace_doors" } })
+    .catch(() => {});
+
+  const removedModifiers = await prisma.stageCostModifier.deleteMany({
+    where: {
+      OR: [
+        { triggerQuestionSlug: "has_terrace_doors" },
+        {
+          triggerQuestionSlug: "insulation_level",
+          NOT: { description: { startsWith: "[PERCENT:" } },
+        },
+      ],
+    },
+  });
+  console.log(`  ✓ removed ${removedModifiers.count} obsolete cost modifier(s)`);
+}
 
 async function seedQuestions() {
   console.log("Seeding question definitions...");
@@ -723,6 +837,7 @@ async function seedModifiers() {
 
 async function main() {
   console.log("🌱 Starting seed...\n");
+  await cleanupObsoleteSeedData();
   await seedQuestions();
   await seedStages();
   await seedModifiers();

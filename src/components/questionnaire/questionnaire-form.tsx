@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import type { QuestionDefinition } from "@/lib/types/domain";
 import {
+  isStartingStateBeforeTarget,
   questionnaireInputsSchema,
   type QuestionnaireInputs,
 } from "@/lib/validations/questionnaire";
@@ -31,9 +32,11 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
   const form = useForm<QuestionnaireInputs>({
     resolver: createZodResolver(questionnaireInputsSchema),
     defaultValues: {
+      starting_state: "FROM_SCRATCH",
       has_attic: false,
       garage_spots: 0,
-      has_terrace_doors: false,
+      balcony_count: 0,
+      terrace_door_count: 0,
     },
   });
 
@@ -44,9 +47,21 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
     if (!fieldsToValidate) return;
 
     const isValid = await form.trigger(fieldsToValidate);
-    if (isValid) {
-      setCurrentStep((prev) => prev + 1);
+    if (!isValid) return;
+
+    if (currentStep === 0) {
+      const { starting_state, investment_state } = form.getValues();
+      if (!isStartingStateBeforeTarget(starting_state, investment_state)) {
+        form.setError("starting_state", {
+          type: "manual",
+          message: "Stan startowy musi być wcześniejszy niż stan docelowy",
+        });
+        return;
+      }
+      form.clearErrors("starting_state");
     }
+
+    setCurrentStep((prev) => prev + 1);
   }
 
   function handleBack() {

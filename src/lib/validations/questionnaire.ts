@@ -8,6 +8,8 @@ export const investmentStateSchema = z.enum([
   "DEVELOPER",
 ]);
 
+export type InvestmentState = z.infer<typeof investmentStateSchema>;
+
 export const buildStandardSchema = z.enum([
   "ECONOMY",
   "STANDARD",
@@ -20,13 +22,29 @@ export const insulationLevelSchema = z.enum([
   "PASSIVE",
 ]);
 
+const investmentStateOrder: Record<InvestmentState, number> = {
+  FROM_SCRATCH: 0,
+  FOUNDATIONS: 1,
+  OPEN_SHELL: 2,
+  CLOSED_SHELL: 3,
+  DEVELOPER: 4,
+};
+
+export function isStartingStateBeforeTarget(
+  starting: InvestmentState,
+  target: InvestmentState,
+): boolean {
+  return investmentStateOrder[starting] < investmentStateOrder[target];
+}
+
 export const questionnaireResponseSchema = z.object({
   questionSlug: z.string().min(1, "Identyfikator pytania jest wymagany"),
   value: z.string().min(1, "Odpowiedź jest wymagana"),
 });
 
-export const questionnaireInputsSchema = z.object({
+const questionnaireInputsBaseSchema = z.object({
   investment_state: investmentStateSchema,
+  starting_state: investmentStateSchema,
   build_standard: buildStandardSchema,
   insulation_level: insulationLevelSchema,
   area: z
@@ -47,6 +65,13 @@ export const questionnaireInputsSchema = z.object({
     .max(3, "Maksymalna liczba miejsc garażowych to 3")
     .optional()
     .default(0),
+  balcony_count: z
+    .number()
+    .int("Liczba balkonów musi być liczbą całkowitą")
+    .min(0, "Minimalna liczba balkonów to 0")
+    .max(4, "Maksymalna liczba balkonów to 4")
+    .optional()
+    .default(0),
   window_count: z
     .number()
     .int("Liczba okien musi być liczbą całkowitą")
@@ -57,11 +82,25 @@ export const questionnaireInputsSchema = z.object({
     .int("Liczba drzwi musi być liczbą całkowitą")
     .min(1, "Minimalna liczba drzwi zewnętrznych to 1")
     .max(5, "Maksymalna liczba drzwi zewnętrznych to 5"),
-  has_terrace_doors: z.boolean().optional().default(false),
+  terrace_door_count: z
+    .number()
+    .int("Liczba drzwi tarasowych musi być liczbą całkowitą")
+    .min(0, "Minimalna liczba drzwi tarasowych to 0")
+    .max(5, "Maksymalna liczba drzwi tarasowych to 5")
+    .optional()
+    .default(0),
 });
 
-export type InvestmentState = z.infer<typeof investmentStateSchema>;
+export const questionnaireInputsSchema = questionnaireInputsBaseSchema.refine(
+  (data) => isStartingStateBeforeTarget(data.starting_state, data.investment_state),
+  {
+    message: "Stan startowy musi być wcześniejszy niż stan docelowy",
+    path: ["starting_state"],
+  },
+);
 export type BuildStandard = z.infer<typeof buildStandardSchema>;
 export type InsulationLevel = z.infer<typeof insulationLevelSchema>;
-export type QuestionnaireResponseInput = z.infer<typeof questionnaireResponseSchema>;
-export type QuestionnaireInputs = z.infer<typeof questionnaireInputsSchema>;
+export type QuestionnaireResponseInput = z.infer<
+  typeof questionnaireResponseSchema
+>;
+export type QuestionnaireInputs = z.infer<typeof questionnaireInputsBaseSchema>;
