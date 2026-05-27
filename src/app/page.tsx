@@ -14,7 +14,7 @@ export default async function HomePage() {
   const isAuthenticated = !!user;
 
   return (
-    <div className="flex min-h-svh flex-col">
+    <div className="flex min-h-svh flex-col overflow-x-hidden">
       <LandingHeader isAuthenticated={isAuthenticated} />
       <main className="flex-1">
         <LandingHero isAuthenticated={isAuthenticated} />

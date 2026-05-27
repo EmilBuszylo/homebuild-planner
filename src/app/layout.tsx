@@ -18,9 +18,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Planer budowy domu",
+  title: {
+    default: "Planer budowy domu",
+    template: "%s | Planer budowy domu",
+  },
   description:
-    "Orientacyjny kosztorys etapów budowy i harmonogram prac dla osób budujących dom w trybie gospodarczym.",
+    "Wypełnij ankietę o swoim domu i otrzymaj orientacyjny kosztorys etapów budowy oraz harmonogram prac — dla inwestorów budujących w trybie gospodarczym.",
 };
 
 export default function RootLayout({

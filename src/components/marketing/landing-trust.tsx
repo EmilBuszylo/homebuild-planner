@@ -1,6 +1,6 @@
 export function LandingTrust() {
   return (
-    <section className="border-y bg-muted/50 py-16 lg:py-20">
+    <section className="border-y bg-muted/50 py-16 lg:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Orientacyjnie, na podstawie Twoich odpowiedzi

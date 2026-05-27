@@ -15,7 +15,7 @@ export function LandingHeader({ isAuthenticated }: LandingHeaderProps) {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         <Link
           href={routes.home}
-          className="flex items-center gap-2 text-sm font-medium"
+          className="flex items-center gap-2 rounded-md text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <Home className="size-4" aria-hidden />
