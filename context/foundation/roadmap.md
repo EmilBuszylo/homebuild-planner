@@ -30,8 +30,9 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 | F-01 | supabase-auth-wiring | (foundation) Supabase Auth podpięte; logowanie i rejestracja działają end-to-end | — | FR-001, FR-002 | done |
 | F-01b | user-model-sync | (foundation) Model User w Prisma zsynchronizowany z Supabase Auth; rejestracja tworzy rekord User | F-01 | FR-001 | ready |
 | F-02 | domain-schema-and-seed | (foundation) Modele domenowe (ankieta, plan, etapy, wyceny) w Prisma + seed lokalnej bazy wiedzy o etapach budowy | F-01, F-01b | FR-003, FR-008 | proposed |
-| S-01 | questionnaire-flow | Użytkownik przechodzi ankietę krok po kroku, zatwierdza odpowiedzi | F-01, F-02 | US-01, FR-003, FR-004 | proposed |
-| S-02 | plan-generation | System generuje kosztorys etapów i timeline na podstawie odpowiedzi z ankiety (lokalna baza wiedzy) | S-01 | US-01, FR-006, FR-008 | proposed |
+| S-01 | questionnaire-flow | Użytkownik przechodzi ankietę krok po kroku, zatwierdza odpowiedzi | F-01, F-02 | US-01, FR-003, FR-004 | done |
+| S-01b | questionnaire-refinements | Ankieta uwzględnia realne mechanizmy wyceny: ocieplenie jako mnożnik %, stan docelowy + startowy, drzwi tarasowe × ilość, balkony | S-01 | FR-003, FR-004, FR-008 | done |
+| S-02 | plan-generation | System generuje kosztorys etapów i timeline na podstawie odpowiedzi z ankiety (lokalna baza wiedzy) | S-01, S-01b | US-01, FR-006, FR-008 | proposed |
 | S-03 | first-plan-e2e | Użytkownik wypełnia ankietę i widzi kosztorys + timeline (north star) | S-02 | US-01, FR-003, FR-006, FR-008 | proposed |
 | S-04 | internet-refinement | System doprecyzowuje wyceny danymi z internetu | S-03 | FR-009 | proposed |
 | S-05 | edit-and-recalculate | Użytkownik edytuje odpowiedzi ankiety i uruchamia ponowne przeliczenie | S-03 | US-01, FR-005 | proposed |
@@ -42,7 +43,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
 | A | Auth i dane | `F-01` → `F-01b` → `F-02` | Fundament: auth + model użytkownika + schemat domenowy — odblokują ankietę i generowanie. |
-| B | Rdzeń wartości | `S-01` → `S-02` → `S-03` → `S-05` | Główna ścieżka do gwiazdy przewodniej i edycji; `S-05` parallel with `S-04`. |
+| B | Rdzeń wartości | `S-01` → `S-01b` → `S-02` → `S-03` → `S-05` | Główna ścieżka do gwiazdy przewodniej i edycji; `S-05` parallel with `S-04`. |
 | C | Doprecyzowanie | `S-04` | Internet refinement — po north star; parallel with `S-05`. |
 | D | Limity i koszty | `S-06` | Blocked na decyzję o limicie przeliceń (Open Question #2). |
 
@@ -116,6 +117,24 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Risk:** Zbyt wiele pytań w MVP zwiększy drop-off; PRD mówi „keep required core inputs minimal".
 - **Status:** proposed
 
+### S-01b: Korekta pytań ankiety pod realne mechanizmy wyceny
+
+- **Outcome:** Ankieta uwzględnia realne mechanizmy kosztowe budowy domu: (1) ocieplenie działa jako mnożnik procentowy kosztów per m², nie jako grubość styropianu w cm; (2) stan inwestycji oznacza stan docelowy, z dodatkowym pytaniem o stan startowy — etapy już ukończone są pomijane w kosztach i timeline; (3) drzwi tarasowe mają ilość i cenę zależną od standardu (ekonomiczny = balkonowe, standard = przesuwne smart, premium = HS); (4) nowe pytanie o balkony wpływające na koszt.
+- **Change ID:** questionnaire-refinements
+- **PRD refs:** FR-003, FR-004, FR-008 (Business Logic: wycena musi być realistyczna)
+- **Unlocks:** S-02 — dokładność wyceny zależy od poprawnego modelu pytań i modyfikatorów kosztowych
+- **Prerequisites:** S-01
+- **Parallel with:** —
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Zmiana semantyki `investment_state` i `insulation_level` wymaga aktualizacji seed, Zod schema, formularza i modyfikatorów kosztowych. Istniejące plany (jeśli są w DB) mogą mieć stare wartości — migracja danych planów nie jest w scope (MVP, niska baza użytkowników).
+- **Status:** done
+- **Detail of changes:**
+  1. **Ocieplenie** — `insulation_level` options: usunąć etykiety z cm (np. „15–20 cm"), zmienić na opisy jakościowe. Modifier działa jako procentowy mnożnik kosztów per m² na etapie ocieplenia (i powiązanych etapach jak strop, dach), a nie jako stała kwota.
+  2. **Stan inwestycji** — zmiana semantyki `investment_state` na „stan docelowy" (do jakiego etapu inwestor chce dojść w ramach planu). Nowe pytanie `starting_state` (opcje takie same) — etapy z `completedByState ≤ starting_state` zostają pominięte w kosztorysie i timeline.
+  3. **Drzwi tarasowe** — zamiana `has_terrace_doors: BOOLEAN` na `terrace_door_count: NUMBER (0–5)`. Cena za sztukę × ilość, zależna od standardu (economy = drzwi balkonowe, standard = przesuwne smart, premium = HS).
+  4. **Balkony** — nowe pytanie `balcony_count: NUMBER (0–5)`. Nowe modyfikatory kosztowe na etap `structure` lub dedykowany etap opcjonalny.
+
 ### S-02: Generowanie planu (lokalna baza)
 
 - **Outcome:** System analizuje odpowiedzi z ankiety i generuje orientacyjny kosztorys etapów oraz timeline na podstawie lokalnej bazy wiedzy (seed z F-02).
@@ -187,8 +206,9 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 | F-01 | supabase-auth-wiring | Podpięcie Supabase Auth end-to-end | done | — |
 | F-01b | user-model-sync | Model User w Prisma + sync z Supabase Auth | yes | Run `/10x-plan user-model-sync` |
 | F-02 | domain-schema-and-seed | Schemat domenowy Prisma + seed bazy wiedzy etapów | no | Wymaga F-01, F-01b |
-| S-01 | questionnaire-flow | Przepływ ankiety krok po kroku | no | Wymaga F-01, F-02 |
-| S-02 | plan-generation | Generowanie kosztorysu i timeline z lokalnej bazy | no | Wymaga S-01 |
+| S-01 | questionnaire-flow | Przepływ ankiety krok po kroku | done | — |
+| S-01b | questionnaire-refinements | Korekta pytań ankiety pod realne mechanizmy wyceny | done | — |
+| S-02 | plan-generation | Generowanie kosztorysu i timeline z lokalnej bazy | no | Wymaga S-01, S-01b |
 | S-03 | first-plan-e2e | Kompletna ścieżka: ankieta → kosztorys + timeline | no | Wymaga S-02; north star |
 | S-04 | internet-refinement | Doprecyzowanie wycen danymi z internetu | no | Wymaga S-03 |
 | S-05 | edit-and-recalculate | Edycja odpowiedzi i ponowne przeliczenie | no | Wymaga S-03; parallel with S-04 |
@@ -210,3 +230,5 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 ## Done
 
 - **F-01** supabase-auth-wiring — Supabase Auth podpięte end-to-end (formularze, Server Actions, middleware, dashboard stub). Retro: brak modelu User wyodrębniony do F-01b.
+- **S-01** questionnaire-flow — Dynamiczna ankieta krok po kroku (3 kroki + podsumowanie), POST /api/plans z atomową transakcją Prisma, redirect do strony planu. Retro: auto-submit bug naprawiony (type="button" + programmatic handleSubmit); user.upsert dodany defensywnie w tx.
+- **S-01b** questionnaire-refinements — 13 pytań: stan docelowy vs startowy (osobne opcje), ocieplenie jako %, drzwi tarasowe × ilość, balkony; walidacja start < cel z czyszczeniem błędu po poprawce.

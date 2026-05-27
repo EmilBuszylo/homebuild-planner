@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import type { QuestionDefinition } from "@/lib/types/domain";
@@ -32,6 +32,7 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
   const form = useForm<QuestionnaireInputs>({
     resolver: createZodResolver(questionnaireInputsSchema),
     defaultValues: {
+      investment_state: "FOUNDATIONS",
       starting_state: "FROM_SCRATCH",
       has_attic: false,
       garage_spots: 0,
@@ -41,6 +42,25 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
   });
 
   const isSummary = currentStep === TOTAL_STEPS - 1;
+
+  const startingState = useWatch({
+    control: form.control,
+    name: "starting_state",
+  });
+  const investmentState = useWatch({
+    control: form.control,
+    name: "investment_state",
+  });
+
+  useEffect(() => {
+    if (
+      startingState &&
+      investmentState &&
+      isStartingStateBeforeTarget(startingState, investmentState)
+    ) {
+      form.clearErrors("starting_state");
+    }
+  }, [startingState, investmentState, form]);
 
   async function handleNext() {
     const fieldsToValidate = STEP_FIELDS[currentStep];

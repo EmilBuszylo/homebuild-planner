@@ -341,27 +341,27 @@ Update `TOTAL_STEPS` if step count changes (it stays at 4: 3 content + 1 summary
 
 #### Automated
 
-- [x] 1.1 `pnpm build` passes
-- [x] 1.2 `pnpm lint` passes
+- [x] 1.1 `pnpm build` passes — 49a9fc4
+- [x] 1.2 `pnpm lint` passes — 49a9fc4
 
 #### Manual
 
-- [x] 1.3 `pnpm db:seed` runs without errors
-- [x] 1.4 Prisma Studio shows 13 questions with correct labels and sortOrders
-- [x] 1.5 Insulation modifiers use `[PERCENT:N]` pattern on 4 stages
-- [x] 1.6 Terrace/balcony modifiers use `[PER_UNIT:slug]` pattern
+- [x] 1.3 `pnpm db:seed` runs without errors — 49a9fc4
+- [x] 1.4 Prisma Studio shows 13 questions with correct labels and sortOrders — 49a9fc4
+- [x] 1.5 Insulation modifiers use `[PERCENT:N]` pattern on 4 stages — 49a9fc4
+- [x] 1.6 Terrace/balcony modifiers use `[PER_UNIT:slug]` pattern — 49a9fc4
 
 ### Phase 2: Form UI Updates
 
 #### Automated
 
-- [ ] 2.1 `pnpm build` passes
-- [ ] 2.2 `pnpm lint` passes
+- [x] 2.1 `pnpm build` passes
+- [x] 2.2 `pnpm lint` passes
 
 #### Manual
 
-- [ ] 2.3 Step 1 shows 4 questions including starting_state with cross-validation
-- [ ] 2.4 Step 2 shows 5 questions including balcony_count
-- [ ] 2.5 Step 3 shows terrace_door_count replacing boolean
-- [ ] 2.6 Summary shows all 13 answers correctly
-- [ ] 2.7 Submit creates 13 QuestionnaireResponse rows in DB
+- [x] 2.3 Step 1 shows 4 questions including starting_state with cross-validation
+- [x] 2.4 Step 2 shows 5 questions including balcony_count
+- [x] 2.5 Step 3 shows terrace_door_count replacing boolean
+- [x] 2.6 Summary shows all 13 answers correctly
+- [x] 2.7 Submit creates 13 QuestionnaireResponse rows in DB

@@ -10,12 +10,20 @@ const prisma = new PrismaClient();
 // Question definitions
 // ---------------------------------------------------------------------------
 
-const investmentStateOptions = [
+/** Stan docelowy — plan do którego dąży inwestor (bez „od zera”). */
+const targetStateOptions = [
+  { value: "FOUNDATIONS", label: "Stan zero (fundamenty)" },
+  { value: "OPEN_SHELL", label: "Stan surowy otwarty" },
+  { value: "CLOSED_SHELL", label: "Stan surowy zamknięty" },
+  { value: "DEVELOPER", label: "Stan deweloperski" },
+] as const;
+
+/** Aktualny stan — skąd startujemy (bez stanu deweloperskiego). */
+const startingStateOptions = [
   { value: "FROM_SCRATCH", label: "Od zera (działka)" },
   { value: "FOUNDATIONS", label: "Fundamenty gotowe" },
   { value: "OPEN_SHELL", label: "Stan surowy otwarty" },
   { value: "CLOSED_SHELL", label: "Stan surowy zamknięty" },
-  { value: "DEVELOPER", label: "Stan deweloperski" },
 ] as const;
 
 const questions = [
@@ -25,7 +33,7 @@ const questions = [
     type: QuestionType.SINGLE_CHOICE,
     required: true,
     sortOrder: 1,
-    options: [...investmentStateOptions],
+    options: [...targetStateOptions],
     validation: null,
     unit: null,
   },
@@ -35,7 +43,7 @@ const questions = [
     type: QuestionType.SINGLE_CHOICE,
     required: true,
     sortOrder: 2,
-    options: [...investmentStateOptions],
+    options: [...startingStateOptions],
     validation: null,
     unit: null,
   },
