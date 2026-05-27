@@ -277,9 +277,9 @@ Forward-only. Existing `PlanStageResult` rows are not backfilled; only new versi
 
 #### Manual
 
-- [ ] 2.3 Multiplier ≠ 1.0 changes stage costs vs baseline
-- [ ] 2.4 Empty benchmark table → local-only fallback
-- [ ] 2.5 Recalculate applies refinement
+- [x] 2.3 Multiplier ≠ 1.0 changes stage costs vs baseline — 70a3e97
+- [x] 2.4 Empty benchmark table → local-only fallback — 70a3e97
+- [x] 2.5 Recalculate applies refinement — 70a3e97
 
 ### Phase 3: Results API, UI & E2E verification
 
@@ -290,6 +290,6 @@ Forward-only. Existing `PlanStageResult` rows are not backfilled; only new versi
 
 #### Manual
 
-- [ ] 3.3 Plan UI shows refinement disclaimer when applied
-- [ ] 3.4 GET results JSON includes refinement fields
-- [ ] 3.5 End-to-end create/recalc ≤100s with benchmarks
+- [x] 3.3 Plan UI shows refinement disclaimer when applied — 02a741a
+- [x] 3.4 GET results JSON includes refinement fields — 02a741a
+- [x] 3.5 End-to-end create/recalc ≤100s with benchmarks — 02a741a
