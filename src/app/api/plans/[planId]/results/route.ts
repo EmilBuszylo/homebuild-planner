@@ -77,6 +77,9 @@ export async function GET(_request: Request, context: RouteContext) {
     keyDate,
     totalCost,
     stages,
+    refinementApplied: version.refinementApplied,
+    benchmarkAsOf: version.benchmarkFetchedAt?.toISOString() ?? null,
+    benchmarkSource: version.benchmarkSourceName,
   };
 
   return NextResponse.json(payload);

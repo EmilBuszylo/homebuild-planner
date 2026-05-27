@@ -12,4 +12,7 @@ export type PlanResultsDto = {
   keyDate: string;
   totalCost: number;
   stages: PlanResultsStageDto[];
+  refinementApplied: boolean;
+  benchmarkAsOf: string | null;
+  benchmarkSource: string | null;
 };

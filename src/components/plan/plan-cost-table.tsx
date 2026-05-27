@@ -1,5 +1,6 @@
 import type { PlanResultsDto } from "@/lib/plan-results";
 import { formatPln } from "@/lib/format/currency";
+import { formatBenchmarkAsOf } from "@/lib/format/plan-date";
 import { formatPlanCategory } from "@/lib/format/plan-category";
 import {
   Card,
@@ -11,6 +12,9 @@ import {
 
 const DISCLAIMER =
   "Powyższe kwoty mają charakter orientacyjny i nie stanowią oferty handlowej ani wiążącej wyceny.";
+
+const REFINED_DISCLAIMER =
+  "Koszty mogą uwzględniać orientacyjne indeksy rynkowe (cache bazy) — nadal nie stanowią oferty handlowej.";
 
 type PlanCostTableProps = {
   results: PlanResultsDto;
@@ -24,6 +28,23 @@ export function PlanCostTable({ results }: PlanCostTableProps) {
         <CardDescription>Orientacyjne koszty poszczególnych etapów budowy</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {results.refinementApplied ? (
+          <div
+            className="rounded-md border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground leading-relaxed"
+            role="status"
+          >
+            <p>
+              Koszty doprecyzowano wg orientacyjnych indeksów rynkowych
+              {results.benchmarkAsOf ? (
+                <> (stan na {formatBenchmarkAsOf(results.benchmarkAsOf)})</>
+              ) : null}
+              {results.benchmarkSource ? (
+                <> — źródło: {results.benchmarkSource}</>
+              ) : null}
+              .
+            </p>
+          </div>
+        ) : null}
         <div className="overflow-x-auto rounded-md border">
           <table className="w-full text-sm">
             <thead>
@@ -60,6 +81,7 @@ export function PlanCostTable({ results }: PlanCostTableProps) {
         </div>
         <p className="text-muted-foreground text-xs leading-relaxed">
           {DISCLAIMER}
+          {results.refinementApplied ? ` ${REFINED_DISCLAIMER}` : null}
         </p>
       </CardContent>
     </Card>
