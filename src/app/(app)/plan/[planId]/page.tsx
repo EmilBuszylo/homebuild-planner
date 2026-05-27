@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { PlanCostTable } from "@/components/plan/plan-cost-table";
@@ -23,44 +22,44 @@ export default async function PlanPage({ params }: PlanPageProps) {
     redirect(routes.login);
   }
 
-  const results = await fetchPlanResults(planId);
+  const result = await fetchPlanResults(planId);
 
-  if (!results) {
+  if (result.status === "unauthorized") {
+    redirect(routes.login);
+  }
+
+  if (result.status === "not_found") {
     return (
-      <div className="mx-auto flex min-h-svh max-w-lg flex-col items-center justify-center gap-4 p-6 text-center">
+      <div className="mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-lg flex-col items-center justify-center gap-4 p-6 text-center">
+        <h1 className="text-2xl font-bold">Twój plan budowy</h1>
+        <p className="text-muted-foreground">Nie znaleziono planu.</p>
+      </div>
+    );
+  }
+
+  if (result.status === "error") {
+    return (
+      <div className="mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-lg flex-col items-center justify-center gap-4 p-6 text-center">
         <h1 className="text-2xl font-bold">Twój plan budowy</h1>
         <p className="text-muted-foreground">
-          Nie udało się wczytać wyników planu. Spróbuj ponownie później lub
-          wróć do panelu.
+          Nie udało się wczytać wyników planu. Spróbuj ponownie później.
         </p>
-        <Link
-          href={routes.dashboard}
-          className="text-primary underline-offset-4 hover:underline"
-        >
-          Wróć do panelu
-        </Link>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto flex min-h-svh max-w-4xl flex-col gap-8 p-6 py-10">
+    <div className="mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-4xl flex-col gap-8 p-6 py-10">
       <header className="space-y-2">
         <h1 className="text-2xl font-bold">Twój plan budowy</h1>
         <p className="text-muted-foreground">
           Orientacyjny kosztorys i harmonogram na podstawie Twoich odpowiedzi w
           ankiecie.
         </p>
-        <Link
-          href={routes.dashboard}
-          className="text-primary text-sm underline-offset-4 hover:underline"
-        >
-          Wróć do panelu
-        </Link>
       </header>
 
-      <PlanCostTable results={results} />
-      <PlanTimeline results={results} />
+      <PlanCostTable results={result.data} />
+      <PlanTimeline results={result.data} />
     </div>
   );
 }

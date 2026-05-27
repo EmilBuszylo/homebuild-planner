@@ -125,6 +125,11 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
 
       const data = await res.json();
 
+      if (res.status === 401) {
+        router.push(routes.login);
+        return;
+      }
+
       if (res.status === 201) {
         router.push(routes.plan(data.planId));
       } else if (res.status === 409) {

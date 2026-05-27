@@ -296,14 +296,14 @@ None. Users with plans created before S-02 without `PlanStageResult` will still 
 
 #### Automated
 
-- [x] 2.1 `pnpm lint` passes
-- [x] 2.2 `pnpm build` passes
+- [x] 2.1 `pnpm lint` passes — 9804f21
+- [x] 2.2 `pnpm build` passes — 9804f21
 
 #### Manual
 
-- [x] 2.3 New user: panel → anketa → submit → plan without manual URLs
-- [x] 2.4 User with plan: panel link opens correct results
-- [x] 2.5 `/ankieta` with existing plan redirects to plan
+- [x] 2.3 New user: panel → anketa → submit → plan without manual URLs — 9804f21
+- [x] 2.4 User with plan: panel link opens correct results — 9804f21
+- [x] 2.5 `/ankieta` with existing plan redirects to plan — 9804f21
 
 ### Phase 3: App shell, polish & north-star verification
 
@@ -314,7 +314,7 @@ None. Users with plans created before S-02 without `PlanStageResult` will still 
 
 #### Manual
 
-- [ ] 3.3 North-star manual script passes (desktop)
-- [ ] 3.4 Mobile spot-check on questionnaire and plan
-- [ ] 3.5 Header + sign-out on app routes; plan loading and 404 copy
-- [ ] 3.6 Roadmap lists `marketing-landing` follow-up slice
+- [x] 3.3 North-star manual script passes (desktop)
+- [x] 3.4 Mobile spot-check on questionnaire and plan
+- [x] 3.5 Header + sign-out on app routes; plan loading and 404 copy
+- [x] 3.6 Roadmap lists `marketing-landing` follow-up slice
