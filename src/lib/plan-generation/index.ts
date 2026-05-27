@@ -1,3 +1,8 @@
+export {
+  getFootprintArea,
+  getStageBillingArea,
+  getUsableArea,
+} from "./effective-area";
 export { generatePlanResults } from "./generate-plan-results";
 export { toQuestionnaireResponsesMap } from "./responses-map";
 export { filterStages } from "./stage-filter";

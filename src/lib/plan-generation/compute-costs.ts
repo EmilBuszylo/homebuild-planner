@@ -1,6 +1,7 @@
 import type { BuildStandard } from "@/lib/validations/questionnaire";
 import type { StageCostModifier } from "@/lib/types/domain";
 
+import { getStageBillingArea, getUsableArea } from "./effective-area";
 import { parseModifierDescription } from "./parse-modifier";
 import type { QuestionnaireResponsesMap, StageWithModifiers } from "./types";
 
@@ -53,20 +54,19 @@ export function computeStageCost(
   responses: QuestionnaireResponsesMap,
 ): number {
   const buildStandard = responses.build_standard as BuildStandard | undefined;
-  const area = Number(responses.area);
-
-  if (!buildStandard || !Number.isFinite(area) || area <= 0) {
+  if (!buildStandard || getUsableArea(responses) <= 0) {
     return 0;
   }
 
+  const billingArea = getStageBillingArea(stage.slug, responses);
   const basePerM2 = getCostPerM2ForStandard(stage, buildStandard);
-  let total = basePerM2 * area;
+  let total = basePerM2 * billingArea;
 
   for (const modifier of stage.costModifiers) {
     if (!modifierMatches(modifier, responses)) {
       continue;
     }
-    total += applyModifier(modifier, basePerM2, area, responses);
+    total += applyModifier(modifier, basePerM2, billingArea, responses);
   }
 
   return Math.round(total);
