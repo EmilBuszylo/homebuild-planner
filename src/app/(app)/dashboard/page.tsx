@@ -43,11 +43,16 @@ export default async function DashboardPage() {
             <p className="text-muted-foreground text-sm">
               Plan utworzony {formatPlanCreatedAt(plan.createdAt)}
             </p>
-            <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link href={routes.plan(plan.id)}>
-                Zobacz kosztorys i harmonogram
-              </Link>
-            </Button>
+            <div className="flex w-full flex-col gap-3 sm:w-auto">
+              <Button asChild size="lg" className="w-full">
+                <Link href={routes.plan(plan.id)}>
+                  Zobacz kosztorys i harmonogram
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="w-full">
+                <Link href={routes.questionnaire}>Edytuj odpowiedzi</Link>
+              </Button>
+            </div>
           </>
         ) : (
           <>
