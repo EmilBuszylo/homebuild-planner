@@ -271,26 +271,26 @@ Replace placeholder plan page with stacked cost table + calendar timeline fed by
 
 #### Automated
 
-- [x] 1.1 `pnpm lint` passes
-- [x] 1.2 `pnpm build` passes
+- [x] 1.1 `pnpm lint` passes — f964e1f
+- [x] 1.2 `pnpm build` passes — f964e1f
 
 #### Manual
 
-- [x] 1.3 Generator fixtures: FOUNDATIONS-only and DEVELOPER paths — stage sets and insulation % behave as specified
-- [x] 1.4 `garage_spots: 0` excludes `garage_gate`
+- [x] 1.3 Generator fixtures: FOUNDATIONS-only and DEVELOPER paths — stage sets and insulation % behave as specified — f964e1f
+- [x] 1.4 `garage_spots: 0` excludes `garage_gate` — f964e1f
 
 ### Phase 2: API & persistence
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint` passes
-- [ ] 2.2 `pnpm build` passes
+- [x] 2.1 `pnpm lint` passes
+- [x] 2.2 `pnpm build` passes
 
 #### Manual
 
-- [ ] 2.3 POST questionnaire creates `PlanStageResult` rows in same transaction
-- [ ] 2.4 GET `/api/plans/[planId]/results` returns correct payload; forbidden for other users
-- [ ] 2.5 Generation failure rolls back plan creation
+- [x] 2.3 POST questionnaire creates `PlanStageResult` rows in same transaction
+- [x] 2.4 GET `/api/plans/[planId]/results` returns correct payload; forbidden for other users
+- [x] 2.5 Generation failure rolls back plan creation
 
 ### Phase 3: Results UI
 

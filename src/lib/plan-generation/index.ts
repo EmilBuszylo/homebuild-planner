@@ -1,4 +1,5 @@
 export { generatePlanResults } from "./generate-plan-results";
+export { toQuestionnaireResponsesMap } from "./responses-map";
 export { filterStages } from "./stage-filter";
 export { computeStageCost } from "./compute-costs";
 export { scheduleTimeline } from "./schedule-timeline";

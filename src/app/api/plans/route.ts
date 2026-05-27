@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 
+import {
+  generatePlanResults,
+  toQuestionnaireResponsesMap,
+} from "@/lib/plan-generation";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { questionnaireInputsSchema } from "@/lib/validations/questionnaire";
@@ -60,6 +64,25 @@ export async function POST(request: Request) {
       }));
 
       await tx.questionnaireResponse.createMany({ data: responses });
+
+      const stages = await tx.constructionStage.findMany({
+        include: { costModifiers: true },
+        orderBy: { sortOrder: "asc" },
+      });
+
+      const responsesMap = toQuestionnaireResponsesMap(parsed.data);
+      const stageResults = generatePlanResults(stages, responsesMap);
+
+      await tx.planStageResult.createMany({
+        data: stageResults.map((result) => ({
+          planVersionId: planVersion.id,
+          stageSlug: result.stageSlug,
+          estimatedCost: result.estimatedCost,
+          startDay: result.startDay,
+          durationDays: result.durationDays,
+          sortOrder: result.sortOrder,
+        })),
+      });
 
       return { plan: newPlan, created: true } as const;
     });
