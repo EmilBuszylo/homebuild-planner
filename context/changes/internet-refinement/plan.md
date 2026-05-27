@@ -259,14 +259,14 @@ Forward-only. Existing `PlanStageResult` rows are not backfilled; only new versi
 
 #### Automated
 
-- [x] 1.1 `pnpm lint` passes
-- [x] 1.2 `pnpm build` passes
+- [x] 1.1 `pnpm lint` passes — f6229d5
+- [x] 1.2 `pnpm build` passes — f6229d5
 
 #### Manual
 
-- [x] 1.3 Owner applied `pnpm db:migrate`
-- [x] 1.4 `MarketBenchmark` rows present after seed/import
-- [x] 1.5 `pnpm benchmarks:import` upserts from JSON
+- [x] 1.3 Owner applied `pnpm db:migrate` — f6229d5
+- [x] 1.4 `MarketBenchmark` rows present after seed/import — f6229d5
+- [x] 1.5 `pnpm benchmarks:import` upserts from JSON — f6229d5
 
 ### Phase 2: Refinement engine & persistence hook
 
