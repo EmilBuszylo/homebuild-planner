@@ -4,6 +4,7 @@ import {
   generatePlanResults,
   toQuestionnaireResponsesMap,
 } from "@/lib/plan-generation";
+import { applyMarketBenchmarks } from "@/lib/plan-refinement/apply-market-benchmarks";
 import type { QuestionnaireInputs } from "@/lib/validations/questionnaire";
 
 export async function persistPlanVersionWithResults(
@@ -35,10 +36,24 @@ export async function persistPlanVersionWithResults(
   });
 
   const responsesMap = toQuestionnaireResponsesMap(params.inputs);
-  const stageResults = generatePlanResults(stages, responsesMap);
+  const localResults = generatePlanResults(stages, responsesMap);
+
+  const benchmarks = await tx.marketBenchmark.findMany();
+  const refinement = applyMarketBenchmarks(localResults, stages, benchmarks);
+
+  if (refinement.refinementApplied) {
+    await tx.planVersion.update({
+      where: { id: planVersion.id },
+      data: {
+        refinementApplied: true,
+        benchmarkFetchedAt: refinement.benchmarkFetchedAt,
+        benchmarkSourceName: refinement.benchmarkSourceName,
+      },
+    });
+  }
 
   await tx.planStageResult.createMany({
-    data: stageResults.map((result) => ({
+    data: refinement.results.map((result) => ({
       planVersionId: planVersion.id,
       stageSlug: result.stageSlug,
       estimatedCost: result.estimatedCost,

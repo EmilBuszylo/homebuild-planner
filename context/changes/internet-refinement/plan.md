@@ -272,8 +272,8 @@ Forward-only. Existing `PlanStageResult` rows are not backfilled; only new versi
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint` passes
-- [ ] 2.2 `pnpm build` passes
+- [x] 2.1 `pnpm lint` passes
+- [x] 2.2 `pnpm build` passes
 
 #### Manual
 
