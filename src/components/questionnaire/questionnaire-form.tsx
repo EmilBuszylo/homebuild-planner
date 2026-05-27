@@ -25,28 +25,43 @@ import { QuestionnaireSummary } from "./questionnaire-summary";
 
 const TOTAL_STEPS = 4;
 
+const EMPTY_DEFAULTS: Partial<QuestionnaireInputs> = {
+  investment_state: "FOUNDATIONS",
+  starting_state: "FROM_SCRATCH",
+  has_attic: false,
+  garage_spots: 0,
+  balcony_count: 0,
+  terrace_door_count: 0,
+};
+
 interface QuestionnaireFormProps {
   questions: QuestionDefinition[];
+  planId?: string;
+  initialValues?: QuestionnaireInputs;
 }
 
-export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
+export function QuestionnaireForm({
+  questions,
+  planId,
+  initialValues,
+}: QuestionnaireFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
+  const isEditMode = Boolean(planId);
 
   const form = useForm<QuestionnaireInputs>({
     resolver: createZodResolver(questionnaireFormSchema),
-    defaultValues: {
-      investment_state: "FOUNDATIONS",
-      starting_state: "FROM_SCRATCH",
-      has_attic: false,
-      garage_spots: 0,
-      balcony_count: 0,
-      terrace_door_count: 0,
-    },
+    defaultValues: { ...EMPTY_DEFAULTS, ...initialValues },
   });
 
-  const { clearErrors, setValue, getValues } = form;
+  const { clearErrors, setValue, getValues, reset } = form;
+
+  useEffect(() => {
+    if (initialValues) {
+      reset(initialValues);
+    }
+  }, [initialValues, reset]);
 
   const isSummary = currentStep === TOTAL_STEPS - 1;
 
@@ -59,7 +74,6 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
     name: "investment_state",
   });
 
-  /** Utrzymuj parę start/cel w dozwolonym zbiorze (np. bez FOUNDATIONS→FOUNDATIONS). */
   useEffect(() => {
     if (!startingState || !investmentState) {
       return;
@@ -116,8 +130,13 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
       return;
     }
 
+    const targetPlanId = planId;
+    const url = targetPlanId
+      ? `/api/plans/${targetPlanId}/recalculate`
+      : "/api/plans";
+
     try {
-      const res = await fetch("/api/plans", {
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),
@@ -130,16 +149,22 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
         return;
       }
 
-      if (res.status === 201) {
+      if (res.status === 201 || res.status === 200) {
         router.push(routes.plan(data.planId));
-      } else if (res.status === 409) {
-        router.push(routes.plan(data.planId));
-      } else {
-        setServerError(data.error ?? "Wystąpił błąd. Spróbuj ponownie.");
+        return;
       }
+
+      if (res.status === 409 && data.planId) {
+        router.push(routes.plan(data.planId));
+        return;
+      }
+
+      setServerError(data.error ?? "Wystąpił błąd. Spróbuj ponownie.");
     } catch {
       setServerError(
-        "Nie udało się wysłać ankiety. Sprawdź połączenie z internetem.",
+        isEditMode
+          ? "Nie udało się przeliczyć planu. Sprawdź połączenie z internetem."
+          : "Nie udało się wysłać ankiety. Sprawdź połączenie z internetem.",
       );
     }
   }
@@ -179,6 +204,8 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
           onNext={handleNext}
           onSubmit={() => form.handleSubmit(onSubmit)()}
           isSubmitting={form.formState.isSubmitting}
+          submitLabel={isEditMode ? "Przelicz ponownie" : "Zatwierdź"}
+          submittingLabel={isEditMode ? "Przeliczanie..." : "Wysyłanie..."}
         />
       </form>
     </div>
