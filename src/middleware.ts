@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { routes } from "@/lib/routes";
 import { updateSession } from "@/lib/supabase/middleware";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/panel", "/questionnaire", "/ankieta", "/plan", "/moj-plan"];
@@ -21,7 +22,7 @@ export async function middleware(request: NextRequest) {
 
   const isAuthPage = AUTH_PATHS.some((p) => pathname.startsWith(p));
   if (isAuthPage && session) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL(routes.dashboard, request.url));
   }
 
   return response;

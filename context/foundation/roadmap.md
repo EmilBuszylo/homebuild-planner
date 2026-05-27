@@ -33,7 +33,8 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 | S-01 | questionnaire-flow | Użytkownik przechodzi ankietę krok po kroku, zatwierdza odpowiedzi | F-01, F-02 | US-01, FR-003, FR-004 | done |
 | S-01b | questionnaire-refinements | Ankieta uwzględnia realne mechanizmy wyceny: ocieplenie jako mnożnik %, stan docelowy + startowy, drzwi tarasowe × ilość, balkony | S-01 | FR-003, FR-004, FR-008 | done |
 | S-02 | plan-generation | System generuje kosztorys etapów i timeline na podstawie odpowiedzi z ankiety (lokalna baza wiedzy) | S-01, S-01b | US-01, FR-006, FR-008 | done |
-| S-03 | first-plan-e2e | Użytkownik wypełnia ankietę i widzi kosztorys + timeline (north star) | S-02 | US-01, FR-003, FR-006, FR-008 | proposed |
+| S-03 | first-plan-e2e | Użytkownik wypełnia ankietę i widzi kosztorys + timeline (north star) | S-02 | US-01, FR-003, FR-006, FR-008 | done |
+| S-03b | marketing-landing | Użytkownik widzi pełny landing marketingowy (hero, korzyści, CTA) zamiast minimalnej strony startowej | S-03 | — | done |
 | S-04 | internet-refinement | System doprecyzowuje wyceny danymi z internetu | S-03 | FR-009 | proposed |
 | S-05 | edit-and-recalculate | Użytkownik edytuje odpowiedzi ankiety i uruchamia ponowne przeliczenie | S-03 | US-01, FR-005 | proposed |
 | S-06 | rate-limit-enforcement | System ogranicza liczbę przeliceń na użytkownika zgodnie z ustalonym limitem | S-05 | FR-005, NFR (limit przeliceń) | blocked |
@@ -158,7 +159,19 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** To jest integracja S-01 + S-02 w spójny UX. Jeśli S-01 i S-02 powstaną w izolacji, integracja może ujawnić niespójności w modelu danych.
-- **Status:** proposed
+- **Status:** done
+
+### S-03b: Landing marketingowy
+
+- **Outcome:** Pełna strona główna produktowa (hero, korzyści, social proof / zaufanie, CTA do rejestracji) zastępuje minimalną stronę startową z S-03.
+- **Change ID:** marketing-landing
+- **PRD refs:** —
+- **Prerequisites:** S-03
+- **Parallel with:** S-04 (opcjonalnie)
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Niski — warstwa prezentacji; S-03 dostarcza minimalny `/` jako placeholder.
+- **Status:** done
 
 ### S-04: Doprecyzowanie danymi z internetu
 
@@ -209,7 +222,8 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 | S-01 | questionnaire-flow | Przepływ ankiety krok po kroku | done | — |
 | S-01b | questionnaire-refinements | Korekta pytań ankiety pod realne mechanizmy wyceny | done | — |
 | S-02 | plan-generation | Generowanie kosztorysu i timeline z lokalnej bazy | done | — |
-| S-03 | first-plan-e2e | Kompletna ścieżka: ankieta → kosztorys + timeline | no | Wymaga S-02; north star |
+| S-03 | first-plan-e2e | Kompletna ścieżka: ankieta → kosztorys + timeline | done | — |
+| S-03b | marketing-landing | Pełny landing marketingowy | done | — |
 | S-04 | internet-refinement | Doprecyzowanie wycen danymi z internetu | no | Wymaga S-03 |
 | S-05 | edit-and-recalculate | Edycja odpowiedzi i ponowne przeliczenie | no | Wymaga S-03; parallel with S-04 |
 | S-06 | rate-limit-enforcement | Limit przeliceń na użytkownika | no | Blocked: brak ustalonego limitu (OQ #2) |
@@ -232,3 +246,4 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **F-01** supabase-auth-wiring — Supabase Auth podpięte end-to-end (formularze, Server Actions, middleware, dashboard stub). Retro: brak modelu User wyodrębniony do F-01b.
 - **S-01** questionnaire-flow — Dynamiczna ankieta krok po kroku (3 kroki + podsumowanie), POST /api/plans z atomową transakcją Prisma, redirect do strony planu. Retro: auto-submit bug naprawiony (type="button" + programmatic handleSubmit); user.upsert dodany defensywnie w tx.
 - **S-01b** questionnaire-refinements — 13 pytań: stan docelowy vs startowy (osobne opcje), ocieplenie jako %, drzwi tarasowe × ilość, balkony; walidacja start < cel z czyszczeniem błędu po poprawce.
+- **S-03b** marketing-landing — Pełny landing na `/` (hero, korzyści, zaufanie, sticky header, CTA rejestracji).

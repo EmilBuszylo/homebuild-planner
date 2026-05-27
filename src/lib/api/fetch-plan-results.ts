@@ -13,9 +13,15 @@ function getSiteOrigin(): string {
   return "http://localhost:3000";
 }
 
+export type FetchPlanResultsResult =
+  | { status: "ok"; data: PlanResultsDto }
+  | { status: "not_found" }
+  | { status: "unauthorized" }
+  | { status: "error" };
+
 export async function fetchPlanResults(
   planId: string,
-): Promise<PlanResultsDto | null> {
+): Promise<FetchPlanResultsResult> {
   const headerList = await headers();
   const cookie = headerList.get("cookie");
 
@@ -27,9 +33,18 @@ export async function fetchPlanResults(
     },
   );
 
-  if (!response.ok) {
-    return null;
+  if (response.status === 401) {
+    return { status: "unauthorized" };
   }
 
-  return response.json() as Promise<PlanResultsDto>;
+  if (response.status === 404) {
+    return { status: "not_found" };
+  }
+
+  if (!response.ok) {
+    return { status: "error" };
+  }
+
+  const data = (await response.json()) as PlanResultsDto;
+  return { status: "ok", data };
 }

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 
 import { prisma } from "@/lib/prisma";
+import { routes } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/server";
 import { loginSchema, registerServerSchema } from "@/lib/validations/auth";
 
@@ -46,7 +47,7 @@ export async function login(values: {
     return { error: translateAuthError(error.message) };
   }
 
-  redirect("/dashboard");
+  redirect(routes.dashboard);
 }
 
 export async function register(values: {
@@ -105,7 +106,7 @@ export async function register(values: {
     };
   }
 
-  redirect("/dashboard");
+  redirect(routes.dashboard);
 }
 
 export async function signOut(): Promise<void> {
