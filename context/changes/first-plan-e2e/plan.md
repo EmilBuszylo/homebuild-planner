@@ -309,12 +309,12 @@ None. Users with plans created before S-02 without `PlanStageResult` will still 
 
 #### Automated
 
-- [x] 3.1 `pnpm lint` passes
-- [x] 3.2 `pnpm build` passes
+- [x] 3.1 `pnpm lint` passes — cc56cbd
+- [x] 3.2 `pnpm build` passes — cc56cbd
 
 #### Manual
 
-- [x] 3.3 North-star manual script passes (desktop)
-- [x] 3.4 Mobile spot-check on questionnaire and plan
-- [x] 3.5 Header + sign-out on app routes; plan loading and 404 copy
-- [x] 3.6 Roadmap lists `marketing-landing` follow-up slice
+- [x] 3.3 North-star manual script passes (desktop) — cc56cbd
+- [x] 3.4 Mobile spot-check on questionnaire and plan — cc56cbd
+- [x] 3.5 Header + sign-out on app routes; plan loading and 404 copy — cc56cbd
+- [x] 3.6 Roadmap lists `marketing-landing` follow-up slice — cc56cbd
