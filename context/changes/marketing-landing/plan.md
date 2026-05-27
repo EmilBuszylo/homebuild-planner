@@ -261,9 +261,9 @@ Final copy pass, optional metadata alignment, and manual regression on auth entr
 
 #### Automated
 
-- [x] 3.1 `pnpm lint` passes
-- [x] 3.2 `pnpm build` passes
+- [x] 3.1 `pnpm lint` passes — 20d2305
+- [x] 3.2 `pnpm build` passes — 20d2305
 
 #### Manual
 
-- [x] 3.3 Manual regression checklist (auth entry, dark mode, no redirect for authed `/`)
+- [x] 3.3 Manual regression checklist (auth entry, dark mode, no redirect for authed `/`) — 20d2305
