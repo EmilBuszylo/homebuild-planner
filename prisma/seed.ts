@@ -1,3 +1,7 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import {
   PrismaClient,
   QuestionType,
@@ -5,6 +9,7 @@ import {
 } from "@prisma/client";
 
 const prisma = new PrismaClient();
+const seedDir = path.dirname(fileURLToPath(import.meta.url));
 
 // ---------------------------------------------------------------------------
 // Question definitions
@@ -840,6 +845,46 @@ async function seedModifiers() {
 }
 
 // ---------------------------------------------------------------------------
+// Market benchmarks (S-04)
+// ---------------------------------------------------------------------------
+
+type MarketBenchmarkSeedRow = {
+  stageCategory: string;
+  multiplier: number;
+  sourceName: string;
+  sourceUrl?: string | null;
+};
+
+async function seedMarketBenchmarks() {
+  console.log("Seeding market benchmarks...");
+  const filePath = path.join(seedDir, "data/market-benchmarks.json");
+  const raw = await readFile(filePath, "utf-8");
+  const rows = JSON.parse(raw) as MarketBenchmarkSeedRow[];
+  const fetchedAt = new Date();
+
+  for (const row of rows) {
+    await prisma.marketBenchmark.upsert({
+      where: { stageCategory: row.stageCategory },
+      create: {
+        stageCategory: row.stageCategory,
+        multiplier: row.multiplier,
+        sourceName: row.sourceName,
+        sourceUrl: row.sourceUrl ?? null,
+        fetchedAt,
+      },
+      update: {
+        multiplier: row.multiplier,
+        sourceName: row.sourceName,
+        sourceUrl: row.sourceUrl ?? null,
+        fetchedAt,
+      },
+    });
+  }
+
+  console.log(`  ✓ ${rows.length} market benchmarks upserted`);
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -849,6 +894,7 @@ async function main() {
   await seedQuestions();
   await seedStages();
   await seedModifiers();
+  await seedMarketBenchmarks();
   console.log("\n✅ Seed complete!");
 }
 

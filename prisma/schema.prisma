@@ -81,6 +81,16 @@ model ConstructionStage {
   costModifiers StageCostModifier[]
 }
 
+/// Cached market multipliers per stage category (FR-009); refreshed via `pnpm benchmarks:import`.
+model MarketBenchmark {
+  id            String   @id @default(cuid())
+  stageCategory String   @unique
+  multiplier    Float
+  sourceName    String
+  sourceUrl     String?
+  fetchedAt     DateTime
+}
+
 model StageCostModifier {
   id                   String @id @default(cuid())
   triggerQuestionSlug  String
@@ -123,9 +133,12 @@ model Plan {
 }
 
 model PlanVersion {
-  id            String   @id @default(cuid())
-  versionNumber Int
-  createdAt     DateTime @default(now())
+  id                 String    @id @default(cuid())
+  versionNumber      Int
+  createdAt          DateTime  @default(now())
+  refinementApplied  Boolean   @default(false)
+  benchmarkFetchedAt DateTime?
+  benchmarkSourceName String?
 
   plan         Plan                    @relation(fields: [planId], references: [id], onDelete: Cascade)
   planId       String

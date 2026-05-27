@@ -1,0 +1,32 @@
+[
+  {
+    "stageCategory": "STRUCTURE",
+    "multiplier": 1.0,
+    "sourceName": "Orientacyjny indeks rynkowy PL (MVP)",
+    "sourceUrl": null
+  },
+  {
+    "stageCategory": "INSTALLATIONS",
+    "multiplier": 1.0,
+    "sourceName": "Orientacyjny indeks rynkowy PL (MVP)",
+    "sourceUrl": null
+  },
+  {
+    "stageCategory": "ENVELOPE",
+    "multiplier": 1.05,
+    "sourceName": "Orientacyjny indeks rynkowy PL (MVP)",
+    "sourceUrl": null
+  },
+  {
+    "stageCategory": "FINISHING",
+    "multiplier": 0.98,
+    "sourceName": "Orientacyjny indeks rynkowy PL (MVP)",
+    "sourceUrl": null
+  },
+  {
+    "stageCategory": "OPTIONAL",
+    "multiplier": 1.0,
+    "sourceName": "Orientacyjny indeks rynkowy PL (MVP)",
+    "sourceUrl": null
+  }
+]
