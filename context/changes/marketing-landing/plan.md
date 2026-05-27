@@ -250,12 +250,12 @@ Final copy pass, optional metadata alignment, and manual regression on auth entr
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint` passes
-- [ ] 2.2 `pnpm build` passes
+- [x] 2.1 `pnpm lint` passes
+- [x] 2.2 `pnpm build` passes
 
 #### Manual
 
-- [ ] 2.3 Guest and authed landing layouts verified (mobile + desktop, Polish URLs)
+- [x] 2.3 Guest and authed landing layouts verified (mobile + desktop, Polish URLs)
 
 ### Phase 3: Polish, metadata touch-up, north-star spot-check
 
