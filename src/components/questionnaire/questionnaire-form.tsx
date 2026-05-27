@@ -4,9 +4,14 @@ import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
-import type { QuestionDefinition } from "@/lib/types/domain";
 import {
   isStartingStateBeforeTarget,
+  pickDefaultTargetForStarting,
+  STATE_ORDER_ERROR_MESSAGE,
+} from "@/lib/investment-state";
+import type { QuestionDefinition } from "@/lib/types/domain";
+import {
+  questionnaireFormSchema,
   questionnaireInputsSchema,
   type QuestionnaireInputs,
 } from "@/lib/validations/questionnaire";
@@ -30,7 +35,7 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
   const router = useRouter();
 
   const form = useForm<QuestionnaireInputs>({
-    resolver: createZodResolver(questionnaireInputsSchema),
+    resolver: createZodResolver(questionnaireFormSchema),
     defaultValues: {
       investment_state: "FOUNDATIONS",
       starting_state: "FROM_SCRATCH",
@@ -40,6 +45,8 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
       terrace_door_count: 0,
     },
   });
+
+  const { clearErrors, setValue, getValues } = form;
 
   const isSummary = currentStep === TOTAL_STEPS - 1;
 
@@ -52,15 +59,28 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
     name: "investment_state",
   });
 
+  /** Utrzymuj parę start/cel w dozwolonym zbiorze (np. bez FOUNDATIONS→FOUNDATIONS). */
   useEffect(() => {
-    if (
-      startingState &&
-      investmentState &&
-      isStartingStateBeforeTarget(startingState, investmentState)
-    ) {
-      form.clearErrors("starting_state");
+    if (!startingState || !investmentState) {
+      return;
     }
-  }, [startingState, investmentState, form]);
+
+    if (isStartingStateBeforeTarget(startingState, investmentState)) {
+      clearErrors("starting_state");
+      return;
+    }
+
+    const { starting_state, investment_state } = getValues();
+    if (
+      starting_state === startingState &&
+      investment_state === investmentState
+    ) {
+      setValue("investment_state", pickDefaultTargetForStarting(startingState), {
+        shouldValidate: true,
+      });
+      clearErrors("starting_state");
+    }
+  }, [startingState, investmentState, clearErrors, setValue, getValues]);
 
   async function handleNext() {
     const fieldsToValidate = STEP_FIELDS[currentStep];
@@ -68,18 +88,6 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
 
     const isValid = await form.trigger(fieldsToValidate);
     if (!isValid) return;
-
-    if (currentStep === 0) {
-      const { starting_state, investment_state } = form.getValues();
-      if (!isStartingStateBeforeTarget(starting_state, investment_state)) {
-        form.setError("starting_state", {
-          type: "manual",
-          message: "Stan startowy musi być wcześniejszy niż stan docelowy",
-        });
-        return;
-      }
-      form.clearErrors("starting_state");
-    }
 
     setCurrentStep((prev) => prev + 1);
   }
@@ -90,11 +98,29 @@ export function QuestionnaireForm({ questions }: QuestionnaireFormProps) {
 
   async function onSubmit(values: QuestionnaireInputs) {
     setServerError(null);
+
+    const parsed = questionnaireInputsSchema.safeParse(values);
+    if (!parsed.success) {
+      const stateError = parsed.error.issues.find(
+        (issue) => issue.path[0] === "starting_state",
+      );
+      if (stateError) {
+        form.setError("starting_state", {
+          type: "manual",
+          message: STATE_ORDER_ERROR_MESSAGE,
+        });
+        setCurrentStep(0);
+        return;
+      }
+      setServerError("Nieprawidłowe dane ankiety. Sprawdź wszystkie kroki.");
+      return;
+    }
+
     try {
       const res = await fetch("/api/plans", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(parsed.data),
       });
 
       const data = await res.json();

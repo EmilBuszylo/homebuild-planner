@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-import { investmentStateOrder } from "@/lib/investment-state";
+import {
+  isStartingStateBeforeTarget,
+  STATE_ORDER_ERROR_MESSAGE,
+} from "@/lib/investment-state";
 
 /** Wszystkie wartości enum w DB (kolejność etapów budowy). */
 export const investmentStateSchema = z.enum([
@@ -33,6 +36,8 @@ export const startingStateSchema = z.enum([
 
 export type StartingState = z.infer<typeof startingStateSchema>;
 
+export { isStartingStateBeforeTarget, STATE_ORDER_ERROR_MESSAGE };
+
 export const buildStandardSchema = z.enum([
   "ECONOMY",
   "STANDARD",
@@ -45,19 +50,16 @@ export const insulationLevelSchema = z.enum([
   "PASSIVE",
 ]);
 
-export function isStartingStateBeforeTarget(
-  starting: StartingState,
-  target: TargetState,
-): boolean {
-  return investmentStateOrder[starting] < investmentStateOrder[target];
-}
-
 export const questionnaireResponseSchema = z.object({
   questionSlug: z.string().min(1, "Identyfikator pytania jest wymagany"),
   value: z.string().min(1, "Odpowiedź jest wymagana"),
 });
 
-const questionnaireInputsBaseSchema = z.object({
+/**
+ * Pola ankiety bez `.refine()` — **jedyny** schemat pod `createZodResolver` / RHF.
+ * Walidacja krzyżowa start/cel: UI (filtrowane opcje) + `questionnaireInputsSchema` na API.
+ */
+export const questionnaireFormSchema = z.object({
   investment_state: targetStateSchema,
   starting_state: startingStateSchema,
   build_standard: buildStandardSchema,
@@ -106,11 +108,12 @@ const questionnaireInputsBaseSchema = z.object({
     .default(0),
 });
 
-export const questionnaireInputsSchema = questionnaireInputsBaseSchema.refine(
+/** Pełna walidacja z regułą start < cel — tylko API / jawny parse przed wysyłką. */
+export const questionnaireInputsSchema = questionnaireFormSchema.refine(
   (data) =>
     isStartingStateBeforeTarget(data.starting_state, data.investment_state),
   {
-    message: "Stan startowy musi być wcześniejszy niż stan docelowy",
+    message: STATE_ORDER_ERROR_MESSAGE,
     path: ["starting_state"],
   },
 );
@@ -120,4 +123,4 @@ export type InsulationLevel = z.infer<typeof insulationLevelSchema>;
 export type QuestionnaireResponseInput = z.infer<
   typeof questionnaireResponseSchema
 >;
-export type QuestionnaireInputs = z.infer<typeof questionnaireInputsBaseSchema>;
+export type QuestionnaireInputs = z.infer<typeof questionnaireFormSchema>;
