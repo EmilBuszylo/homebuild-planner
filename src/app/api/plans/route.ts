@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 
-import {
-  generatePlanResults,
-  toQuestionnaireResponsesMap,
-} from "@/lib/plan-generation";
+import { persistPlanVersionWithResults } from "@/lib/plan/persist-plan-version";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { questionnaireInputsSchema } from "@/lib/validations/questionnaire";
@@ -50,38 +47,10 @@ export async function POST(request: Request) {
         data: { userId: user.id },
       });
 
-      const planVersion = await tx.planVersion.create({
-        data: {
-          planId: newPlan.id,
-          versionNumber: 1,
-        },
-      });
-
-      const responses = Object.entries(parsed.data).map(([slug, value]) => ({
-        planVersionId: planVersion.id,
-        questionSlug: slug,
-        value: String(value),
-      }));
-
-      await tx.questionnaireResponse.createMany({ data: responses });
-
-      const stages = await tx.constructionStage.findMany({
-        include: { costModifiers: true },
-        orderBy: { sortOrder: "asc" },
-      });
-
-      const responsesMap = toQuestionnaireResponsesMap(parsed.data);
-      const stageResults = generatePlanResults(stages, responsesMap);
-
-      await tx.planStageResult.createMany({
-        data: stageResults.map((result) => ({
-          planVersionId: planVersion.id,
-          stageSlug: result.stageSlug,
-          estimatedCost: result.estimatedCost,
-          startDay: result.startDay,
-          durationDays: result.durationDays,
-          sortOrder: result.sortOrder,
-        })),
+      await persistPlanVersionWithResults(tx, {
+        planId: newPlan.id,
+        versionNumber: 1,
+        inputs: parsed.data,
       });
 
       return { plan: newPlan, created: true } as const;

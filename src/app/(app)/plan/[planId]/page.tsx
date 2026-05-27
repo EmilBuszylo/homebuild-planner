@@ -1,4 +1,7 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
 
 import { PlanCostTable } from "@/components/plan/plan-cost-table";
 import { PlanTimeline } from "@/components/plan/plan-timeline";
@@ -50,12 +53,17 @@ export default async function PlanPage({ params }: PlanPageProps) {
 
   return (
     <div className="mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-4xl flex-col gap-8 p-6 py-10">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-bold">Twój plan budowy</h1>
-        <p className="text-muted-foreground">
-          Orientacyjny kosztorys i harmonogram na podstawie Twoich odpowiedzi w
-          ankiecie.
-        </p>
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold">Twój plan budowy</h1>
+          <p className="text-muted-foreground">
+            Orientacyjny kosztorys i harmonogram na podstawie Twoich odpowiedzi
+            w ankiecie.
+          </p>
+        </div>
+        <Button asChild variant="outline" className="shrink-0">
+          <Link href={routes.questionnaire}>Edytuj odpowiedzi</Link>
+        </Button>
       </header>
 
       <PlanCostTable results={result.data} />

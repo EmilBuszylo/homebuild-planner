@@ -9,6 +9,8 @@ interface StepNavigationProps {
   onNext: () => void;
   onSubmit: () => void;
   isSubmitting: boolean;
+  submitLabel?: string;
+  submittingLabel?: string;
 }
 
 export function StepNavigation({
@@ -18,6 +20,8 @@ export function StepNavigation({
   onNext,
   onSubmit,
   isSubmitting,
+  submitLabel = "Zatwierdź",
+  submittingLabel = "Wysyłanie...",
 }: StepNavigationProps) {
   const isSummary = currentStep === totalSteps - 1;
 
@@ -33,7 +37,7 @@ export function StepNavigation({
 
       {isSummary ? (
         <Button type="button" onClick={onSubmit} disabled={isSubmitting}>
-          {isSubmitting ? "Wysyłanie..." : "Zatwierdź"}
+          {isSubmitting ? submittingLabel : submitLabel}
         </Button>
       ) : (
         <Button type="button" onClick={onNext}>
