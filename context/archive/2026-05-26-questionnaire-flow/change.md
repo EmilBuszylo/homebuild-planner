@@ -1,10 +1,10 @@
 ---
 change_id: questionnaire-flow
 title: Przepływ ankiety krok po kroku z dynamicznymi pytaniami
-status: impl_reviewed
+status: archived
 created: 2026-05-26
-updated: 2026-05-26
-archived_at: null
+updated: 2026-05-28
+archived_at: 2026-05-28T10:48:19Z
 ---
 
 ## Notes
