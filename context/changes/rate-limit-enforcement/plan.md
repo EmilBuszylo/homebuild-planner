@@ -168,7 +168,7 @@ Utrwalenie decyzji i wartości limitu w artefaktach.
 
 #### Manual
 
-- [x] 1.3 `POST /api/plans/[planId]/recalculate` returns `429` after exceeding limit
+- [x] 1.3 `POST /api/plans/[planId]/recalculate` returns `429` after exceeding limit — 7df8261
 
 ### Phase 2: UX & copy
 
@@ -179,12 +179,12 @@ Utrwalenie decyzji i wartości limitu w artefaktach.
 
 #### Manual
 
-- [x] 2.3 Questionnaire UI shows a clear message for `429`
+- [x] 2.3 Questionnaire UI shows a clear message for `429` — 0aadb7b
 
 ### Phase 3: Documentation & roadmap sync
 
 #### Manual
 
-- [x] 3.1 `change.md` documents the chosen limit + window + scope
-- [x] 3.2 Roadmap S-06 marked `done`
+- [x] 3.1 `change.md` documents the chosen limit + window + scope — c84e991
+- [x] 3.2 Roadmap S-06 marked `done` — c84e991
 
