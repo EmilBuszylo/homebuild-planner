@@ -1,10 +1,10 @@
 ---
 change_id: domain-schema-and-seed
 title: Schemat domenowy Prisma i seed bazy wiedzy o etapach budowy
-status: implemented
+status: archived
 created: 2026-05-25
 updated: 2026-05-28
-archived_at: null
+archived_at: 2026-05-28T10:48:19Z
 ---
 
 ## Notes
