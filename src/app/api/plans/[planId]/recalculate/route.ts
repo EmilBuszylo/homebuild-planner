@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { persistPlanVersionWithResults } from "@/lib/plan/persist-plan-version";
 import { prisma } from "@/lib/prisma";
+import { checkPlanRecalcLimit } from "@/lib/rate-limit/plan-recalc";
 import { createClient } from "@/lib/supabase/server";
 import { questionnaireInputsSchema } from "@/lib/validations/questionnaire";
 
@@ -44,6 +45,22 @@ export async function POST(request: Request, context: RouteContext) {
 
   try {
     await prisma.$transaction(async (tx) => {
+      const rateLimit = await checkPlanRecalcLimit(tx, { userId: user.id });
+      if (!rateLimit.allowed) {
+        const payload = {
+          error:
+            "Zbyt wiele przeliczeń w krótkim czasie. Spróbuj ponownie później.",
+          retryAfterSeconds: rateLimit.retryAfterSeconds,
+          limit: rateLimit.limit,
+          windowHours: rateLimit.windowHours,
+        };
+
+        throw Object.assign(new Error("RATE_LIMIT"), {
+          name: "RateLimitError",
+          payload,
+        });
+      }
+
       const latest = await tx.planVersion.findFirst({
         where: { planId },
         orderBy: { versionNumber: "desc" },
@@ -65,7 +82,19 @@ export async function POST(request: Request, context: RouteContext) {
     });
 
     return NextResponse.json({ planId }, { status: 200 });
-  } catch {
+  } catch (error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "name" in error &&
+      (error as { name?: unknown }).name === "RateLimitError" &&
+      "payload" in error
+    ) {
+      return NextResponse.json((error as { payload: unknown }).payload, {
+        status: 429,
+      });
+    }
+
     return NextResponse.json(
       { error: "Nie udało się przeliczyć planu. Spróbuj ponownie." },
       { status: 500 },
