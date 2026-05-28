@@ -1,10 +1,10 @@
 ---
 change_id: questionnaire-refinements
 title: Korekta pytań ankiety pod realne mechanizmy wyceny budowy
-status: implemented
+status: archived
 created: 2026-05-26
-updated: 2026-05-27
-archived_at: null
+updated: 2026-05-28
+archived_at: 2026-05-28T10:48:19Z
 ---
 
 ## Notes
