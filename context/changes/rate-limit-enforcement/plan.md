@@ -175,8 +175,8 @@ Utrwalenie decyzji i wartości limitu w artefaktach.
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint` passes
-- [ ] 2.2 `pnpm build:ci` passes
+- [x] 2.1 `pnpm lint` passes
+- [x] 2.2 `pnpm build:ci` passes
 
 #### Manual
 

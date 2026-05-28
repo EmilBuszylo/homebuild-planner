@@ -159,6 +159,23 @@ export function QuestionnaireForm({
         return;
       }
 
+      if (res.status === 429) {
+        const retryAfterSeconds =
+          typeof data.retryAfterSeconds === "number" ? data.retryAfterSeconds : null;
+        if (retryAfterSeconds) {
+          const minutes = Math.max(1, Math.ceil(retryAfterSeconds / 60));
+          setServerError(
+            `Zbyt wiele przeliczeń. Spróbuj ponownie za ok. ${minutes} min.`,
+          );
+          return;
+        }
+
+        setServerError(
+          data.error ?? "Zbyt wiele przeliczeń. Spróbuj ponownie później.",
+        );
+        return;
+      }
+
       setServerError(data.error ?? "Wystąpił błąd. Spróbuj ponownie.");
     } catch {
       setServerError(
