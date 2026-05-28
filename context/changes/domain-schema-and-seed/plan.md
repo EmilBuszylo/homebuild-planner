@@ -436,4 +436,4 @@ Polish validation messages, following the pattern in `src/lib/validations/auth.t
 
 #### Manual
 
-- [ ] 3.4 Verify enum re-exports match Prisma schema
+- [x] 3.4 Verify enum re-exports match Prisma schema

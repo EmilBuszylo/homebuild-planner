@@ -3,7 +3,7 @@ project: home-build-planner
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-05-26
+updated: 2026-05-28
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -28,8 +28,8 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | supabase-auth-wiring | (foundation) Supabase Auth podpięte; logowanie i rejestracja działają end-to-end | — | FR-001, FR-002 | done |
-| F-01b | user-model-sync | (foundation) Model User w Prisma zsynchronizowany z Supabase Auth; rejestracja tworzy rekord User | F-01 | FR-001 | ready |
-| F-02 | domain-schema-and-seed | (foundation) Modele domenowe (ankieta, plan, etapy, wyceny) w Prisma + seed lokalnej bazy wiedzy o etapach budowy | F-01, F-01b | FR-003, FR-008 | proposed |
+| F-01b | user-model-sync | (foundation) Model User w Prisma zsynchronizowany z Supabase Auth; rejestracja tworzy rekord User | F-01 | FR-001 | done |
+| F-02 | domain-schema-and-seed | (foundation) Modele domenowe (ankieta, plan, etapy, wyceny) w Prisma + seed lokalnej bazy wiedzy o etapach budowy | F-01, F-01b | FR-003, FR-008 | done |
 | S-01 | questionnaire-flow | Użytkownik przechodzi ankietę krok po kroku, zatwierdza odpowiedzi | F-01, F-02 | US-01, FR-003, FR-004 | done |
 | S-01b | questionnaire-refinements | Ankieta uwzględnia realne mechanizmy wyceny: ocieplenie jako mnożnik %, stan docelowy + startowy, drzwi tarasowe × ilość, balkony | S-01 | FR-003, FR-004, FR-008 | done |
 | S-02 | plan-generation | System generuje kosztorys etapów i timeline na podstawie odpowiedzi z ankiety (lokalna baza wiedzy) | S-01, S-01b | US-01, FR-006, FR-008 | done |
@@ -43,7 +43,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
-| A | Auth i dane | `F-01` → `F-01b` → `F-02` | Fundament: auth + model użytkownika + schemat domenowy — odblokują ankietę i generowanie. |
+| A | Auth i dane | `F-01` → `F-01b` → `F-02` | Fundament: auth + model użytkownika + schemat domenowy (done). |
 | B | Rdzeń wartości | `S-01` → `S-01b` → `S-02` → `S-03` → `S-05` | Główna ścieżka do gwiazdy przewodniej i edycji; `S-05` parallel with `S-04`. |
 | C | Doprecyzowanie | `S-04` | Internet refinement — po north star; parallel with `S-05`. |
 | D | Limity i koszty | `S-06` | Limit przeliczeń: 3 / 24h na użytkownika (recalculate). |
@@ -87,7 +87,7 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Tworzenie rekordu User musi być atomowe z `signUp` — jeśli jedno się powiedzie a drugie nie, zostanie osierocony użytkownik w Supabase bez rekordu w bazie domenowej. Rozwiązanie: try/catch z cleanup lub Supabase DB trigger jako fallback.
-- **Status:** ready
+- **Status:** done
 
 ### F-02: Schemat domenowy i seed bazy wiedzy
 
@@ -101,7 +101,7 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Unknowns:**
   - Dokładna lista etapów budowy i widełek kosztowych do seeda — Owner: user. Block: no (można zacząć od przykładowych danych i iterować).
 - **Risk:** Schemat ankiety musi być elastyczny na pytania wymagane vs opcjonalne (FR-004); zbyt sztywny model utrudni późniejsze zmiany.
-- **Status:** proposed
+- **Status:** done
 
 ## Slices
 
@@ -116,7 +116,7 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Unknowns:**
   - Która data jest obligatoryjna w ankiecie — termin startu czy termin docelowy? (PRD Open Question #3) — Owner: user. Block: no (można wdrożyć z jedną datą wymaganą i drugą opcjonalną).
 - **Risk:** Zbyt wiele pytań w MVP zwiększy drop-off; PRD mówi „keep required core inputs minimal".
-- **Status:** proposed
+- **Status:** done
 
 ### S-01b: Korekta pytań ankiety pod realne mechanizmy wyceny
 
@@ -216,8 +216,8 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
 | F-01 | supabase-auth-wiring | Podpięcie Supabase Auth end-to-end | done | — |
-| F-01b | user-model-sync | Model User w Prisma + sync z Supabase Auth | yes | Run `/10x-plan user-model-sync` |
-| F-02 | domain-schema-and-seed | Schemat domenowy Prisma + seed bazy wiedzy etapów | no | Wymaga F-01, F-01b |
+| F-01b | user-model-sync | Model User w Prisma + sync z Supabase Auth | done | — |
+| F-02 | domain-schema-and-seed | Schemat domenowy Prisma + seed bazy wiedzy etapów | done | — |
 | S-01 | questionnaire-flow | Przepływ ankiety krok po kroku | done | — |
 | S-01b | questionnaire-refinements | Korekta pytań ankiety pod realne mechanizmy wyceny | done | — |
 | S-02 | plan-generation | Generowanie kosztorysu i timeline z lokalnej bazy | done | — |
@@ -243,6 +243,8 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 ## Done
 
 - **F-01** supabase-auth-wiring — Supabase Auth podpięte end-to-end (formularze, Server Actions, middleware, dashboard stub). Retro: brak modelu User wyodrębniony do F-01b.
+- **F-01b** user-model-sync — Model `User` w Prisma (PK = Supabase UUID); rejestracja tworzy rekord w `register` Server Action; dashboard czyta email z Prisma. Migracja: `20260526074630_create_user_table`.
+- **F-02** domain-schema-and-seed — Modele domenowe (`QuestionDefinition`, `ConstructionStage`, `Plan`, `PlanVersion`, …) + `pnpm db:seed` (baza wiedzy etapów). Migracja: `20260526085624_create_models_from_f_02`.
 - **S-01** questionnaire-flow — Dynamiczna ankieta krok po kroku (3 kroki + podsumowanie), POST /api/plans z atomową transakcją Prisma, redirect do strony planu. Retro: auto-submit bug naprawiony (type="button" + programmatic handleSubmit); user.upsert dodany defensywnie w tx.
 - **S-01b** questionnaire-refinements — 13 pytań: stan docelowy vs startowy (osobne opcje), ocieplenie jako %, drzwi tarasowe × ilość, balkony; walidacja start < cel z czyszczeniem błędu po poprawce.
 - **S-03b** marketing-landing — Pełny landing na `/` (hero, korzyści, zaufanie, sticky header, CTA rejestracji).
