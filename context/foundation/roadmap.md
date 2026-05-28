@@ -37,7 +37,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 | S-03b | marketing-landing | Użytkownik widzi pełny landing marketingowy (hero, korzyści, CTA) zamiast minimalnej strony startowej | S-03 | — | done |
 | S-04 | internet-refinement | System doprecyzowuje wyceny danymi z internetu | S-03 | FR-009 | done |
 | S-05 | edit-and-recalculate | Użytkownik edytuje odpowiedzi ankiety i uruchamia ponowne przeliczenie | S-03 | US-01, FR-005 | done |
-| S-06 | rate-limit-enforcement | System ogranicza liczbę przeliceń na użytkownika zgodnie z ustalonym limitem | S-05 | FR-005, NFR (limit przeliceń) | blocked |
+| S-06 | rate-limit-enforcement | System ogranicza liczbę przeliceń na użytkownika zgodnie z ustalonym limitem | S-05 | FR-005, NFR (limit przeliceń) | done |
 
 ## Streams
 
@@ -46,7 +46,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym nie ma jasnej mapy e
 | A | Auth i dane | `F-01` → `F-01b` → `F-02` | Fundament: auth + model użytkownika + schemat domenowy — odblokują ankietę i generowanie. |
 | B | Rdzeń wartości | `S-01` → `S-01b` → `S-02` → `S-03` → `S-05` | Główna ścieżka do gwiazdy przewodniej i edycji; `S-05` parallel with `S-04`. |
 | C | Doprecyzowanie | `S-04` | Internet refinement — po north star; parallel with `S-05`. |
-| D | Limity i koszty | `S-06` | Blocked na decyzję o limicie przeliceń (Open Question #2). |
+| D | Limity i koszty | `S-06` | Limit przeliczeń: 3 / 24h na użytkownika (recalculate). |
 
 ## Baseline
 
@@ -207,10 +207,9 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 - **Prerequisites:** S-05
 - **Parallel with:** —
 - **Blockers:** —
-- **Unknowns:**
-  - Jaki jest liczbowy limit pełnych przeliceń planu na użytkownika? (PRD Open Question #2, Block: yes) — Owner: user. Block: yes.
-- **Risk:** Bez ustalonego limitu nie da się zaimplementować ani przetestować tego slice'a. To jedyny slice z blokerem decyzyjnym.
-- **Status:** blocked
+- **Unknowns:** —
+- **Risk:** Niski — prosty limit per-user na recalculate.
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -226,12 +225,12 @@ Foundations poniżej zakładają, że te warstwy istnieją i NIE budują ich od 
 | S-03b | marketing-landing | Pełny landing marketingowy | done | — |
 | S-04 | internet-refinement | Doprecyzowanie wycen danymi z internetu | done | — |
 | S-05 | edit-and-recalculate | Edycja odpowiedzi i ponowne przeliczenie | done | — |
-| S-06 | rate-limit-enforcement | Limit przeliceń na użytkownika | no | Blocked: brak ustalonego limitu (OQ #2) |
+| S-06 | rate-limit-enforcement | Limit przeliceń na użytkownika | done | — |
 
 ## Open Roadmap Questions
 
 1. **Jaka forma prezentacji wyniku jest docelowa na MVP?** Tabela + timeline czy jeden widok timeline z kosztami. Owner: user. Block: S-02 (można startować od jednego czytelnego wariantu, ale decyzja wpłynie na UI).
-2. **Jaki jest liczbowy limit pełnych przeliceń planu na użytkownika?** Wymagany konkretny próg do finalizacji S-06 i NFR kosztowego. Owner: user. Block: S-06.
+2. ~~**Jaki jest liczbowy limit pełnych przeliceń planu na użytkownika?**~~ **Rozwiązane (S-06):** max **3 przeliczenia / 24h** na użytkownika (`versionNumber > 1`); konfiguracja: `PLAN_RECALC_LIMIT`, `PLAN_RECALC_WINDOW_HOURS`.
 3. **Która data jest obligatoryjna w ankiecie?** Termin startu czy termin docelowy (druga opcja może być opcjonalna). Owner: user. Block: S-01 (można wdrożyć z jedną datą wymaganą i drugą opcjonalną).
 
 ## Parked

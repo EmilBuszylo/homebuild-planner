@@ -163,30 +163,28 @@ Utrwalenie decyzji i wartości limitu w artefaktach.
 
 #### Automated
 
-- [x] 1.1 `pnpm lint` passes
 - [x] 1.1 `pnpm lint` passes — 018d14e
 - [x] 1.2 `pnpm build:ci` passes — 018d14e
 
 #### Manual
 
-- [ ] 1.3 `POST /api/plans/[planId]/recalculate` returns `429` after exceeding limit
+- [x] 1.3 `POST /api/plans/[planId]/recalculate` returns `429` after exceeding limit
 
 ### Phase 2: UX & copy
 
 #### Automated
 
-- [x] 2.1 `pnpm lint` passes
 - [x] 2.1 `pnpm lint` passes — 0aadb7b
 - [x] 2.2 `pnpm build:ci` passes — 0aadb7b
 
 #### Manual
 
-- [ ] 2.3 Questionnaire UI shows a clear message for `429`
+- [x] 2.3 Questionnaire UI shows a clear message for `429`
 
 ### Phase 3: Documentation & roadmap sync
 
 #### Manual
 
-- [ ] 3.1 `change.md` documents the chosen limit + window + scope
-- [ ] 3.2 Roadmap S-06 marked `done`
+- [x] 3.1 `change.md` documents the chosen limit + window + scope
+- [x] 3.2 Roadmap S-06 marked `done`
 
