@@ -39,12 +39,14 @@ export async function checkPlanRecalcLimit(
     tx.planVersion.count({
       where: {
         createdAt: { gte: cutoff },
+        versionNumber: { gt: 1 },
         plan: { userId: params.userId },
       },
     }),
     tx.planVersion.findFirst({
       where: {
         createdAt: { gte: cutoff },
+        versionNumber: { gt: 1 },
         plan: { userId: params.userId },
       },
       orderBy: { createdAt: "asc" },
