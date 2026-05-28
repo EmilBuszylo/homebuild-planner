@@ -1,10 +1,10 @@
 ---
 change_id: user-model-sync
 title: Model User w Prisma zsynchronizowany z Supabase Auth
-status: implemented
+status: archived
 created: 2026-05-26
 updated: 2026-05-28
-archived_at: null
+archived_at: 2026-05-28T10:48:19Z
 ---
 
 ## Notes
