@@ -1,10 +1,10 @@
 ---
 change_id: marketing-landing
 title: Marketing landing
-status: implemented
+status: archived
 created: 2026-05-27
-updated: 2026-05-27
-archived_at: null
+updated: 2026-05-28
+archived_at: 2026-05-28T10:48:19Z
 ---
 
 ## Notes
