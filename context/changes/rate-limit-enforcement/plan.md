@@ -35,7 +35,7 @@ Zakładamy MVP-scope: prosta, przewidywalna reguła + czytelny komunikat w UI.
 
 **Bloker z roadmapy:** potrzebujemy konkretnej liczby. Implementacja zakłada konfigurację:
 
-- `PLAN_RECALC_LIMIT` (np. 10)
+- `PLAN_RECALC_LIMIT` (np. 3)
 - `PLAN_RECALC_WINDOW_HOURS` (np. 24)
 
 Plan jest gotowy do wdrożenia po ustawieniu wartości (albo zaakceptowaniu defaultów na MVP).

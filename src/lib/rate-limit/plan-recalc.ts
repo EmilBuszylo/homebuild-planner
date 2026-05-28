@@ -7,7 +7,7 @@ export type PlanRecalcRateLimitResult = {
   retryAfterSeconds: number | null;
 };
 
-const DEFAULT_PLAN_RECALC_LIMIT = 10;
+const DEFAULT_PLAN_RECALC_LIMIT = 3;
 const DEFAULT_PLAN_RECALC_WINDOW_HOURS = 24;
 
 function parsePositiveInt(value: string | undefined): number | null {
