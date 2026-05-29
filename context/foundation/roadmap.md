@@ -181,4 +181,4 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **S-04** internet-refinement — Doprecyzowanie benchmarkami rynkowymi.
 - **S-05** edit-and-recalculate — Edycja ankiety i przeliczenie.
 - **S-06** rate-limit-enforcement — Limit 3 przeliczeń / 24h.
-- **S-08** horizontal-timeline-coaching — Poziomy harmonogram + hinty praktyczne; DAG kolejności prac. → `context/changes/horizontal-timeline-coaching/`
+- **S-08: Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi** — Archived 2026-05-29 → `context/archive/2026-05-28-horizontal-timeline-coaching/`. Lesson: —.

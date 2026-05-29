@@ -1,10 +1,10 @@
 ---
 change_id: horizontal-timeline-coaching
 title: Horizontal timeline coaching
-status: complete
+status: archived
 created: 2026-05-28
 updated: 2026-05-29
-archived_at: null
+archived_at: 2026-05-29T10:24:24Z
 ---
 
 ## Notes
