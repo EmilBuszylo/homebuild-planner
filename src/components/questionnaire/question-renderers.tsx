@@ -13,6 +13,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { cn } from "@/lib/utils";
+import {
+  ChoiceHintLabel,
+  ChoiceHintsGuide,
+  QuestionHintIcon,
+  SelectedChoiceHintPreview,
+} from "@/components/questionnaire/question-hint";
+import {
+  getQuestionChoiceHint,
+  hasQuestionChoiceHints,
+} from "@/lib/questionnaire/question-hints";
 
 type QuestionOption = { value: string; label: string };
 
@@ -40,6 +51,24 @@ function fieldLabel(question: QuestionDefinition): string {
   return question.required ? question.label : `${question.label} (opcjonalne)`;
 }
 
+function LabelWithHint({
+  question,
+  htmlFor,
+}: {
+  question: QuestionDefinition;
+  htmlFor?: string;
+}) {
+  return (
+    <FieldLabel
+      htmlFor={htmlFor}
+      className="inline-flex items-baseline gap-1 leading-snug"
+    >
+      <span>{fieldLabel(question)}</span>
+      <QuestionHintIcon slug={question.slug} />
+    </FieldLabel>
+  );
+}
+
 function SingleChoiceField({ question, control }: QuestionFieldProps) {
   const options = (question.options as QuestionOption[] | null) ?? [];
   const slug = question.slug as FieldPath<QuestionnaireInputs>;
@@ -50,26 +79,48 @@ function SingleChoiceField({ question, control }: QuestionFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field data-invalid={!!fieldState.error}>
-          <FieldLabel>{fieldLabel(question)}</FieldLabel>
+          <LabelWithHint question={question} />
+          <ChoiceHintsGuide slug={question.slug} />
           <RadioGroup
             value={(field.value as string) ?? undefined}
             onValueChange={field.onChange}
+            className="gap-2"
           >
-            {options.map((opt) => (
-              <div key={opt.value} className="flex items-center gap-2">
-                <RadioGroupItem
-                  value={opt.value}
-                  id={`${question.slug}-${opt.value}`}
-                />
-                <Label
-                  htmlFor={`${question.slug}-${opt.value}`}
-                  className="cursor-pointer font-normal"
+            {options.map((opt) => {
+              const choiceHint = getQuestionChoiceHint(
+                question.slug,
+                opt.value,
+              );
+              return (
+                <div
+                  key={opt.value}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-1 py-0.5 -mx-1 transition-colors",
+                    choiceHint && "hover:bg-muted/40",
+                  )}
                 >
-                  {opt.label}
-                </Label>
-              </div>
-            ))}
+                  <RadioGroupItem
+                    value={opt.value}
+                    id={`${question.slug}-${opt.value}`}
+                  />
+                  <Label
+                    htmlFor={`${question.slug}-${opt.value}`}
+                    className="cursor-pointer font-normal"
+                  >
+                    <ChoiceHintLabel slug={question.slug} value={opt.value}>
+                      {opt.label}
+                    </ChoiceHintLabel>
+                  </Label>
+                </div>
+              );
+            })}
           </RadioGroup>
+          {hasQuestionChoiceHints(question.slug) ? (
+            <SelectedChoiceHintPreview
+              slug={question.slug}
+              value={(field.value as string) ?? undefined}
+            />
+          ) : null}
           <FieldError errors={[fieldState.error]} />
         </Field>
       )}
@@ -86,7 +137,7 @@ function NumberField({ question, control }: QuestionFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field data-invalid={!!fieldState.error}>
-          <FieldLabel htmlFor={question.slug}>{fieldLabel(question)}</FieldLabel>
+          <LabelWithHint question={question} htmlFor={question.slug} />
           <div className="flex items-center gap-2">
             <Input
               id={question.slug}
@@ -126,7 +177,7 @@ function DateField({ question, control }: QuestionFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field data-invalid={!!fieldState.error}>
-          <FieldLabel htmlFor={question.slug}>{fieldLabel(question)}</FieldLabel>
+          <LabelWithHint question={question} htmlFor={question.slug} />
           <Input
             id={question.slug}
             type="date"
@@ -152,6 +203,7 @@ function BooleanField({ question, control }: QuestionFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field data-invalid={!!fieldState.error}>
+          <LabelWithHint question={question} htmlFor={question.slug} />
           <label
             htmlFor={question.slug}
             className="flex cursor-pointer items-center gap-3"
@@ -163,9 +215,7 @@ function BooleanField({ question, control }: QuestionFieldProps) {
               onChange={(e) => field.onChange(e.target.checked)}
               className="size-4 shrink-0 rounded border border-input accent-primary"
             />
-            <span className="text-sm font-medium">
-              {fieldLabel(question)}
-            </span>
+            <span className="text-sm font-normal">Tak</span>
           </label>
           <FieldError errors={[fieldState.error]} />
         </Field>

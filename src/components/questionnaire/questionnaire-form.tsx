@@ -18,6 +18,8 @@ import {
 import { createZodResolver } from "@/lib/validations/zod-resolver";
 import { routes } from "@/lib/routes";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 import { StepProgress } from "./step-progress";
 import { StepContent, STEP_FIELDS } from "./step-content";
 import { StepNavigation } from "./step-navigation";
@@ -187,44 +189,46 @@ export function QuestionnaireForm({
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-8">
-      <StepProgress currentStep={currentStep} totalSteps={TOTAL_STEPS} />
+    <TooltipProvider delayDuration={200}>
+      <div className="mx-auto w-full max-w-2xl space-y-8">
+        <StepProgress currentStep={currentStep} totalSteps={TOTAL_STEPS} />
 
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        noValidate
-        className="space-y-8"
-      >
-        {isSummary ? (
-          <QuestionnaireSummary
-            questions={questions}
-            getValues={form.getValues}
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          noValidate
+          className="space-y-8"
+        >
+          {isSummary ? (
+            <QuestionnaireSummary
+              questions={questions}
+              getValues={form.getValues}
+            />
+          ) : (
+            <StepContent
+              stepIndex={currentStep}
+              questions={questions}
+              control={form.control}
+            />
+          )}
+
+          {serverError && (
+            <p role="alert" className="text-center text-sm text-destructive">
+              {serverError}
+            </p>
+          )}
+
+          <StepNavigation
+            currentStep={currentStep}
+            totalSteps={TOTAL_STEPS}
+            onBack={handleBack}
+            onNext={handleNext}
+            onSubmit={() => form.handleSubmit(onSubmit)()}
+            isSubmitting={form.formState.isSubmitting}
+            submitLabel={isEditMode ? "Przelicz ponownie" : "Zatwierdź"}
+            submittingLabel={isEditMode ? "Przeliczanie..." : "Wysyłanie..."}
           />
-        ) : (
-          <StepContent
-            stepIndex={currentStep}
-            questions={questions}
-            control={form.control}
-          />
-        )}
-
-        {serverError && (
-          <p role="alert" className="text-center text-sm text-destructive">
-            {serverError}
-          </p>
-        )}
-
-        <StepNavigation
-          currentStep={currentStep}
-          totalSteps={TOTAL_STEPS}
-          onBack={handleBack}
-          onNext={handleNext}
-          onSubmit={() => form.handleSubmit(onSubmit)()}
-          isSubmitting={form.formState.isSubmitting}
-          submitLabel={isEditMode ? "Przelicz ponownie" : "Zatwierdź"}
-          submittingLabel={isEditMode ? "Przeliczanie..." : "Wysyłanie..."}
-        />
-      </form>
-    </div>
+        </form>
+      </div>
+    </TooltipProvider>
   );
 }

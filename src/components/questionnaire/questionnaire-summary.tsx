@@ -4,6 +4,7 @@ import type { UseFormGetValues } from "react-hook-form";
 
 import type { QuestionDefinition } from "@/lib/types/domain";
 import type { QuestionnaireInputs } from "@/lib/validations/questionnaire";
+import { SummaryHintIcon } from "@/components/questionnaire/question-hint";
 import {
   Card,
   CardContent,
@@ -87,16 +88,32 @@ export function QuestionnaireSummary({
             {group.slugs.map((slug) => {
               const question = questions.find((q) => q.slug === slug);
               if (!question) return null;
+              const rawValue = values[slug];
+              const answerLabel = formatAnswer(question, rawValue);
+              const choiceValue =
+                question.type === "SINGLE_CHOICE" &&
+                rawValue !== undefined &&
+                rawValue !== null
+                  ? String(rawValue)
+                  : undefined;
+
               return (
                 <div
                   key={slug}
-                  className="flex items-baseline justify-between border-b py-2.5 last:border-0"
+                  className="flex items-center justify-between gap-4 border-b py-3 last:border-0"
                 >
-                  <span className="text-sm text-muted-foreground">
-                    {question.label}
+                  <span className="inline-flex items-baseline gap-1 text-sm text-muted-foreground">
+                    <span>{question.label}</span>
+                    <SummaryHintIcon
+                      slug={slug}
+                      choiceValue={choiceValue}
+                      choiceLabel={
+                        choiceValue ? answerLabel : undefined
+                      }
+                    />
                   </span>
-                  <span className="ml-4 text-sm font-medium">
-                    {formatAnswer(question, values[slug])}
+                  <span className="shrink-0 text-sm font-medium sm:text-right">
+                    {answerLabel}
                   </span>
                 </div>
               );

@@ -29,7 +29,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym potrzebuje jasnej ma
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-07 | vitest-minimal-setup | (foundation) Uruchomić `pnpm test` z minimalnym Vitest i kilkoma testami logiki czystej | — | Success Criteria (guardrails), NFR | proposed |
-| S-07 | questionnaire-hints | Przy pytaniach ankiety czytać podpowiedź: co oznacza pytanie i jak wpływa na wycenę | — | FR-003, FR-004, Business Logic | ready |
+| S-07 | questionnaire-hints | Przy pytaniach ankiety czytać podpowiedź: co oznacza pytanie i jak wpływa na wycenę | — | FR-003, FR-004, Business Logic | done |
 | S-08 | horizontal-timeline-coaching | Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi | — | FR-006, NFR (czytelna prezentacja) | done |
 | S-09 | app-panel-polish | Korzystać z dopracowanego panelu (hub, nawigacja, układ strony planu) zamiast surowego szkieletu | S-08 | FR-006, NFR (mobile) | proposed |
 | S-10 | mvp-polish-finish | Doświadczyć spójnego, „gotowego” MVP: copy, disclaimery orientacyjne, mobile, brak surowych krawędzi | S-07, S-08, S-09, F-07 | US-01, FR-003–FR-006, FR-008–FR-009, Success Criteria | proposed |
@@ -84,7 +84,8 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **Unknowns:**
   - Treści hintów: pole w seed (`QuestionDefinition`) vs mapa w kodzie — Owner: team. Block: no (MVP treści może być kuratowana w seed).
 - **Risk:** Zbyt długie hinty obciążą mobile — trzymać 2–4 zdania + opcjonalne „rozwiń”.
-- **Status:** ready
+- **Status:** done
+- **Delivered (2026-05-29):** hinty front-only (`src/lib/questionnaire/hints/pl.ts`); tooltip przy pytaniu, podkreślenie + podgląd wybranej opcji dla SINGLE_CHOICE, podsumowanie z jednym tooltipem. Dalsze poprawki UX po sesjach z użytkownikami → **roadmap v3** (parked poniżej).
 
 ### S-08: Poziomy harmonogram z notkami praktycznymi
 
@@ -144,7 +145,7 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
 | F-07 | vitest-minimal-setup | Vitest + 2–3 testy jednostkowe logiki czystej | yes | Równolegle z S-07/S-08 |
-| S-07 | questionnaire-hints | Hinty przy pytaniach ankiety | yes | — |
+| S-07 | questionnaire-hints | Hinty przy pytaniach ankiety | — | done |
 | S-08 | horizontal-timeline-coaching | Poziomy timeline + notki praktyczne | — | done |
 | S-09 | app-panel-polish | Dopracowanie panelu i układu planu | no | Po S-08 |
 | S-10 | mvp-polish-finish | Capstone: spójne, gotowe MVP | no | Po S-07, S-08, S-09, F-07 |
@@ -158,6 +159,7 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 
 ## Parked
 
+- **Hinty ankiety — iteracja po user research (roadmap v3)** — Why parked: S-07 dostarczone na tyle, by iść dalej (S-09); discoverability mobile, skróty copy, uproszczenie panelu podglądu opcji — po sesjach z użytkownikami.
 - **Scalony / rozbudowany widok kosztorysu + timeline** — Why parked: poza zakresem S-08; slice **S-11** po domknięciu S-10.
 - **Drobne UX timeline** (np. gęstość osi, mobile, kolizje markerów) — Why parked: S-11 polish details.
 - **FR-007: Notatki użytkownika na etapach** — Why parked: nice-to-have; notki w S-08 to copy systemowe (coaching), nie edycja przez użytkownika.
@@ -182,3 +184,4 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **S-05** edit-and-recalculate — Edycja ankiety i przeliczenie.
 - **S-06** rate-limit-enforcement — Limit 3 przeliczeń / 24h.
 - **S-08: Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi** — Archived 2026-05-29 → `context/archive/2026-05-28-horizontal-timeline-coaching/`. Lesson: —.
+- **S-07: Przy pytaniach ankiety czytać podpowiedź** — Implemented 2026-05-29 → `context/changes/questionnaire-hints/` (archive TBD). Hinty front-only, tooltip + podgląd opcji SINGLE_CHOICE.
