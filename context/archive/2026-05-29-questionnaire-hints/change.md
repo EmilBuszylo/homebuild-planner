@@ -1,9 +1,10 @@
 ---
 change_id: questionnaire-hints
 title: Questionnaire hints
-status: implemented
+status: archived
+created: 2026-05-29
 updated: 2026-05-29
-archived_at: null
+archived_at: 2026-05-29T11:09:07Z
 ---
 
 ## Notes

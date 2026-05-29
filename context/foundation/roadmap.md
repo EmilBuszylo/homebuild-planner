@@ -184,4 +184,4 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **S-05** edit-and-recalculate — Edycja ankiety i przeliczenie.
 - **S-06** rate-limit-enforcement — Limit 3 przeliczeń / 24h.
 - **S-08: Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi** — Archived 2026-05-29 → `context/archive/2026-05-28-horizontal-timeline-coaching/`. Lesson: —.
-- **S-07: Przy pytaniach ankiety czytać podpowiedź** — Implemented 2026-05-29 → `context/changes/questionnaire-hints/` (archive TBD). Hinty front-only, tooltip + podgląd opcji SINGLE_CHOICE.
+- **S-07: Użytkownik przy (prawie) każdym pytaniu ankiety widzi hint: co oznacza pytanie (np. stan surowy otwarty vs zamknięty), jak orientacyjnie wpływa na kalkulację i na całość planu.** — Archived 2026-05-29 → `context/archive/2026-05-29-questionnaire-hints/`. Lesson: —.
