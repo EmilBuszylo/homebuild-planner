@@ -68,6 +68,7 @@ model ConstructionStage {
   slug             String           @unique
   name             String
   description      String?
+  coachingNote     String?
   category         String
   sortOrder        Int
   completedByState InvestmentState?

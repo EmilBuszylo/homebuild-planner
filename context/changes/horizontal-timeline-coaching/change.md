@@ -1,12 +1,16 @@
 ---
 change_id: horizontal-timeline-coaching
 title: Horizontal timeline coaching
-status: planned
+status: complete
 created: 2026-05-28
-updated: 2026-05-28
+updated: 2026-05-29
 archived_at: null
 ---
 
 ## Notes
 
-Coaching notes v1: 7 slugów — treści i research (praktyka + internet) w `research.md` § „Coaching notes” oraz tabela w `plan.md`. Zaakceptuj copy przed seedem lub popraw w seedzie.
+S-08 ukończone. Poziomy timeline + hinty coachingowe (`src/lib/plan/coaching-hints.ts`), poprawiony DAG harmonogramu w seedzie.
+
+Dalsze usprawnienia timeline/kosztorysu celowo **poza** tym change — slice **S-11** (`plan-results-polish-details`) na roadmapie, po S-10.
+
+**Owner (jednorazowo):** `pnpm db:seed` + przeliczenie istniejących planów, jeśli jeszcze nie zrobione.

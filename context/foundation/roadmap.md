@@ -3,7 +3,7 @@ project: home-build-planner
 version: 2
 status: active
 created: 2026-05-25
-updated: 2026-05-28
+updated: 2026-05-29
 prd_version: 1
 main_goal: quality
 top_blocker: none
@@ -22,7 +22,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym potrzebuje jasnej ma
 
 ## North star
 
-**S-08: Użytkownik widzi poziomy harmonogram z notkami praktycznymi** — najmniejszy widoczny dowód, że faza polish się udała: na stronie planu widać **kolejność etapów w czasie** (oś pozioma, czytelniejsza niż surowy widok typu Jira) oraz **krótkie wskazówki** (np. podczas fundamentów warto już myśleć o oknach i drzwiach). Bez tego reszta polishu nie spełnia kryterium „fajnego, gotowego MVP” z PRD (prezentacja wyniku wspiera decyzje).
+**S-08: Użytkownik widzi poziomy harmonogram z notkami praktycznymi** — zrealizowane w tej iteracji (oś pozioma, hinty na wierszach etapów, poprawiony DAG kolejności prac). Kolejny widoczny krok fazy: **S-09** (spójny panel wokół wyników).
 
 ## At a glance
 
@@ -30,9 +30,10 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym potrzebuje jasnej ma
 |---|---|---|---|---|---|
 | F-07 | vitest-minimal-setup | (foundation) Uruchomić `pnpm test` z minimalnym Vitest i kilkoma testami logiki czystej | — | Success Criteria (guardrails), NFR | proposed |
 | S-07 | questionnaire-hints | Przy pytaniach ankiety czytać podpowiedź: co oznacza pytanie i jak wpływa na wycenę | — | FR-003, FR-004, Business Logic | ready |
-| S-08 | horizontal-timeline-coaching | Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi | — | FR-006, NFR (czytelna prezentacja) | ready |
+| S-08 | horizontal-timeline-coaching | Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi | — | FR-006, NFR (czytelna prezentacja) | done |
 | S-09 | app-panel-polish | Korzystać z dopracowanego panelu (hub, nawigacja, układ strony planu) zamiast surowego szkieletu | S-08 | FR-006, NFR (mobile) | proposed |
 | S-10 | mvp-polish-finish | Doświadczyć spójnego, „gotowego” MVP: copy, disclaimery orientacyjne, mobile, brak surowych krawędzi | S-07, S-08, S-09, F-07 | US-01, FR-003–FR-006, FR-008–FR-009, Success Criteria | proposed |
+| S-11 | plan-results-polish-details | (faza 3) Dalsze usprawnienia prezentacji kosztorysu i harmonogramu poza zakresem S-08 | S-10 | FR-006 | parked |
 
 ## Streams
 
@@ -42,6 +43,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym potrzebuje jasnej ma
 | B | Zrozumienie ankiety | `S-07` | Hinty przy pytaniach (stan surowy otwarty vs zamknięty itd.). |
 | C | Harmonogram i panel | `S-08` → `S-09` | Najpierw nowy timeline; potem spójny układ panelu wokół wyników. |
 | D | Domknięcie | `S-10` | Capstone po pozostałych slice’ach fazy. |
+| E | (faza 3) Polish details | `S-11` | Po S-10; usprawnienia kosztorysu + timeline poza MVP polish — nie blokuje S-07…S-10. |
 
 ## Baseline
 
@@ -96,7 +98,22 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
   - Zakres notek na MVP (które etapy, kto dostarcza copy PL) — Owner: user. Block: no (można zacząć od 3–5 kluczowych etapów w seed).
   - Czy kosztorys pozostaje tabelą pod timeline, czy scalony widok — Owner: user. Block: no (domyślnie: tabela + timeline, timeline poziomy).
 - **Risk:** Złożoność layoutu na mobile — wymaga przewijania poziomego lub zwinięcia etapów; zaplanować w `/10x-plan`.
-- **Status:** ready
+- **Status:** done
+- **Delivered (2026-05-29):** poziomy Gantt (wiersz = etap), hinty coachingowe w `src/lib/plan/coaching-hints.ts` (wiersz docelowy + pozycja na osi), poprawiony DAG `predecessorSlugs` (instalacje po stanie zamkniętym, tynki po dachu/oknach). Dalsze usprawnienia UI timeline/kosztorysu → **S-11** (parked).
+
+### S-11: Polish details — kosztorys i harmonogram (faza 3)
+
+- **Outcome:** Użytkownik ma **dopracowaną** prezentację wyników planu: czytelniejszy kosztorys, ewentualnie scalony widok z harmonogramem, drobne UX timeline — ponad to, co dostarczyło S-08.
+- **Change ID:** plan-results-polish-details *(do utworzenia przez `/10x-new`)*
+- **PRD refs:** FR-006 (prezentacja wyniku)
+- **Prerequisites:** S-10 (domknięcie MVP polish)
+- **Parallel with:** —
+- **Blockers:** —
+- **Unknowns:**
+  - Scalony kosztorys + timeline vs osobne widoki z lepszą hierarchią — Owner: user. Block: no.
+  - Zakres kosmetyki kosztorysu (grupowanie, wykresy, mobile) — Owner: user. Block: no.
+- **Risk:** Scope creep — trzymać jako „polishing details”, nie nowe funkcje produktu (FR-007, kalendarz itd. nadal w Parked).
+- **Status:** parked
 
 ### S-09: Dopracowany panel aplikacji
 
@@ -128,18 +145,21 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 |---|---|---|---|---|
 | F-07 | vitest-minimal-setup | Vitest + 2–3 testy jednostkowe logiki czystej | yes | Równolegle z S-07/S-08 |
 | S-07 | questionnaire-hints | Hinty przy pytaniach ankiety | yes | — |
-| S-08 | horizontal-timeline-coaching | Poziomy timeline + notki praktyczne | yes | North star fazy |
+| S-08 | horizontal-timeline-coaching | Poziomy timeline + notki praktyczne | — | done |
 | S-09 | app-panel-polish | Dopracowanie panelu i układu planu | no | Po S-08 |
 | S-10 | mvp-polish-finish | Capstone: spójne, gotowe MVP | no | Po S-07, S-08, S-09, F-07 |
+| S-11 | plan-results-polish-details | Polish details: kosztorys + timeline UX | no | Po S-10; faza 3 |
 
 ## Open Roadmap Questions
 
-1. **Które etapy dostają notki coachingowe w pierwszej iteracji?** (fundamenty, stan zamknięty, okna/drzwi?) — Owner: user. Block: S-08 (można wdrożyć 3–5 notek i rozszerzać).
-2. **Czy kosztorys zostaje osobną tabelą pod poziomym timeline?** — Owner: user. Block: no (rekomendacja: tabela + timeline).
+1. ~~**Które etapy dostają notki coachingowe w pierwszej iteracji?**~~ — Zamknięte w S-08 (8+ hintów w kodzie, filtrowane wg planu).
+2. ~~**Czy kosztorys zostaje osobną tabelą pod poziomym timeline?**~~ — Tak na MVP polish (S-08); ewentualne scalenie → **S-11**.
 3. **Jaka nazwa projektu w PRD frontmatter?** — Owner: user. Block: no (metadane dokumentu).
 
 ## Parked
 
+- **Scalony / rozbudowany widok kosztorysu + timeline** — Why parked: poza zakresem S-08; slice **S-11** po domknięciu S-10.
+- **Drobne UX timeline** (np. gęstość osi, mobile, kolizje markerów) — Why parked: S-11 polish details.
 - **FR-007: Notatki użytkownika na etapach** — Why parked: nice-to-have; notki w S-08 to copy systemowe (coaching), nie edycja przez użytkownika.
 - **FR-010: Google Calendar** — Why parked: PRD nice-to-have; zależność zewnętrzna.
 - **FR-011: Logowanie Google** — Why parked: PRD nice-to-have; faza polish = email/hasło.
@@ -161,3 +181,4 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **S-04** internet-refinement — Doprecyzowanie benchmarkami rynkowymi.
 - **S-05** edit-and-recalculate — Edycja ankiety i przeliczenie.
 - **S-06** rate-limit-enforcement — Limit 3 przeliczeń / 24h.
+- **S-08** horizontal-timeline-coaching — Poziomy harmonogram + hinty praktyczne; DAG kolejności prac. → `context/changes/horizontal-timeline-coaching/`

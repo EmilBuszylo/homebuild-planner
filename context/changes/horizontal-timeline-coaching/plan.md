@@ -307,8 +307,8 @@ Zamknąć unknowns roadmapy i przygotować pod implement review.
 
 #### Automated
 
-- [ ] 1.1 Dodać `coachingNote` do `ConstructionStage` w `schema.prisma`
-- [ ] 1.2 Dodać plik migracji SQL
+- [x] 1.1 Dodać `coachingNote` do `ConstructionStage` w `schema.prisma`
+- [x] 1.2 Dodać plik migracji SQL
 
 #### Manual
 
@@ -318,22 +318,22 @@ Zamknąć unknowns roadmapy i przygotować pod implement review.
 
 #### Automated
 
-- [ ] 2.1 Rozszerzyć `PlanResultsStageDto` o `coachingNote`
-- [ ] 2.2 Zaktualizować `GET .../results` (select + mapowanie)
+- [x] 2.1 Rozszerzyć `PlanResultsStageDto` o `coachingNote`
+- [x] 2.2 Zaktualizować `GET .../results` (select + mapowanie)
 
 ### Phase 3: Timeline layout utilities
 
 #### Automated
 
-- [ ] 3.1 Dodać `src/lib/plan/layout-timeline-stages.ts` (sort + tracks + totalSpan)
+- [x] 3.1 Dodać `src/lib/plan/layout-timeline-stages.ts` (sort + tracks + totalSpan)
 
 ### Phase 4: Horizontal timeline UI
 
 #### Automated
 
-- [ ] 4.1 Przebudować `plan-timeline.tsx` (pozioma oś + notki)
-- [ ] 4.2 Poszerzyć wrapper strony planu do `max-w-6xl`
-- [ ] 4.3 Zaktualizować `loading.tsx` skeleton
+- [x] 4.1 Przebudować `plan-timeline.tsx` (pozioma oś + notki)
+- [x] 4.2 Poszerzyć wrapper strony planu do `max-w-6xl`
+- [x] 4.3 Zaktualizować `loading.tsx` skeleton
 
 #### Manual
 

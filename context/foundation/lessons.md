@@ -27,8 +27,15 @@
 
 - **Context**: Any task that adds or changes `prisma/schema.prisma`, creates migration files, or implements features that query new/changed tables on the owner’s Supabase Postgres.
 - **Problem**: An agent running `pnpm db:migrate` / `prisma migrate dev` against the owner’s database without coordination can apply the wrong migration, block on prompts, or proceed with code/tests while the DB is still on an old schema.
-- **Rule**: Only the repo owner runs local `pnpm db:migrate` / `prisma migrate dev`. Agents may edit `schema.prisma` and add migration SQL under `prisma/migrations/`, but if execution requires migrations to be applied locally first, the agent must **stop**, state the required commands clearly, ask the owner to run them and confirm success, and **not continue** until the owner explicitly allows it. Do not run `migrate dev`, `db push`, or `db:studio` on the owner’s behalf.
+- **Rule**: Only the repo owner runs local `pnpm db:migrate` / `prisma migrate dev`. Agents may edit `schema.prisma` when a schema change is required, but **must not** create or edit files under `prisma/migrations/` (see next lesson). If execution requires migrations to be applied locally first, the agent must **stop**, list the exact owner commands (`pnpm db:migrate`, then `pnpm db:seed` if needed), ask the owner to run them and confirm success, and **not continue** with code that assumes the new columns/tables exist until the owner confirms. Do not run `migrate dev`, `db push`, or `db:studio` on the owner’s behalf.
 - **Applies to**: frame, plan, plan-review, implement, impl-review, all
+
+## Never hand-write Prisma migration files
+
+- **Context**: Any schema change in `prisma/schema.prisma` (new columns, models, indexes, enums).
+- **Problem**: Manually adding `prisma/migrations/<timestamp>_…/migration.sql` (or editing existing migration SQL) desynchronizes Prisma’s migration history from what `prisma migrate dev` would generate on the owner’s machine — leading to drift, duplicate migrations, failed `migrate dev`, or prompts to reset. Observed on S-08 (`coachingNote`): agent-created SQL conflicted with the owner’s normal migrate workflow.
+- **Rule**: **Never** create, edit, or delete anything under `prisma/migrations/` unless the user **explicitly** asks for a hand-written migration in that turn. Default workflow: agent changes `schema.prisma` only → **stop** → owner runs `pnpm db:migrate` (which generates and applies the migration) → owner confirms → agent continues with seed/API/UI that depend on the new schema. If the owner already ran migrate and a migration file exists, agents may read it but must not rewrite it.
+- **Applies to**: plan, plan-review, implement, impl-review, all
 
 ## Group FK scalar fields directly below their relation line in Prisma schema
 

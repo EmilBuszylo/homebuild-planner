@@ -52,7 +52,7 @@ export default async function PlanPage({ params }: PlanPageProps) {
   }
 
   return (
-    <div className="mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-4xl flex-col gap-8 p-6 py-10">
+    <div className="mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-6xl flex-col gap-8 p-6 py-10">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">Twój plan budowy</h1>
