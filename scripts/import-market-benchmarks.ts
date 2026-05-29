@@ -2,15 +2,30 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 import { PrismaClient } from "@prisma/client";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 
-type BenchmarkRow = {
-  stageCategory: string;
-  multiplier: number;
-  sourceName: string;
-  sourceUrl?: string | null;
-};
+const benchmarkRowSchema = z.object({
+  stageCategory: z.string().trim().min(1),
+  multiplier: z.number().finite().positive(),
+  sourceName: z.string().trim().min(1),
+  sourceUrl: z.string().nullable().optional(),
+});
+
+const benchmarkFileSchema = z.array(benchmarkRowSchema).min(1);
+
+type BenchmarkRow = z.infer<typeof benchmarkRowSchema>;
+
+function parseBenchmarkRows(data: unknown): BenchmarkRow[] {
+  const parsed = benchmarkFileSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(
+      `Nieprawidłowy format benchmarków: ${parsed.error.issues.map((i) => i.message).join("; ")}`,
+    );
+  }
+  return parsed.data;
+}
 
 async function loadRows(): Promise<BenchmarkRow[]> {
   const url = process.env.BENCHMARKS_JSON_URL;
@@ -21,7 +36,7 @@ async function loadRows(): Promise<BenchmarkRow[]> {
         `Nie udało się pobrać benchmarków (${response.status} ${response.statusText})`,
       );
     }
-    return response.json() as Promise<BenchmarkRow[]>;
+    return parseBenchmarkRows(await response.json());
   }
 
   const fileArg = process.argv[2];
@@ -30,7 +45,7 @@ async function loadRows(): Promise<BenchmarkRow[]> {
     : path.join(process.cwd(), "prisma/data/market-benchmarks.json");
 
   const raw = await readFile(filePath, "utf-8");
-  return JSON.parse(raw) as BenchmarkRow[];
+  return parseBenchmarkRows(JSON.parse(raw) as unknown);
 }
 
 async function main() {
