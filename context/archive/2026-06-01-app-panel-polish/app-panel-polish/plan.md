@@ -265,34 +265,34 @@ Brak zmian schematu.
 
 #### Automated
 
-- [x] 1.1 Dodać `AppPageShell` i podpiąć w layout / ankiecie
-- [x] 1.2 Odświeżyć `AppHeader` (sticky, nav, `latestPlanId`)
-- [x] 1.3 `(app)/layout.tsx` — przekazanie `latestPlanId` do nagłówka
+- [x] 1.1 Dodać `AppPageShell` i podpiąć w layout / ankiecie — c33675e
+- [x] 1.2 Odświeżyć `AppHeader` (sticky, nav, `latestPlanId`) — c33675e
+- [x] 1.3 `(app)/layout.tsx` — przekazanie `latestPlanId` do nagłówka — c33675e
 
 #### Manual
 
-- [ ] 1.4 Smoke: nawigacja + ankieta od góry (desktop + mobile)
+- [x] 1.4 Smoke: nawigacja + ankieta od góry (desktop + mobile)
 
 ### Phase 2: Dashboard hub
 
 #### Automated
 
-- [ ] 2.1 Przebudować `dashboard/page.tsx` (hub, bez centrowania)
-- [ ] 2.2 Snapshot planu przez `fetchPlanResults` + karta KPI
-- [ ] 2.3 Empty state w `Card`
+- [x] 2.1 Przebudować `dashboard/page.tsx` (hub, bez centrowania)
+- [x] 2.2 Snapshot planu przez `fetchPlanResults` + karta KPI
+- [x] 2.3 Empty state w `Card`
 
 #### Manual
 
-- [ ] 2.4 Smoke: panel z planem i bez planu
+- [x] 2.4 Smoke: panel z planem i bez planu
 
 ### Phase 3: Plan page hierarchy & polish
 
 #### Automated
 
-- [ ] 3.1 `PlanSummaryStrip` + `OrientationalDisclaimer`
-- [ ] 3.2 Składać stronę planu + stany błędu z CTA
-- [ ] 3.3 `loading.tsx` + `metadata` na stronach `(app)`
+- [x] 3.1 `PlanSummaryStrip` + `OrientationalDisclaimer`
+- [x] 3.2 Składać stronę planu + stany błędu z CTA
+- [x] 3.3 `loading.tsx` + `metadata` na stronach `(app)`
 
 #### Manual
 
-- [ ] 3.4 Smoke: plan → ankieta → przeliczenie; mobile timeline
+- [x] 3.4 Smoke: plan → ankieta → przeliczenie; mobile timeline

@@ -3,7 +3,7 @@ project: home-build-planner
 version: 2
 status: active
 created: 2026-05-25
-updated: 2026-05-29
+updated: 2026-06-01
 prd_version: 1
 main_goal: quality
 top_blocker: none
@@ -31,7 +31,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym potrzebuje jasnej ma
 | F-07 | vitest-minimal-setup | (foundation) Uruchomić `pnpm test` z minimalnym Vitest i kilkoma testami logiki czystej | — | Success Criteria (guardrails), NFR | proposed |
 | S-07 | questionnaire-hints | Przy pytaniach ankiety czytać podpowiedź: co oznacza pytanie i jak wpływa na wycenę | — | FR-003, FR-004, Business Logic | done |
 | S-08 | horizontal-timeline-coaching | Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi | — | FR-006, NFR (czytelna prezentacja) | done |
-| S-09 | app-panel-polish | Korzystać z dopracowanego panelu (hub, nawigacja, układ strony planu) zamiast surowego szkieletu | S-08 | FR-006, NFR (mobile) | proposed |
+| S-09 | app-panel-polish | Korzystać z dopracowanego panelu (hub, nawigacja, układ strony planu) zamiast surowego szkieletu | S-08 | FR-006, NFR (mobile) | done |
 | S-10 | mvp-polish-finish | Doświadczyć spójnego, „gotowego” MVP: copy, disclaimery orientacyjne, mobile, brak surowych krawędzi | S-07, S-08, S-09, F-07 | US-01, FR-003–FR-006, FR-008–FR-009, Success Criteria | proposed |
 | S-11 | plan-results-polish-details | (faza 3) Dalsze usprawnienia prezentacji kosztorysu i harmonogramu poza zakresem S-08 | S-10 | FR-006 | parked |
 
@@ -126,7 +126,8 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Kosmetyka bez S-08 może rozjechać się z nowym timeline — dlatego S-08 wcześniej.
-- **Status:** proposed
+- **Status:** done
+- **Delivered (2026-06-01):** `AppPageShell`, sticky nav, dashboard hub + `PlanSnapshotCard`, `PlanSummaryStrip`, disclaimer, metadata.
 
 ### S-10: Domknięcie MVP (polish capstone)
 
@@ -147,7 +148,7 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 | F-07 | vitest-minimal-setup | Vitest + 2–3 testy jednostkowe logiki czystej | yes | Równolegle z S-07/S-08 |
 | S-07 | questionnaire-hints | Hinty przy pytaniach ankiety | — | done |
 | S-08 | horizontal-timeline-coaching | Poziomy timeline + notki praktyczne | — | done |
-| S-09 | app-panel-polish | Dopracowanie panelu i układu planu | no | Po S-08 |
+| S-09 | app-panel-polish | Dopracowanie panelu i układu planu | — | done |
 | S-10 | mvp-polish-finish | Capstone: spójne, gotowe MVP | no | Po S-07, S-08, S-09, F-07 |
 | S-11 | plan-results-polish-details | Polish details: kosztorys + timeline UX | no | Po S-10; faza 3 |
 
@@ -185,3 +186,4 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **S-06** rate-limit-enforcement — Limit 3 przeliczeń / 24h.
 - **S-08: Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi** — Archived 2026-05-29 → `context/archive/2026-05-28-horizontal-timeline-coaching/`. Lesson: —.
 - **S-07: Użytkownik przy (prawie) każdym pytaniu ankiety widzi hint: co oznacza pytanie (np. stan surowy otwarty vs zamknięty), jak orientacyjnie wpływa na kalkulację i na całość planu.** — Archived 2026-05-29 → `context/archive/2026-05-29-questionnaire-hints/`. Lesson: —.
+- **S-09: Użytkownik ma przyjazny hub i spójny układ w `(app)`: dashboard z sensownymi CTA i kontekstem planu, strona planu z hierarchią wizualną (nagłówek, podsumowanie, wyniki), mniej „surowego” centrowania i pustej przestrzeni.** — Archived 2026-06-01 → `context/archive/2026-06-01-app-panel-polish/`. Lesson: —.

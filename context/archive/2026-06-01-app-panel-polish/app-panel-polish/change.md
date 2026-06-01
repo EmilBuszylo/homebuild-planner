@@ -1,10 +1,10 @@
 ---
 change_id: app-panel-polish
 title: App panel polish
-status: implementing
+status: archived
 created: 2026-06-01
 updated: 2026-06-01
-archived_at: null
+archived_at: 2026-06-01T12:00:00Z
 ---
 
 ## Notes
