@@ -1,3 +1,7 @@
+import {
+  COST_TABLE_DISCLAIMER,
+  COST_TABLE_REFINED_APPENDIX,
+} from "@/lib/copy/orientational";
 import type { PlanResultsDto } from "@/lib/plan-results";
 import { formatPln } from "@/lib/format/currency";
 import { formatBenchmarkAsOf } from "@/lib/format/plan-date";
@@ -9,12 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-const DISCLAIMER =
-  "Powyższe kwoty mają charakter orientacyjny i nie stanowią oferty handlowej ani wiążącej wyceny.";
-
-const REFINED_DISCLAIMER =
-  "Koszty mogą uwzględniać orientacyjne indeksy rynkowe (cache bazy) — nadal nie stanowią oferty handlowej.";
 
 type PlanCostTableProps = {
   results: PlanResultsDto;
@@ -80,8 +78,8 @@ export function PlanCostTable({ results }: PlanCostTableProps) {
           </table>
         </div>
         <p className="text-muted-foreground text-xs leading-relaxed">
-          {DISCLAIMER}
-          {results.refinementApplied ? ` ${REFINED_DISCLAIMER}` : null}
+          {COST_TABLE_DISCLAIMER}
+          {results.refinementApplied ? ` ${COST_TABLE_REFINED_APPENDIX}` : null}
         </p>
       </CardContent>
     </Card>
