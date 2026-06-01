@@ -392,8 +392,8 @@ Brak migracji DB. Deploy: standard Vercel build (test w CI już jest).
 
 #### Automated
 
-- [ ] 4.1 `pnpm lint`
-- [ ] 4.2 `pnpm build:ci`
+- [x] 4.1 `pnpm lint` — 1c49728
+- [x] 4.2 `pnpm build:ci` — 1c49728
 
 #### Manual
 

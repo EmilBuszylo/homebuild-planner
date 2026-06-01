@@ -26,21 +26,35 @@ export function StepNavigation({
   const isSummary = currentStep === totalSteps - 1;
 
   return (
-    <div className="flex items-center justify-between pt-4">
+    <div className="flex flex-col gap-2 pt-4 sm:flex-row sm:items-center sm:justify-between">
       {currentStep > 0 ? (
-        <Button type="button" variant="outline" onClick={onBack}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
+          className="w-full sm:w-auto"
+        >
           Wstecz
         </Button>
       ) : (
-        <div />
+        <div className="hidden sm:block" aria-hidden />
       )}
 
       {isSummary ? (
-        <Button type="button" onClick={onSubmit} disabled={isSubmitting}>
+        <Button
+          type="button"
+          onClick={onSubmit}
+          disabled={isSubmitting}
+          className="w-full sm:ml-auto sm:w-auto"
+        >
           {isSubmitting ? submittingLabel : submitLabel}
         </Button>
       ) : (
-        <Button type="button" onClick={onNext}>
+        <Button
+          type="button"
+          onClick={onNext}
+          className="w-full sm:ml-auto sm:w-auto"
+        >
           Dalej
         </Button>
       )}

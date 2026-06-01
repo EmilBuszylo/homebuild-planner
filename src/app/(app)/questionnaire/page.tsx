@@ -49,7 +49,7 @@ export default async function QuestionnairePage() {
   return (
     <AppPageShell width="narrow">
       <div className="mb-6 space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {planId ? "Edycja ankiety" : "Ankieta planistyczna"}
         </h1>
         <p className="text-sm text-muted-foreground">
