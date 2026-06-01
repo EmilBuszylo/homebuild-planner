@@ -1,3 +1,4 @@
+import { KPI_LABELS } from "@/lib/copy/orientational";
 import { formatPlDate } from "@/lib/format/date";
 import { formatPln } from "@/lib/format/currency";
 import type { PlanResultsDto } from "@/lib/plan-results";
@@ -19,7 +20,7 @@ export function PlanSummaryStrip({ results }: PlanSummaryStripProps) {
     <div className="grid gap-4 rounded-lg border bg-muted/30 p-4 sm:grid-cols-3 sm:p-5">
       <div className="space-y-1">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Łączny koszt orientacyjny
+          {KPI_LABELS.totalCost}
         </p>
         <p className="text-2xl font-semibold tracking-tight">
           {formatPln(results.totalCost)}
@@ -27,7 +28,7 @@ export function PlanSummaryStrip({ results }: PlanSummaryStripProps) {
       </div>
       <div className="space-y-1">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Planowany start
+          {KPI_LABELS.plannedStart}
         </p>
         <p className="text-lg font-medium">
           {results.keyDate ? formatPlDate(results.keyDate) : "—"}
@@ -35,7 +36,7 @@ export function PlanSummaryStrip({ results }: PlanSummaryStripProps) {
       </div>
       <div className="space-y-1">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Etapy
+          {KPI_LABELS.stageCount}
         </p>
         <p className="text-lg font-medium">{stageLabel}</p>
       </div>

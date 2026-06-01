@@ -85,10 +85,6 @@ export default async function PlanPage({ params }: PlanPageProps) {
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Twój plan budowy
           </h1>
-          <p className="max-w-2xl text-muted-foreground">
-            Orientacyjny kosztorys i harmonogram na podstawie Twoich odpowiedzi
-            w ankiecie.
-          </p>
         </div>
         <Button asChild variant="outline" className="shrink-0">
           <Link href={routes.questionnaire}>Edytuj odpowiedzi</Link>

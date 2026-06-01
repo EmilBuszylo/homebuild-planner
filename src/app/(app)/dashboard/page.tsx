@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ORIENTATIONAL_TRUST_HEADING } from "@/lib/copy/orientational";
 import { fetchPlanResults } from "@/lib/api/fetch-plan-results";
 import { formatPlDate } from "@/lib/format/date";
 import { prisma } from "@/lib/prisma";
@@ -98,10 +99,7 @@ export default async function DashboardPage() {
           <Card className="max-w-xl">
             <CardHeader>
               <CardTitle>Zacznij od ankiety</CardTitle>
-              <CardDescription>
-                Orientacyjnie, na podstawie Twoich odpowiedzi — bez zobowiązań
-                wobec wykonawcy.
-              </CardDescription>
+              <CardDescription>{ORIENTATIONAL_TRUST_HEADING}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">

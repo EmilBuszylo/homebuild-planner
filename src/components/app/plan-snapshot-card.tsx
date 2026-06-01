@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { KPI_LABELS } from "@/lib/copy/orientational";
 import { formatPlDate } from "@/lib/format/date";
 import { formatPln } from "@/lib/format/currency";
 import type { PlanResultsDto } from "@/lib/plan-results";
@@ -48,7 +49,7 @@ export function PlanSnapshotCard({
         <dl className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-1">
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Łączny koszt
+              {KPI_LABELS.totalCost}
             </dt>
             <dd className="text-2xl font-semibold tracking-tight">
               {formatPln(results.totalCost)}
@@ -56,7 +57,7 @@ export function PlanSnapshotCard({
           </div>
           <div className="space-y-1">
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Start budowy
+              {KPI_LABELS.plannedStart}
             </dt>
             <dd className="text-lg font-medium">
               {results.keyDate ? formatPlDate(results.keyDate) : "—"}
@@ -64,7 +65,7 @@ export function PlanSnapshotCard({
           </div>
           <div className="space-y-1">
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Etapy w planie
+              {KPI_LABELS.stageCount}
             </dt>
             <dd className="text-lg font-medium">{stageLabel}</dd>
           </div>

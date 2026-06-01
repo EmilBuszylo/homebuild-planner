@@ -2,6 +2,7 @@
 
 import type { UseFormGetValues } from "react-hook-form";
 
+import { OrientationalDisclaimer } from "@/components/app/orientational-disclaimer";
 import type { QuestionDefinition } from "@/lib/types/domain";
 import type { QuestionnaireInputs } from "@/lib/validations/questionnaire";
 import { SummaryHintIcon } from "@/components/questionnaire/question-hint";
@@ -121,6 +122,8 @@ export function QuestionnaireSummary({
           </CardContent>
         </Card>
       ))}
+
+      <OrientationalDisclaimer />
     </div>
   );
 }

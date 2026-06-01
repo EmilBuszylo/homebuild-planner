@@ -355,21 +355,21 @@ Brak migracji DB. Deploy: standard Vercel build (test w CI już jest).
 
 #### Automated
 
-- [x] 1.1 `pnpm lint`
-- [x] 1.2 `pnpm test`
-- [x] 1.3 `pnpm build:ci`
+- [x] 1.1 `pnpm lint` — d25065d
+- [x] 1.2 `pnpm test` — d25065d
+- [x] 1.3 `pnpm build:ci` — d25065d
 
 #### Manual
 
-- [x] 1.4 Landing trust/footer i plan cost footer — spójny ton PL
+- [x] 1.4 Landing trust/footer i plan cost footer — spójny ton PL — d25065d
 
 ### Phase 2: App surfaces — panel, ankieta, plan
 
 #### Automated
 
-- [x] 2.1 `pnpm lint`
-- [x] 2.2 `pnpm test`
-- [x] 2.3 `pnpm build:ci`
+- [x] 2.1 `pnpm lint` — 5a44470
+- [x] 2.2 `pnpm test` — 5a44470
+- [x] 2.3 `pnpm build:ci` — 5a44470
 
 #### Manual
 

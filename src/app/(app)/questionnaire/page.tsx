@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { AppPageShell } from "@/components/app/app-page-shell";
 import { QuestionnaireForm } from "@/components/questionnaire/questionnaire-form";
+import { QUESTIONNAIRE_INTRO_NEW } from "@/lib/copy/orientational";
 import { responsesToQuestionnaireInputs } from "@/lib/questionnaire/responses-to-inputs";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
@@ -52,7 +53,7 @@ export default async function QuestionnairePage() {
         <p className="text-sm text-muted-foreground">
           {planId
             ? "Zmień odpowiedzi i przelicz orientacyjny kosztorys oraz harmonogram."
-            : "Odpowiedz na pytania o budowę — na końcu otrzymasz wstępny plan."}
+            : QUESTIONNAIRE_INTRO_NEW}
         </p>
       </div>
       <QuestionnaireForm
