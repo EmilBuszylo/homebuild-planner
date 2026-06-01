@@ -31,10 +31,11 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - `pnpm build` — production build; run before claiming deploy readiness.
 - `pnpm start` — serve production build locally.
 - `pnpm lint` — ESLint via @eslint.config.mjs and `eslint-config-next`.
+- `pnpm test` — Vitest unit tests for pure logic in `src/lib/` (colocated `*.test.ts`; no DB required).
 - Prisma: `pnpm db:generate` / `prisma generate` — agents may run. `pnpm db:migrate` / `prisma migrate dev` and `pnpm db:studio` — **owner only**; agents stop and request these when required (see Hard rules). Vercel/production applies pending migrations via `prisma migrate deploy` in `pnpm build` when env is configured.
 - **Local Postgres (Docker):** @docker-compose.yml — Postgres 16 on host port **55432** (`homebuild` / `homebuild` / `homebuild_planner`). `pnpm db:docker:up` starts the DB; `pnpm db:docker:down` stops the container, removes the volume and compose images. Point `DATABASE_URL` and `DIRECT_URL` in `.env.local` at `127.0.0.1:55432` (see @.env.example); no pooler locally.
 - **First / production deploy:** follow @context/deployment/deploy-plan.md (Vercel env + GitHub Actions; `prisma migrate deploy` runs automatically in `pnpm build` on Vercel).
-- No test runner or `*.test.*` files yet — do not invent a test stack; add tests only when the user asks.
+- Do not add E2E (Playwright) or component test stacks without an explicit user request; extend Vitest coverage for new pure `src/lib/` logic when changing critical paths (benchmarks, rate limits, generation).
 
 ## UI copy and routing
 

@@ -1,7 +1,7 @@
 ---
 change_id: vitest-minimal-setup
 title: Vitest minimal setup
-status: implementing
+status: implemented
 created: 2026-06-01
 updated: 2026-06-01
 archived_at: null

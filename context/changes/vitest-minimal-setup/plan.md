@@ -245,9 +245,9 @@ Brak migracji DB. `pnpm install` wymagany po merge (nowa devDependency).
 
 #### Automated
 
-- [ ] 3.1 `pnpm lint`
-- [ ] 3.2 `pnpm test`
-- [ ] 3.3 `pnpm build:ci`
+- [x] 3.1 `pnpm lint` — e071acc
+- [x] 3.2 `pnpm test` — e071acc
+- [x] 3.3 `pnpm build:ci` — e071acc
 
 #### Manual
 

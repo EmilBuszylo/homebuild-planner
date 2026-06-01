@@ -28,7 +28,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym potrzebuje jasnej ma
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-07 | vitest-minimal-setup | (foundation) Uruchomić `pnpm test` z minimalnym Vitest i kilkoma testami logiki czystej | — | Success Criteria (guardrails), NFR | proposed |
+| F-07 | vitest-minimal-setup | (foundation) Uruchomić `pnpm test` z minimalnym Vitest i kilkoma testami logiki czystej | — | Success Criteria (guardrails), NFR | done |
 | S-07 | questionnaire-hints | Przy pytaniach ankiety czytać podpowiedź: co oznacza pytanie i jak wpływa na wycenę | — | FR-003, FR-004, Business Logic | done |
 | S-08 | horizontal-timeline-coaching | Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi | — | FR-006, NFR (czytelna prezentacja) | done |
 | S-09 | app-panel-polish | Korzystać z dopracowanego panelu (hub, nawigacja, układ strony planu) zamiast surowego szkieletu | S-08 | FR-006, NFR (mobile) | done |
@@ -69,7 +69,8 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Scope creep — tylko minimalny setup i 2–3 testy; bez E2E i bez pełnego coverage.
-- **Status:** proposed
+- **Status:** done
+- **Delivered (2026-06-01):** Vitest 3.2.4, `pnpm test`, 7 unit tests (`apply-market-benchmarks`, `getPlanRecalcPolicy`), CI step Test.
 
 ## Slices
 
@@ -145,11 +146,11 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
-| F-07 | vitest-minimal-setup | Vitest + 2–3 testy jednostkowe logiki czystej | yes | Równolegle z S-07/S-08 |
+| F-07 | vitest-minimal-setup | Vitest + 2–3 testy jednostkowe logiki czystej | — | done |
 | S-07 | questionnaire-hints | Hinty przy pytaniach ankiety | — | done |
 | S-08 | horizontal-timeline-coaching | Poziomy timeline + notki praktyczne | — | done |
 | S-09 | app-panel-polish | Dopracowanie panelu i układu planu | — | done |
-| S-10 | mvp-polish-finish | Capstone: spójne, gotowe MVP | no | Po S-07, S-08, S-09, F-07 |
+| S-10 | mvp-polish-finish | Capstone: spójne, gotowe MVP | yes | Po S-07, S-08, S-09, F-07 (F-07 done) |
 | S-11 | plan-results-polish-details | Polish details: kosztorys + timeline UX | no | Po S-10; faza 3 |
 
 ## Open Roadmap Questions
