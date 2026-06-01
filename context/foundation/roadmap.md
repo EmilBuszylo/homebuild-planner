@@ -32,7 +32,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym potrzebuje jasnej ma
 | S-07 | questionnaire-hints | Przy pytaniach ankiety czytać podpowiedź: co oznacza pytanie i jak wpływa na wycenę | — | FR-003, FR-004, Business Logic | done |
 | S-08 | horizontal-timeline-coaching | Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi | — | FR-006, NFR (czytelna prezentacja) | done |
 | S-09 | app-panel-polish | Korzystać z dopracowanego panelu (hub, nawigacja, układ strony planu) zamiast surowego szkieletu | S-08 | FR-006, NFR (mobile) | done |
-| S-10 | mvp-polish-finish | Doświadczyć spójnego, „gotowego” MVP: copy, disclaimery orientacyjne, mobile, brak surowych krawędzi | S-07, S-08, S-09, F-07 | US-01, FR-003–FR-006, FR-008–FR-009, Success Criteria | proposed |
+| S-10 | mvp-polish-finish | Doświadczyć spójnego, „gotowego” MVP: copy, disclaimery orientacyjne, mobile, brak surowych krawędzi | S-07, S-08, S-09, F-07 | US-01, FR-003–FR-006, FR-008–FR-009, Success Criteria | done |
 | S-11 | plan-results-polish-details | (faza 3) Dalsze usprawnienia prezentacji kosztorysu i harmonogramu poza zakresem S-08 | S-10 | FR-006 | parked |
 
 ## Streams
@@ -140,7 +140,7 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** S-10 nie może stać się nieskończonym „jeszcze tylko…” — checklista zamknięcia w planie change.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -189,3 +189,4 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **S-07: Użytkownik przy (prawie) każdym pytaniu ankiety widzi hint: co oznacza pytanie (np. stan surowy otwarty vs zamknięty), jak orientacyjnie wpływa na kalkulację i na całość planu.** — Archived 2026-05-29 → `context/archive/2026-05-29-questionnaire-hints/`. Lesson: —.
 - **S-09: Użytkownik ma przyjazny hub i spójny układ w `(app)`: dashboard z sensownymi CTA i kontekstem planu, strona planu z hierarchią wizualną (nagłówek, podsumowanie, wyniki), mniej „surowego” centrowania i pustej przestrzeni.** — Archived 2026-06-01 → `context/archive/2026-06-01-app-panel-polish/`. Lesson: —.
 - **F-07: (foundation) Uruchomić `pnpm test` z minimalnym Vitest i kilkoma testami logiki czystej** — Archived 2026-06-01 → `context/archive/2026-06-01-vitest-minimal-setup/`. Lesson: —.
+- **S-10: Użytkownik odbiera produkt jako **skończone MVP**: spójny język (orientacyjne wyceny), disclaimery, sprawdzenie mobile, spójność landing ↔ panel ↔ ankieta ↔ plan; bez funkcji spoza PRD must-have.** — Archived 2026-06-01 → `context/archive/2026-06-01-mvp-polish-finish/`. Lesson: —.

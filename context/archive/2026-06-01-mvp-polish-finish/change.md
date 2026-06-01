@@ -1,10 +1,10 @@
 ---
 change_id: mvp-polish-finish
 title: MVP polish capstone
-status: implementing
+status: archived
 created: 2026-06-01
-updated: 2026-05-28
-archived_at: null
+updated: 2026-06-01
+archived_at: 2026-06-01T10:53:08Z
 ---
 
 ## Notes
