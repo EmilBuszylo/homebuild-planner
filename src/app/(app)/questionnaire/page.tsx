@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { AppPageShell } from "@/components/app/app-page-shell";
 import { QuestionnaireForm } from "@/components/questionnaire/questionnaire-form";
 import { responsesToQuestionnaireInputs } from "@/lib/questionnaire/responses-to-inputs";
 import { prisma } from "@/lib/prisma";
@@ -38,12 +39,12 @@ export default async function QuestionnairePage() {
   });
 
   return (
-    <div className="flex min-h-[calc(100svh-3.5rem)] flex-col items-center justify-center p-6 md:p-10">
-      <div className="mb-6 w-full max-w-2xl space-y-2 text-center">
-        <h1 className="text-2xl font-bold">
+    <AppPageShell width="narrow">
+      <div className="mb-6 space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight">
           {planId ? "Edycja ankiety" : "Ankieta planistyczna"}
         </h1>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {planId
             ? "Zmień odpowiedzi i przelicz orientacyjny kosztorys oraz harmonogram."
             : "Odpowiedz na pytania o budowę — na końcu otrzymasz wstępny plan."}
@@ -54,6 +55,6 @@ export default async function QuestionnairePage() {
         planId={planId}
         initialValues={initialValues}
       />
-    </div>
+    </AppPageShell>
   );
 }
