@@ -223,23 +223,23 @@ Brak migracji DB. `pnpm install` wymagany po merge (nowa devDependency).
 
 #### Automated
 
-- [x] 1.1 `pnpm install` (lockfile po `vitest`)
-- [x] 1.2 `pnpm exec vitest --version`
+- [x] 1.1 `pnpm install` (lockfile po `vitest`) — dea8e4a
+- [x] 1.2 `pnpm exec vitest --version` — dea8e4a
 
 #### Manual
 
-- [ ] 1.3 Brak konfliktu z istniejącym `tsconfig` / build
+- [x] 1.3 Brak konfliktu z istniejącym `tsconfig` / build — dea8e4a
 
 ### Phase 2: Unit tests — benchmarks i polityka rate limit
 
 #### Automated
 
-- [ ] 2.1 `pnpm test` — wszystkie testy zielone
-- [ ] 2.2 `pnpm lint` — bez nowych błędów w plikach testów
+- [x] 2.1 `pnpm test` — wszystkie testy zielone — 7ce26ca
+- [x] 2.2 `pnpm lint` — bez nowych błędów w plikach testów — 7ce26ca
 
 #### Manual
 
-- [ ] 2.3 Nazwy i opisy testów są czytelne przy przeglądzie
+- [x] 2.3 Nazwy i opisy testów są czytelne przy przeglądzie — 7ce26ca
 
 ### Phase 3: CI i dokumentacja agenta
 
