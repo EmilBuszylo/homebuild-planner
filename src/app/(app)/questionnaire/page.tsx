@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { AppPageShell } from "@/components/app/app-page-shell";
@@ -6,6 +7,10 @@ import { responsesToQuestionnaireInputs } from "@/lib/questionnaire/responses-to
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { routes } from "@/lib/routes";
+
+export const metadata: Metadata = {
+  title: "Ankieta",
+};
 
 export default async function QuestionnairePage() {
   const supabase = await createClient();
