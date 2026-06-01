@@ -112,5 +112,5 @@ export async function register(values: {
 export async function signOut(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/logowanie");
+  redirect(routes.login);
 }

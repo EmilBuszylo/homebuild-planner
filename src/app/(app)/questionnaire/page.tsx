@@ -4,13 +4,15 @@ import { redirect } from "next/navigation";
 import { AppPageShell } from "@/components/app/app-page-shell";
 import { QuestionnaireForm } from "@/components/questionnaire/questionnaire-form";
 import { QUESTIONNAIRE_INTRO_NEW } from "@/lib/copy/orientational";
+import { PAGE_METADATA } from "@/lib/copy/site";
 import { responsesToQuestionnaireInputs } from "@/lib/questionnaire/responses-to-inputs";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = {
-  title: "Ankieta",
+  title: PAGE_METADATA.questionnaire.title,
+  description: PAGE_METADATA.questionnaire.description,
 };
 
 export default async function QuestionnairePage() {

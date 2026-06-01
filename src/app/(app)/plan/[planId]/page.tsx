@@ -9,12 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { PlanCostTable } from "@/components/plan/plan-cost-table";
 import { PlanTimeline } from "@/components/plan/plan-timeline";
+import { PAGE_METADATA } from "@/lib/copy/site";
 import { fetchPlanResults } from "@/lib/api/fetch-plan-results";
 import { createClient } from "@/lib/supabase/server";
 import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = {
-  title: "Twój plan budowy",
+  title: PAGE_METADATA.plan.title,
+  description: PAGE_METADATA.plan.description,
 };
 
 interface PlanPageProps {

@@ -83,7 +83,7 @@ export function LoginForm({
           </Button>
         </AuthSubmitField>
         <AuthFormFooter>
-          Nie masz konta? <Link href={routes.register}>Zarejestruj się</Link>
+          Nie masz konta? <Link href={routes.register}>Załóż konto</Link>
         </AuthFormFooter>
       </AuthFormGroup>
     </form>

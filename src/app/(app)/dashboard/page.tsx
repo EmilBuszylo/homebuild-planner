@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ORIENTATIONAL_TRUST_HEADING } from "@/lib/copy/orientational";
+import { PAGE_METADATA } from "@/lib/copy/site";
 import { fetchPlanResults } from "@/lib/api/fetch-plan-results";
 import { formatPlDate } from "@/lib/format/date";
 import { prisma } from "@/lib/prisma";
@@ -21,7 +22,8 @@ import { routes } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Panel",
+  title: PAGE_METADATA.dashboard.title,
+  description: PAGE_METADATA.dashboard.description,
 };
 
 export default async function DashboardPage() {

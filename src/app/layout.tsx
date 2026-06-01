@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { SITE_DESCRIPTION } from "@/lib/copy/site";
 import { cn } from "@/lib/utils";
 
 const playfairDisplayHeading = Playfair_Display({subsets:['latin'],variable:'--font-heading'});
@@ -22,8 +23,7 @@ export const metadata: Metadata = {
     default: "Planer budowy domu",
     template: "%s | Planer budowy domu",
   },
-  description:
-    "Wypełnij ankietę o swoim domu i otrzymaj orientacyjny kosztorys etapów budowy oraz harmonogram prac — dla inwestorów budujących w trybie gospodarczym.",
+  description: SITE_DESCRIPTION,
 };
 
 export default function RootLayout({
