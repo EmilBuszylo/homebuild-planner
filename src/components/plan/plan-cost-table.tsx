@@ -3,6 +3,7 @@ import {
   COST_TABLE_REFINED_APPENDIX,
 } from "@/lib/copy/orientational";
 import type { PlanResultsDto } from "@/lib/plan-results";
+import { sortPlanStagesChronologically } from "@/lib/plan/sort-plan-stages-chronologically";
 import { formatPln } from "@/lib/format/currency";
 import { formatBenchmarkAsOf } from "@/lib/format/plan-date";
 import { formatPlanCategory } from "@/lib/format/plan-category";
@@ -19,6 +20,8 @@ type PlanCostTableProps = {
 };
 
 export function PlanCostTable({ results }: PlanCostTableProps) {
+  const stages = sortPlanStagesChronologically(results.stages);
+
   return (
     <Card>
       <CardHeader>
@@ -53,7 +56,7 @@ export function PlanCostTable({ results }: PlanCostTableProps) {
               </tr>
             </thead>
             <tbody>
-              {results.stages.map((stage) => (
+              {stages.map((stage) => (
                 <tr key={stage.stageSlug} className="border-b last:border-0">
                   <td className="px-4 py-3">{stage.name}</td>
                   <td className="px-4 py-3 text-muted-foreground">

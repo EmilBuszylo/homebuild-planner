@@ -354,13 +354,13 @@ Brak migracji DB. Deploy: standard Vercel build.
 
 #### Automated
 
-- [ ] 4.1 `pnpm lint`
-- [ ] 4.2 `pnpm test`
-- [ ] 4.3 `pnpm build:ci`
+- [x] 4.1 `pnpm lint`
+- [x] 4.2 `pnpm test`
+- [x] 4.3 `pnpm build:ci`
 
 #### Manual
 
-- [ ] 4.4 Ta sama kolejność etapów w tabeli i harmonogramie
+- [x] 4.4 Ta sama kolejność etapów w tabeli i harmonogramie
 
 ### Phase 5: Capstone verification
 
