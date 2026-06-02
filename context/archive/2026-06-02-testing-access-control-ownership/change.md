@@ -1,10 +1,10 @@
 ---
 change_id: testing-access-control-ownership
 title: Access control & ownership (test rollout Phase 1)
-status: implemented
+status: archived
 created: 2026-06-02
 updated: 2026-06-02
-archived_at: null
+archived_at: 2026-06-02T12:00:00Z
 ---
 
 ## Notes
