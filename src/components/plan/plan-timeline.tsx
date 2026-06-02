@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import { Lightbulb } from "lucide-react";
 
-import { PLAN_TIMELINE_SCROLL_HINT, PLAN_TIMELINE_SCROLL_REGION_ARIA_LABEL } from "@/lib/copy/orientational";
+import {
+  PLAN_TIMELINE_COACHING_CARD_SUFFIX,
+  PLAN_TIMELINE_COACHING_MARKER_ARIA_LABEL,
+  PLAN_TIMELINE_SCROLL_HINT,
+  PLAN_TIMELINE_SCROLL_REGION_ARIA_LABEL,
+} from "@/lib/copy/orientational";
 import type { PlanResultsDto } from "@/lib/plan-results";
 import { addDaysToIsoDate } from "@/lib/format/plan-date";
 import {
@@ -20,11 +25,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 type PlanTimelineProps = {
@@ -36,6 +40,9 @@ const TIMELINE_MOBILE_MEDIA_QUERY = "(max-width: 639px)";
 const LABEL_COLUMN_WIDTH = "9.5rem";
 const ROW_HEIGHT = "3rem";
 const CALENDAR_HEIGHT = "2.5rem";
+
+const COACHING_POPOVER_CONTENT_CLASS =
+  "max-w-sm border-amber-200 bg-amber-50 text-left leading-relaxed text-amber-950 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-50";
 
 function useTimelinePxPerDay(): number {
   const [pxPerDay, setPxPerDay] = useState(TIMELINE_PX_PER_DAY);
@@ -149,32 +156,32 @@ function CoachingMarker({
         : "-translate-x-1/2";
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         <button
           type="button"
           className={cn(
-            "absolute top-1/2 z-20 flex size-7 -translate-y-1/2 cursor-help items-center justify-center rounded-full border-2 border-amber-600 bg-amber-400 shadow-md ring-2 ring-amber-500/40 dark:border-amber-500 dark:bg-amber-600 dark:ring-amber-400/30",
+            "absolute top-1/2 z-20 flex size-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-2 border-amber-600 bg-amber-400 shadow-md ring-2 ring-amber-500/40 dark:border-amber-500 dark:bg-amber-600 dark:ring-amber-400/30",
             triggerAlign,
           )}
           style={{ left: leftPx }}
-          aria-label="Wskazówka — najedź, aby przeczytać"
+          aria-label={PLAN_TIMELINE_COACHING_MARKER_ARIA_LABEL}
         >
           <Lightbulb
             className="size-3.5 shrink-0 text-amber-950 dark:text-amber-50"
             aria-hidden
           />
         </button>
-      </TooltipTrigger>
-      <TooltipContent
+      </PopoverTrigger>
+      <PopoverContent
         side="top"
         sideOffset={8}
-        className="max-w-sm border-amber-200 bg-amber-50 text-left leading-relaxed text-amber-950 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-50"
+        className={COACHING_POPOVER_CONTENT_CLASS}
       >
         <p className="font-semibold">Wskazówka</p>
         <p className="mt-1.5 font-normal">{marker.note}</p>
-      </TooltipContent>
-    </Tooltip>
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -197,126 +204,122 @@ export function PlanTimeline({ results }: PlanTimelineProps) {
         <CardDescription>
           Planowany przebieg etapów od {anchorLabel} (dzień 0). Każdy wiersz to
           jeden etap; oś u góry pokazuje daty.
-          {hasAnyCoaching
-            ? " Żółte ikony na wierszu etapu pokazują poradę w danym momencie harmonogramu — najedź, aby przeczytać."
-            : null}
+          {hasAnyCoaching ? PLAN_TIMELINE_COACHING_CARD_SUFFIX : null}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {stages.length === 0 ? (
           <p className="text-muted-foreground text-sm">Brak etapów w planie.</p>
         ) : (
-          <TooltipProvider delayDuration={200}>
-            <div className="space-y-2">
-              <p className="text-muted-foreground text-sm">
-                {PLAN_TIMELINE_SCROLL_HINT}
-              </p>
-              <div className="flex overflow-hidden rounded-md border">
+          <div className="space-y-2">
+            <p className="text-muted-foreground text-sm">
+              {PLAN_TIMELINE_SCROLL_HINT}
+            </p>
+            <div className="flex overflow-hidden rounded-md border">
+              <div
+                className="relative z-20 shrink-0 border-r bg-muted/30"
+                style={{ width: LABEL_COLUMN_WIDTH }}
+              >
                 <div
-                  className="relative z-20 shrink-0 border-r bg-muted/30"
-                  style={{ width: LABEL_COLUMN_WIDTH }}
+                  className="border-b px-2 text-xs font-medium text-muted-foreground"
+                  style={{ height: CALENDAR_HEIGHT }}
+                  aria-hidden
+                />
+                {stages.map((stage) => (
+                  <div
+                    key={stage.stageSlug}
+                    className="flex flex-col justify-center border-b px-2 py-1 last:border-b-0"
+                    style={{ height: ROW_HEIGHT }}
+                  >
+                    <p className="truncate text-xs font-medium leading-tight">
+                      {stage.name}
+                    </p>
+                    <p className="text-muted-foreground truncate text-[10px] leading-tight">
+                      {formatStageRange(
+                        results.keyDate,
+                        stage.startDay,
+                        stage.durationDays,
+                      )}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div
+                className="relative min-w-0 flex-1 overflow-x-auto"
+                role="region"
+                aria-label={PLAN_TIMELINE_SCROLL_REGION_ARIA_LABEL}
+                tabIndex={0}
+              >
+                <div
+                  className="relative"
+                  style={{ minWidth: `${timelineMinWidth}px` }}
                 >
                   <div
-                    className="border-b px-2 text-xs font-medium text-muted-foreground"
+                    className="relative border-b bg-muted/20"
                     style={{ height: CALENDAR_HEIGHT }}
                     aria-hidden
-                  />
-                  {stages.map((stage) => (
-                    <div
-                      key={stage.stageSlug}
-                      className="flex flex-col justify-center border-b px-2 py-1 last:border-b-0"
-                      style={{ height: ROW_HEIGHT }}
-                    >
-                      <p className="truncate text-xs font-medium leading-tight">
-                        {stage.name}
-                      </p>
-                      <p className="text-muted-foreground truncate text-[10px] leading-tight">
-                        {formatStageRange(
-                          results.keyDate,
-                          stage.startDay,
-                          stage.durationDays,
-                        )}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                <div
-                  className="relative min-w-0 flex-1 overflow-x-auto"
-                  role="region"
-                  aria-label={PLAN_TIMELINE_SCROLL_REGION_ARIA_LABEL}
-                  tabIndex={0}
-                >
-                  <div
-                    className="relative"
-                    style={{ minWidth: `${timelineMinWidth}px` }}
                   >
-                    <div
-                      className="relative border-b bg-muted/20"
-                      style={{ height: CALENDAR_HEIGHT }}
-                      aria-hidden
-                    >
-                      {axisTicks.map((tick) => (
-                        <div
-                          key={tick.day}
-                          className="absolute top-0 flex h-full flex-col"
-                          style={{
-                            left: `${(tick.day / totalSpanDays) * 100}%`,
-                            transform:
-                              tick.align === "end"
-                                ? "translateX(-100%)"
-                                : undefined,
-                          }}
-                        >
-                          <span className="whitespace-nowrap px-1 pt-1 text-[10px] text-muted-foreground">
-                            {tick.label}
-                          </span>
-                          <span className="mt-auto h-full w-px bg-border" />
-                        </div>
-                      ))}
-                    </div>
-
-                    {stages.map((stage) => (
+                    {axisTicks.map((tick) => (
                       <div
-                        key={stage.stageSlug}
-                        className="relative overflow-hidden border-b last:border-b-0"
-                        style={{ height: ROW_HEIGHT }}
+                        key={tick.day}
+                        className="absolute top-0 flex h-full flex-col"
+                        style={{
+                          left: `${(tick.day / totalSpanDays) * 100}%`,
+                          transform:
+                            tick.align === "end"
+                              ? "translateX(-100%)"
+                              : undefined,
+                        }}
                       >
-                        <div
-                          className="pointer-events-none absolute inset-0"
-                          aria-hidden
-                        >
-                          {axisTicks.map((tick) => (
-                            <span
-                              key={tick.day}
-                              className="absolute top-0 h-full w-px bg-border/50"
-                              style={{
-                                left: `${(tick.day / totalSpanDays) * 100}%`,
-                              }}
-                            />
-                          ))}
-                        </div>
-                        <StageBar
-                          name={stage.name}
-                          startDay={stage.startDay}
-                          durationDays={stage.durationDays}
-                          totalSpanDays={totalSpanDays}
-                        />
-                        {stage.coachingMarkers.map((marker) => (
-                          <CoachingMarker
-                            key={marker.id}
-                            marker={marker}
-                            timelineWidthPx={timelineMinWidth}
-                            pxPerDay={pxPerDay}
-                          />
-                        ))}
+                        <span className="whitespace-nowrap px-1 pt-1 text-[10px] text-muted-foreground">
+                          {tick.label}
+                        </span>
+                        <span className="mt-auto h-full w-px bg-border" />
                       </div>
                     ))}
                   </div>
+
+                  {stages.map((stage) => (
+                    <div
+                      key={stage.stageSlug}
+                      className="relative overflow-hidden border-b last:border-b-0"
+                      style={{ height: ROW_HEIGHT }}
+                    >
+                      <div
+                        className="pointer-events-none absolute inset-0"
+                        aria-hidden
+                      >
+                        {axisTicks.map((tick) => (
+                          <span
+                            key={tick.day}
+                            className="absolute top-0 h-full w-px bg-border/50"
+                            style={{
+                              left: `${(tick.day / totalSpanDays) * 100}%`,
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <StageBar
+                        name={stage.name}
+                        startDay={stage.startDay}
+                        durationDays={stage.durationDays}
+                        totalSpanDays={totalSpanDays}
+                      />
+                      {stage.coachingMarkers.map((marker) => (
+                        <CoachingMarker
+                          key={marker.id}
+                          marker={marker}
+                          timelineWidthPx={timelineMinWidth}
+                          pxPerDay={pxPerDay}
+                        />
+                      ))}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-          </TooltipProvider>
+          </div>
         )}
       </CardContent>
     </Card>

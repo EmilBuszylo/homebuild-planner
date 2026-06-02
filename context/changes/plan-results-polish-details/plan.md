@@ -332,12 +332,12 @@ Brak migracji DB. Deploy: standard Vercel build.
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint`
-- [ ] 2.2 `pnpm build:ci`
+- [x] 2.1 `pnpm lint` — c2042be
+- [x] 2.2 `pnpm build:ci` — c2042be
 
 #### Manual
 
-- [ ] 2.3 Tap/click coaching na mobile i desktop
+- [x] 2.3 Tap/click coaching na mobile i desktop — c2042be
 
 ### Phase 3: Label column readability on narrow viewports
 

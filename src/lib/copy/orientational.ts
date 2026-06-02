@@ -33,3 +33,9 @@ export const PLAN_TIMELINE_SCROLL_HINT =
 
 export const PLAN_TIMELINE_SCROLL_REGION_ARIA_LABEL =
   "Oś czasu harmonogramu — przewiń w poziomie, aby zobaczyć wszystkie daty i etapy";
+
+export const PLAN_TIMELINE_COACHING_CARD_SUFFIX =
+  " Żółte ikony na wierszu etapu pokazują poradę w danym momencie harmonogramu — dotknij ikony, aby przeczytać.";
+
+export const PLAN_TIMELINE_COACHING_MARKER_ARIA_LABEL =
+  "Wskazówka — dotknij, aby przeczytać";
