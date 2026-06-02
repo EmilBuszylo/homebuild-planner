@@ -366,10 +366,10 @@ Brak migracji DB. Deploy: standard Vercel build.
 
 #### Automated
 
-- [ ] 5.1 `pnpm lint`
-- [ ] 5.2 `pnpm test`
-- [ ] 5.3 `pnpm build:ci`
+- [x] 5.1 `pnpm lint`
+- [x] 5.2 `pnpm test`
+- [x] 5.3 `pnpm build:ci`
 
 #### Manual
 
-- [ ] 5.4 Checklista S-11 (4 punkty w fazie 5) — wszystkie OK
+- [x] 5.4 Checklista S-11 (4 punkty w fazie 5) — wszystkie OK
