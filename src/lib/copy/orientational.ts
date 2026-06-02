@@ -27,3 +27,9 @@ export const KPI_LABELS = {
 
 export const QUESTIONNAIRE_INTRO_NEW =
   "Odpowiedz na pytania o budowę — na końcu otrzymasz orientacyjny kosztorys etapów i harmonogram prac.";
+
+export const PLAN_TIMELINE_SCROLL_HINT =
+  "Przesuń palcem w poziomie, aby zobaczyć całą oś czasu.";
+
+export const PLAN_TIMELINE_SCROLL_REGION_ARIA_LABEL =
+  "Oś czasu harmonogramu — przewiń w poziomie, aby zobaczyć wszystkie daty i etapy";
