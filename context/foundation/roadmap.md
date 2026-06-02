@@ -3,7 +3,7 @@ project: home-build-planner
 version: 2
 status: active
 created: 2026-05-25
-updated: 2026-06-01
+updated: 2026-06-02
 prd_version: 1
 main_goal: quality
 top_blocker: none
@@ -33,7 +33,7 @@ Osoba prywatna budująca pierwszy dom w trybie gospodarczym potrzebuje jasnej ma
 | S-08 | horizontal-timeline-coaching | Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi | — | FR-006, NFR (czytelna prezentacja) | done |
 | S-09 | app-panel-polish | Korzystać z dopracowanego panelu (hub, nawigacja, układ strony planu) zamiast surowego szkieletu | S-08 | FR-006, NFR (mobile) | done |
 | S-10 | mvp-polish-finish | Doświadczyć spójnego, „gotowego” MVP: copy, disclaimery orientacyjne, mobile, brak surowych krawędzi | S-07, S-08, S-09, F-07 | US-01, FR-003–FR-006, FR-008–FR-009, Success Criteria | done |
-| S-11 | plan-results-polish-details | (faza 3) Dalsze usprawnienia prezentacji kosztorysu i harmonogramu poza zakresem S-08 | S-10 | FR-006 | parked |
+| S-11 | plan-results-polish-details | (faza 3) Dalsze usprawnienia prezentacji kosztorysu i harmonogramu poza zakresem S-08 | S-10 | FR-006 | done |
 
 ## Streams
 
@@ -115,7 +115,7 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
   - Scalony kosztorys + timeline vs osobne widoki z lepszą hierarchią — Owner: user. Block: no.
   - Zakres kosmetyki kosztorysu (grupowanie, wykresy, mobile) — Owner: user. Block: no.
 - **Risk:** Scope creep — trzymać jako „polishing details”, nie nowe funkcje produktu (FR-007, kalendarz itd. nadal w Parked).
-- **Status:** parked
+- **Status:** done
 
 ### S-09: Dopracowany panel aplikacji
 
@@ -190,3 +190,4 @@ Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP 
 - **S-09: Użytkownik ma przyjazny hub i spójny układ w `(app)`: dashboard z sensownymi CTA i kontekstem planu, strona planu z hierarchią wizualną (nagłówek, podsumowanie, wyniki), mniej „surowego” centrowania i pustej przestrzeni.** — Archived 2026-06-01 → `context/archive/2026-06-01-app-panel-polish/`. Lesson: —.
 - **F-07: (foundation) Uruchomić `pnpm test` z minimalnym Vitest i kilkoma testami logiki czystej** — Archived 2026-06-01 → `context/archive/2026-06-01-vitest-minimal-setup/`. Lesson: —.
 - **S-10: Użytkownik odbiera produkt jako **skończone MVP**: spójny język (orientacyjne wyceny), disclaimery, sprawdzenie mobile, spójność landing ↔ panel ↔ ankieta ↔ plan; bez funkcji spoza PRD must-have.** — Archived 2026-06-01 → `context/archive/2026-06-01-mvp-polish-finish/`. Lesson: —.
+- **S-11: Użytkownik ma **dopracowaną** prezentację wyników planu: czytelniejszy kosztorys, ewentualnie scalony widok z harmonogramem, drobne UX timeline — ponad to, co dostarczyło S-08.** — Archived 2026-06-02 → `context/archive/2026-06-02-plan-results-polish-details/`. Lesson: —.

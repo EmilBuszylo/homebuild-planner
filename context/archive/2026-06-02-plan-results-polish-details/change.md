@@ -1,10 +1,10 @@
 ---
 change_id: plan-results-polish-details
 title: Plan results polish details
-status: implemented
+status: archived
 created: 2026-06-02
 updated: 2026-06-02
-archived_at: null
+archived_at: 2026-06-02T07:33:52Z
 ---
 
 ## Notes
