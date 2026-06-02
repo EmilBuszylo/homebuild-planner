@@ -343,12 +343,12 @@ Brak migracji DB. Deploy: standard Vercel build.
 
 #### Automated
 
-- [ ] 3.1 `pnpm lint`
-- [ ] 3.2 `pnpm build:ci`
+- [x] 3.1 `pnpm lint` — 88cc1f8
+- [x] 3.2 `pnpm build:ci` — 88cc1f8
 
 #### Manual
 
-- [ ] 3.3 Czytelne nazwy/daty na ~375px; desktop dual-pane OK
+- [x] 3.3 Czytelne nazwy/daty na ~375px; desktop dual-pane OK — 88cc1f8
 
 ### Phase 4: Cost table chronological order
 
