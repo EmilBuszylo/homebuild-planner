@@ -28,7 +28,7 @@
 - **Location**: context/foundation/test-plan.md:128-138
 - **Detail**: Desired state asked for all 10 test files “where relevant.” §4 test-base profile lists `sort-plan-stages-chronologically.test.ts`; §6.0 risk table does not. Acceptable for risk-oriented index; §4 is the full inventory.
 - **Fix**: Optional footnote under §6.0, or skip.
-- **Decision**: PENDING
+- **Decision**: FIXED — footnote under §6.0 (display sort file)
 
 ### F2 — §6.6 Phase 4 still points at active change folder
 
@@ -38,7 +38,7 @@
 - **Location**: context/foundation/test-plan.md:196
 - **Detail**: Phase 4 note links `context/changes/testing-cookbook-ci-floor/`. Prior phases use `context/archive/…` after archive. Expected until `/10x-archive testing-cookbook-ci-floor` runs.
 - **Fix**: Archive the change, then update §6.6 to archive path (or leave pointer during active window).
-- **Decision**: PENDING
+- **Decision**: FIXED — archived to `context/archive/2026-06-03-testing-cookbook-ci-floor/`; §6.6 updated
 
 ### F3 — Optional CI on `main` push not verified in Actions
 
@@ -48,7 +48,7 @@
 - **Location**: N/A (owner manual)
 - **Detail**: Phase 3 optional manual: confirm GitHub Actions runs `CI` on `push` to `main`. `ci.yml` is correct locally; remote run not evidenced in this review.
 - **Fix**: Owner merges/pushes to `main` and checks Actions tab once.
-- **Decision**: PENDING
+- **Decision**: ACCEPTED — owner will verify on next push to `main`
 
 ## Desired end state checklist
 
