@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-03 (Phase 3 rollout complete)
+> Last updated: 2026-06-03 (Phase 4 cookbook — in progress)
 
 ## 1. Strategy
 
@@ -74,7 +74,7 @@ orchestrator updates Status as artifacts appear on disk.
 | 1 | Access control & ownership | Prove plan isolation and stable auth on protected routes | #1, #2, #6 (server validation slice) | integration, unit (validation) | complete | testing-access-control-ownership |
 | 2 | Generation & recalc integrity | Oracle-backed benchmark tests plus generate/recalc integration | #3, #4, #5, #7 | unit, integration | complete | testing-generation-recalc-integrity |
 | 3 | Questionnaire hot-spot hardening | Regressions in high-churn questionnaire flow | #6, cross #4 | unit, integration | complete | testing-questionnaire-hardening |
-| 4 | Cookbook & CI floor | Fill §6 patterns; align §5 gates with what ships | cross-cutting | cookbook + minimal gaps | not started | — |
+| 4 | Cookbook & CI floor | Fill §6 patterns; align §5 gates with what ships | cross-cutting | cookbook + minimal gaps | planned | testing-cookbook-ci-floor |
 
 ## 4. Stack
 
@@ -84,39 +84,62 @@ The classic test base for this project. AI-native tools (if any) carry a
 | Layer | Tool | Version | Notes |
 |-------|------|---------|-------|
 | unit + integration | Vitest | ^3.2.4 | `pnpm test` / `vitest.config.mts`; colocate `*.test.ts` in `src/lib/` per AGENTS.md |
-| API mocking | none yet | — | See §3 Phase 2; research picks MSW or in-process mocks |
+| API mocking | in-process (Vitest) | — | `vi.hoisted` + `vi.mock` in handler test file (§6.2); not MSW |
 | e2e | none (by policy) | — | AGENTS.md: no Playwright without explicit request; interview Q5 excludes full-panel E2E |
 | accessibility | none yet | — | Not in MVP rollout |
 | AI-native | none | n/a | No phase justified under cost × signal for current MVP |
 
 **Stack grounding tools (current session):**
 
-- Docs: none (Context7 / framework docs MCP not available in current session); checked: 2026-06-02
-- Search: none (Exa / web search MCP not used for this write); checked: 2026-06-02
-- Runtime/browser: none; checked: 2026-06-02
-- Provider/platform: Linear + GitLab MCP (auth/issue only, not used for test design); checked: 2026-06-02
+- Docs: none (Context7 / framework docs MCP not available in current session); checked: 2026-06-03
+- Search: none (Exa / web search MCP not used for this write); checked: 2026-06-03
+- Runtime/browser: none; checked: 2026-06-03
+- Provider/platform: Linear + GitLab MCP (auth/issue only, not used for test design); checked: 2026-06-03
 
-**Test-base profile:** growing — Vitest configured; unit tests in `plan-generation/`,
-`plan/`, `plan-refinement/`, `rate-limit/`; handler integration in
-`src/lib/api/plans-route-handlers.test.ts`.
+**Test-base profile:** **10** colocated `*.test.ts` files under `src/lib/` (**54** Vitest cases as of Phase 3 rollout): handler hub `plans-route-handlers.test.ts`; generation `plan-generation/`, `plan/`, `plan-refinement/`; questionnaire `investment-state.test.ts`, `questionnaire/`; validation `validations/questionnaire-inputs.test.ts`; rate limit `rate-limit/plan-recalc.test.ts`; display `plan/sort-plan-stages-chronologically.test.ts`.
 
 ## 5. Quality Gates
 
 | Gate | Where | Required? | Catches |
 |------|-------|-----------|---------|
-| lint + typecheck | local + CI (`.github/workflows/ci.yml`) | required | syntactic / type drift |
-| unit (`pnpm test`) | local + CI | required | pure logic regressions in `src/lib/` |
-| production build (`pnpm build:ci`) | CI | required | compile / Next build breaks |
-| integration (handlers, auth, ownership) | local + CI | required (Phases 1–2 shipped) | IDOR, auth, generate/recalc, rate limit |
+| lint (`pnpm lint`) | local + CI | required | ESLint + TypeScript rules via `eslint-config-next/typescript` |
+| unit + handler integration (`pnpm test`) | local + CI | required | Vitest: pure logic and mocked route handlers in `src/lib/` |
+| production build (`pnpm build:ci`) | local + CI | required | `prisma generate` + Next compile (no DB migrate in CI) |
 | e2e (Playwright) | — | excluded unless explicitly requested | — |
 | post-edit hook | — | not planned | — |
 | visual diff / multimodal review | — | excluded per interview Q5 | — |
-| pre-prod smoke | manual | recommended before deploy | see `context/changes/testing-access-control-ownership/MANUAL-SMOKE.md` |
+| pre-prod smoke | manual | recommended before deploy | see §6.0 (manual smoke column) |
+
+There is **no** separate `pnpm typecheck` script; compile-time TypeScript is covered by **`pnpm build:ci`** plus ESLint TypeScript rules.
+
+### CI job (`.github/workflows/ci.yml`)
+
+**Triggers:** `pull_request` (and `push` to `main` after `testing-cookbook-ci-floor` Phase 3 lands).
+
+**Steps (in order):** `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm test` → `pnpm run build:ci`.
+
+**Note:** `deploy.yml` on `push` to `main` uses Vercel build and does **not** run Vitest; rely on the CI workflow above for test gates on merged code.
 
 ## 6. Cookbook Patterns
 
 How to add new tests in this project. Each sub-section fills in when the
 relevant rollout phase ships.
+
+### 6.0 Quick reference
+
+| Risk | Primary automated coverage | Manual smoke |
+|------|---------------------------|--------------|
+| #1 Plan IDOR | `src/lib/api/plans-route-handlers.test.ts` | `context/archive/2026-06-02-testing-access-control-ownership/MANUAL-SMOKE.md` (plan-by-ID) |
+| #2 Auth / session | `plans-route-handlers.test.ts` (401 cases) | same MANUAL-SMOKE (panel, `/ankieta`, API bez sesji) |
+| #3 Benchmark / cost sanity | `generate-plan-results.test.ts`, `apply-market-benchmarks.test.ts` | — |
+| #4 Generate path | `persist-plan-version.test.ts`, `plans-route-handlers.test.ts`, `questionnaire-pipeline.test.ts` | — |
+| #5 Recalc delta | `plans-route-handlers.test.ts` (recalc `area` inequality) | — |
+| #6 Invalid questionnaire payload | `questionnaire-inputs.test.ts`, `investment-state.test.ts`, `responses-to-inputs.test.ts`, handler **400** (create + recalc) | `context/archive/2026-06-03-testing-questionnaire-hardening/MANUAL-SMOKE.md` (step 1 UI) |
+| #7 Recalc rate limit | `plan-recalc.test.ts` (policy env), `plans-route-handlers.test.ts` (**429**) | — |
+
+**Vitest constraint:** handler mocks use `vi.hoisted` in the **same file** as the test — do not extract hoisted mocks to a shared module (see §6.2).
+
+Detail recipes: §6.1–§6.5. Rollout notes: §6.6.
 
 ### 6.1 Adding a unit test
 
@@ -139,6 +162,7 @@ relevant rollout phase ships.
 - **Rate limit (Risk #7)**: `vi.mock("@/lib/rate-limit/plan-recalc")`; `checkPlanRecalcLimit` → `{ allowed: false, ... }` → **429** + PL error; `planStageResult.createMany` not called.
 - **Shared payload**: `src/lib/api/test-fixtures/questionnaire-payload.ts` (`validQuestionnairePayload`).
 - **Reference tests**: ownership, 401, and 400 cases in `plans-route-handlers.test.ts`; schema unit tests in `src/lib/validations/questionnaire-inputs.test.ts`.
+- **Harness exports** (extend in-file only): `asUser`, `asAnonymous`, `harnessMocks`, `invokePostPlans`, `invokeRecalculate`, `invokeGetResults`, `readJson` from `plans-route-handlers.test.ts` — no separate mock package.
 - **Run locally**: `pnpm test` (no database; mocks only).
 
 ### 6.3 Adding an e2e test
@@ -167,7 +191,9 @@ an explicit product decision recorded outside this guide.
 
 **Phase 2 (generation & recalc integrity):** `POST /api/plans` can return **201** with zero `PlanStageResult` rows when generation filters to empty stages — documented in `persist-plan-version.test.ts` and handler Risk #4 regression tests; follow-up GET results returns **404**. A product guard (reject create when `results.length === 0`) is optional and not shipped in this rollout. Research: `context/archive/2026-06-02-testing-generation-recalc-integrity/research.md`.
 
-**Phase 3 (questionnaire hot-spot hardening):** `questionnaireFormSchema` has no `.refine()` — cross-field rules live in `investment-state.ts` (UI filters), `questionnaireInputsSchema` (API + submit), and `responsesToQuestionnaireInputs` (edit reload). Automated: `investment-state.test.ts`, extended `questionnaire-inputs.test.ts`, `responses-to-inputs.test.ts`, `questionnaire-pipeline.test.ts` (golden payload → non-empty `generatePlanResults`), recalculate **400** in `plans-route-handlers.test.ts`. Step-1 state matrix: `context/changes/testing-questionnaire-hardening/MANUAL-SMOKE.md` (not automated).
+**Phase 3 (questionnaire hot-spot hardening):** `questionnaireFormSchema` has no `.refine()` — cross-field rules live in `investment-state.ts` (UI filters), `questionnaireInputsSchema` (API + submit), and `responsesToQuestionnaireInputs` (edit reload). Automated: `investment-state.test.ts`, extended `questionnaire-inputs.test.ts`, `responses-to-inputs.test.ts`, `questionnaire-pipeline.test.ts` (golden payload → non-empty `generatePlanResults`), recalculate **400** in `plans-route-handlers.test.ts`. Step-1 state matrix: `context/archive/2026-06-03-testing-questionnaire-hardening/MANUAL-SMOKE.md` (not automated).
+
+**Phase 4 (cookbook & CI floor):** §6.0 index, §4–§5 alignment with `ci.yml`, contributor pointers in AGENTS.md / README — see `context/changes/testing-cookbook-ci-floor/`.
 
 ## 7. What We Deliberately Don't Test
 
@@ -181,9 +207,10 @@ Exclusions from Phase 2 interview Q5. Re-evaluate if assumptions change.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-02
-- Stack versions last verified: 2026-06-02
-- AI-native tool references last verified: 2026-06-02 (none in use)
+- Strategy (§1–§5) last reviewed: 2026-06-03
+- Stack versions last verified: 2026-06-03
+- AI-native tool references last verified: 2026-06-03 (none in use)
+- Test rollouts 1–3 complete; Phase 4 (`testing-cookbook-ci-floor`) in progress
 
 Refresh (`/10x-test-plan --refresh`) when:
 
