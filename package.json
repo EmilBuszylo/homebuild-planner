@@ -21,7 +21,8 @@
     "benchmarks:import": "tsx scripts/import-market-benchmarks.ts",
     "db:reset-plans": "tsx prisma/reset-plans.ts",
     "db:docker:up": "docker compose up -d --wait",
-    "db:docker:down": "docker compose down -v --rmi all --remove-orphans"
+    "db:docker:down": "docker compose down -v --rmi all --remove-orphans",
+    "prepare": "husky"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -51,10 +52,17 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
     "prisma": "^6.19.0",
     "tailwindcss": "^4",
     "tsx": "^4.22.3",
     "typescript": "^5",
     "vitest": "^3.2.4"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "eslint --max-warnings 0 --fix"
+    ]
   }
 }
