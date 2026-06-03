@@ -243,12 +243,12 @@ Not applicable.
 
 #### Automated
 
-- [x] 3.1 `pnpm test`, `pnpm lint`, `pnpm build:ci` pass locally
-- [x] 3.2 `ci.yml` includes `push` to `main` trigger
+- [x] 3.1 `pnpm test`, `pnpm lint`, `pnpm build:ci` pass locally — 6e8a567
+- [x] 3.2 `ci.yml` includes `push` to `main` trigger — 6e8a567
 
 ### Phase 4: Verify and close rollout
 
 #### Automated
 
-- [ ] 4.1 Full verification commands pass
-- [ ] 4.2 test-plan §3 row 4 marked `complete`
+- [x] 4.1 Full verification commands pass
+- [x] 4.2 test-plan §3 row 4 marked `complete`

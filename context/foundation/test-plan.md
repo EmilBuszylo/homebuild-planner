@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-03 (Phase 4 cookbook — in progress)
+> Last updated: 2026-06-03 (Phase 4 cookbook — complete)
 
 ## 1. Strategy
 
@@ -74,7 +74,7 @@ orchestrator updates Status as artifacts appear on disk.
 | 1 | Access control & ownership | Prove plan isolation and stable auth on protected routes | #1, #2, #6 (server validation slice) | integration, unit (validation) | complete | testing-access-control-ownership |
 | 2 | Generation & recalc integrity | Oracle-backed benchmark tests plus generate/recalc integration | #3, #4, #5, #7 | unit, integration | complete | testing-generation-recalc-integrity |
 | 3 | Questionnaire hot-spot hardening | Regressions in high-churn questionnaire flow | #6, cross #4 | unit, integration | complete | testing-questionnaire-hardening |
-| 4 | Cookbook & CI floor | Fill §6 patterns; align §5 gates with what ships | cross-cutting | cookbook + minimal gaps | planned | testing-cookbook-ci-floor |
+| 4 | Cookbook & CI floor | Fill §6 patterns; align §5 gates with what ships | cross-cutting | cookbook + minimal gaps | complete | testing-cookbook-ci-floor |
 
 ## 4. Stack
 
@@ -210,7 +210,7 @@ Exclusions from Phase 2 interview Q5. Re-evaluate if assumptions change.
 - Strategy (§1–§5) last reviewed: 2026-06-03
 - Stack versions last verified: 2026-06-03
 - AI-native tool references last verified: 2026-06-03 (none in use)
-- Test rollouts 1–3 complete; Phase 4 (`testing-cookbook-ci-floor`) in progress
+- Test rollouts 1–4 complete (`testing-cookbook-ci-floor` closed)
 
 Refresh (`/10x-test-plan --refresh`) when:
 
