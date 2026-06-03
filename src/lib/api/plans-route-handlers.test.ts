@@ -1,15 +1,24 @@
+import type { Prisma } from "@prisma/client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { minimalStagesForGeneration } from "@/lib/plan-generation/test-fixtures/minimal-stages";
 
 const getUser = vi.hoisted(() => vi.fn());
 const planFindUnique = vi.hoisted(() => vi.fn());
 const planFindFirst = vi.hoisted(() => vi.fn());
 const prismaTransaction = vi.hoisted(() => vi.fn());
 const constructionStageFindMany = vi.hoisted(() => vi.fn());
+const checkPlanRecalcLimit = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
     auth: { getUser },
   })),
+}));
+
+vi.mock("@/lib/rate-limit/plan-recalc", () => ({
+  checkPlanRecalcLimit,
+  getPlanRecalcPolicy: () => ({ limit: 3, windowHours: 24 }),
 }));
 
 vi.mock("@/lib/prisma", () => ({
@@ -41,6 +50,7 @@ export const harnessMocks = {
   planFindFirst,
   prismaTransaction,
   constructionStageFindMany,
+  checkPlanRecalcLimit,
 };
 
 export function asUser(userId: string) {
@@ -89,6 +99,103 @@ export async function invokeRecalculate(planId: string, body: unknown) {
   );
 }
 
+const NEW_PLAN_ID = "plan-new-1";
+
+function mockPostPlansTransaction(
+  stages: typeof minimalStagesForGeneration | [],
+) {
+  const planStageResultCreateMany = vi.fn().mockResolvedValue({ count: 0 });
+
+  const tx = {
+    user: {
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+    plan: {
+      findFirst: vi.fn().mockResolvedValue(null),
+      create: vi.fn().mockResolvedValue({ id: NEW_PLAN_ID, userId: USER_A }),
+    },
+    planVersion: {
+      create: vi.fn().mockResolvedValue({
+        id: "pv-new-1",
+        planId: NEW_PLAN_ID,
+        versionNumber: 1,
+      }),
+      update: vi.fn().mockResolvedValue({}),
+    },
+    questionnaireResponse: {
+      createMany: vi.fn().mockResolvedValue({ count: 0 }),
+    },
+    constructionStage: {
+      findMany: vi.fn().mockResolvedValue(stages),
+    },
+    marketBenchmark: {
+      findMany: vi.fn().mockResolvedValue([]),
+    },
+    planStageResult: {
+      createMany: planStageResultCreateMany,
+    },
+  } as unknown as Prisma.TransactionClient;
+
+  prismaTransaction.mockImplementation(async (callback) => callback(tx));
+
+  return { planStageResultCreateMany };
+}
+
+function sumEstimatedCostsFromCreateManyCall(
+  createMany: ReturnType<typeof vi.fn>,
+  callIndex: number,
+): number {
+  const createManyArg = createMany.mock.calls[callIndex]?.[0] as {
+    data: { estimatedCost: number }[];
+  };
+  return createManyArg.data.reduce(
+    (sum, row) => sum + row.estimatedCost,
+    0,
+  );
+}
+
+function mockRecalculateTransaction(planId: string) {
+  const planStageResultCreateMany = vi.fn().mockResolvedValue({ count: 0 });
+  let currentLatestVersion = 1;
+
+  prismaTransaction.mockImplementation(async (callback) => {
+    const latestForTx = currentLatestVersion;
+    const nextVersionNumber = latestForTx + 1;
+
+    const tx = {
+      planVersion: {
+        findFirst: vi.fn().mockResolvedValue({ versionNumber: latestForTx }),
+        create: vi.fn().mockResolvedValue({
+          id: `pv-${nextVersionNumber}`,
+          planId,
+          versionNumber: nextVersionNumber,
+        }),
+        update: vi.fn().mockResolvedValue({}),
+      },
+      plan: {
+        update: vi.fn().mockResolvedValue({ id: planId }),
+      },
+      questionnaireResponse: {
+        createMany: vi.fn().mockResolvedValue({ count: 0 }),
+      },
+      constructionStage: {
+        findMany: vi.fn().mockResolvedValue(minimalStagesForGeneration),
+      },
+      marketBenchmark: {
+        findMany: vi.fn().mockResolvedValue([]),
+      },
+      planStageResult: {
+        createMany: planStageResultCreateMany,
+      },
+    } as unknown as Prisma.TransactionClient;
+
+    await callback(tx);
+    currentLatestVersion = nextVersionNumber;
+  });
+
+  return { planStageResultCreateMany };
+}
+
 function mockPlanWithStageResults(params: {
   planId: string;
   userId: string;
@@ -123,6 +230,12 @@ function mockPlanWithStageResults(params: {
 describe("plans route handlers", () => {
   beforeEach(() => {
     resetHarnessMocks();
+    checkPlanRecalcLimit.mockResolvedValue({
+      allowed: true,
+      limit: 3,
+      windowHours: 24,
+      retryAfterSeconds: null,
+    });
   });
 
   describe("harness smoke", () => {
@@ -219,6 +332,117 @@ describe("plans route handlers", () => {
       const body = await readJson<{ error: string }>(response);
       expect(body.error).toBe("Nie znaleziono planu");
       expect(prismaTransaction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("POST /api/plans generation contract (Risk #4)", () => {
+    it("returns 201 with planId and persists at least one stage result for golden payload", async () => {
+      asUser(USER_A);
+      const { planStageResultCreateMany } = mockPostPlansTransaction(
+        minimalStagesForGeneration,
+      );
+
+      const response = await invokePostPlans(validQuestionnairePayload);
+
+      expect(response.status).toBe(201);
+      const body = await readJson<{ planId: string }>(response);
+      expect(body.planId).toBe(NEW_PLAN_ID);
+      expect(prismaTransaction).toHaveBeenCalledTimes(1);
+      expect(planStageResultCreateMany).toHaveBeenCalledTimes(1);
+
+      const createManyArg = planStageResultCreateMany.mock.calls[0]?.[0] as {
+        data: { estimatedCost: number }[];
+      };
+      expect(createManyArg.data.length).toBeGreaterThanOrEqual(1);
+      expect(createManyArg.data.every((row) => row.estimatedCost > 0)).toBe(
+        true,
+      );
+    });
+
+    it("Risk #4 regression: returns 201 when generation persists zero stage results", async () => {
+      // Follow-up GET /api/plans/[planId]/results returns 404 — see research.md.
+      asUser(USER_A);
+      const { planStageResultCreateMany } = mockPostPlansTransaction([]);
+
+      const response = await invokePostPlans(validQuestionnairePayload);
+
+      expect(response.status).toBe(201);
+      const body = await readJson<{ planId: string }>(response);
+      expect(body.planId).toBe(NEW_PLAN_ID);
+      expect(planStageResultCreateMany).toHaveBeenCalledTimes(1);
+
+      const createManyArg = planStageResultCreateMany.mock.calls[0]?.[0] as {
+        data: unknown[];
+      };
+      expect(createManyArg.data).toEqual([]);
+    });
+  });
+
+  describe("POST recalculate reflects input changes (Risk #5)", () => {
+    it("persists a different total estimated cost when area changes between recalculations", async () => {
+      asUser(USER_A);
+      planFindUnique.mockResolvedValue({ id: PLAN_B, userId: USER_A });
+      const { planStageResultCreateMany } = mockRecalculateTransaction(PLAN_B);
+
+      const payloadBase = { ...validQuestionnairePayload };
+
+      const first = await invokeRecalculate(PLAN_B, {
+        ...payloadBase,
+        area: 120,
+      });
+      const second = await invokeRecalculate(PLAN_B, {
+        ...payloadBase,
+        area: 200,
+      });
+
+      expect(first.status).toBe(200);
+      expect(second.status).toBe(200);
+      expect(checkPlanRecalcLimit).toHaveBeenCalledTimes(2);
+      expect(planStageResultCreateMany).toHaveBeenCalledTimes(2);
+
+      const sumAt120 = sumEstimatedCostsFromCreateManyCall(
+        planStageResultCreateMany,
+        0,
+      );
+      const sumAt200 = sumEstimatedCostsFromCreateManyCall(
+        planStageResultCreateMany,
+        1,
+      );
+
+      expect(sumAt200).not.toBe(sumAt120);
+      expect(sumAt200).toBeGreaterThan(sumAt120);
+    });
+  });
+
+  describe("POST recalculate rate limit (Risk #7)", () => {
+    it("returns 429 with PL message and does not persist stage results when rate limit denies", async () => {
+      asUser(USER_A);
+      planFindUnique.mockResolvedValue({ id: PLAN_B, userId: USER_A });
+      const { planStageResultCreateMany } = mockRecalculateTransaction(PLAN_B);
+
+      checkPlanRecalcLimit.mockResolvedValueOnce({
+        allowed: false,
+        retryAfterSeconds: 60,
+        limit: 3,
+        windowHours: 24,
+      });
+
+      const response = await invokeRecalculate(PLAN_B, validQuestionnairePayload);
+
+      expect(response.status).toBe(429);
+      const body = await readJson<{
+        error: string;
+        retryAfterSeconds: number;
+        limit: number;
+        windowHours: number;
+      }>(response);
+      expect(body.error).toBe(
+        "Zbyt wiele przeliczeń w krótkim czasie. Spróbuj ponownie później.",
+      );
+      expect(body.retryAfterSeconds).toBe(60);
+      expect(body.limit).toBe(3);
+      expect(body.windowHours).toBe(24);
+      expect(planStageResultCreateMany).not.toHaveBeenCalled();
     });
   });
 

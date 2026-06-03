@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-02 (Phase 1 rollout complete)
+> Last updated: 2026-06-02 (Phase 2 rollout complete)
 
 ## 1. Strategy
 
@@ -72,7 +72,7 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Access control & ownership | Prove plan isolation and stable auth on protected routes | #1, #2, #6 (server validation slice) | integration, unit (validation) | complete | testing-access-control-ownership |
-| 2 | Generation & recalc integrity | Oracle-backed benchmark tests plus generate/recalc integration | #3, #4, #5, #7 | unit, integration | not started | — |
+| 2 | Generation & recalc integrity | Oracle-backed benchmark tests plus generate/recalc integration | #3, #4, #5, #7 | unit, integration | complete | testing-generation-recalc-integrity |
 | 3 | Questionnaire hot-spot hardening | Regressions in high-churn questionnaire flow | #6, cross #4 | unit, integration | not started | — |
 | 4 | Cookbook & CI floor | Fill §6 patterns; align §5 gates with what ships | cross-cutting | cookbook + minimal gaps | not started | — |
 
@@ -96,8 +96,9 @@ The classic test base for this project. AI-native tools (if any) carry a
 - Runtime/browser: none; checked: 2026-06-02
 - Provider/platform: Linear + GitLab MCP (auth/issue only, not used for test design); checked: 2026-06-02
 
-**Test-base profile:** sparse — Vitest configured, 3 test files in `src/lib/`
-(benchmarks, plan-recalc rate limit, chronological sort).
+**Test-base profile:** growing — Vitest configured; unit tests in `plan-generation/`,
+`plan/`, `plan-refinement/`, `rate-limit/`; handler integration in
+`src/lib/api/plans-route-handlers.test.ts`.
 
 ## 5. Quality Gates
 
@@ -106,7 +107,7 @@ The classic test base for this project. AI-native tools (if any) carry a
 | lint + typecheck | local + CI (`.github/workflows/ci.yml`) | required | syntactic / type drift |
 | unit (`pnpm test`) | local + CI | required | pure logic regressions in `src/lib/` |
 | production build (`pnpm build:ci`) | CI | required | compile / Next build breaks |
-| integration (handlers, auth, ownership) | local + CI | required (Phase 1 shipped) | IDOR, auth; generate/recalc in Phase 2 |
+| integration (handlers, auth, ownership) | local + CI | required (Phases 1–2 shipped) | IDOR, auth, generate/recalc, rate limit |
 | e2e (Playwright) | — | excluded unless explicitly requested | — |
 | post-edit hook | — | not planned | — |
 | visual diff / multimodal review | — | excluded per interview Q5 | — |
@@ -119,7 +120,11 @@ relevant rollout phase ships.
 
 ### 6.1 Adding a unit test
 
-TBD — see §3 Phase 2 (generation oracle patterns) and Phase 4 (canonical layout).
+- **Location**: colocate `*.test.ts` next to the module under `src/lib/` (e.g. `src/lib/plan-generation/generate-plan-results.test.ts`).
+- **Pure logic**: import the function under test directly; no Prisma, no HTTP.
+- **Fixtures**: shared inputs in `test-fixtures/` subfolders (e.g. `src/lib/plan-generation/test-fixtures/minimal-stages.ts`, `src/lib/api/test-fixtures/questionnaire-payload.ts`).
+- **Directional oracle (Risk #3)**: assert relationships from requirements/fixture constants (e.g. larger `area` → higher total cost; `PREMIUM` > `ECONOMY`). Do **not** copy production formulas as the expected value.
+- **Run**: `pnpm test` (no database).
 
 ### 6.2 Adding an integration test (API route handlers)
 
@@ -129,6 +134,9 @@ TBD — see §3 Phase 2 (generation oracle patterns) and Phase 4 (canonical layo
 - **Ownership denial (Risk #1)**: caller session user A, `planFindUnique` returns `userId: B` → expect **404**, `{ error: "Nie znaleziono planu" }`, response must **not** include success fields (`stages`, `totalCost`). Do not assert only 200 on own-id happy path.
 - **Unauthenticated (Risk #2)**: `asAnonymous()` → **401**, `{ error: "Brak autoryzacji" }`, Prisma not called.
 - **Invalid body (Risk #6)**: authenticated + Zod-invalid payload → **400** with `details`, `prisma.$transaction` not called.
+- **Generation (Risk #4)**: mock `$transaction` with fake `tx` that runs real `persistPlanVersionWithResults`; assert `planStageResult.createMany` received ≥1 row with `estimatedCost > 0` on golden `POST /api/plans`.
+- **Recalc delta (Risk #5)**: two `invokeRecalculate` calls with different `area`; compare sums from captured `createMany` payloads (strict inequality).
+- **Rate limit (Risk #7)**: `vi.mock("@/lib/rate-limit/plan-recalc")`; `checkPlanRecalcLimit` → `{ allowed: false, ... }` → **429** + PL error; `planStageResult.createMany` not called.
 - **Shared payload**: `src/lib/api/test-fixtures/questionnaire-payload.ts` (`validQuestionnairePayload`).
 - **Reference tests**: ownership, 401, and 400 cases in `plans-route-handlers.test.ts`; schema unit tests in `src/lib/validations/questionnaire-inputs.test.ts`.
 - **Run locally**: `pnpm test` (no database; mocks only).
@@ -147,11 +155,17 @@ an explicit product decision recorded outside this guide.
 
 ### 6.5 Adding a test for benchmark / generation logic
 
-TBD — see §3 Phase 2 (independent oracle from PRD/requirements, not copied formulas).
+- **Engine unit (Risk #3)**: `src/lib/plan-generation/generate-plan-results.test.ts` — `generatePlanResults` + `minimalStagesForGeneration` + directional asserts (see §6.1).
+- **Persist boundary (Risk #4)**: `src/lib/plan/persist-plan-version.test.ts` — fake `Prisma.TransactionClient`; assert `planStageResult.createMany` row count and costs without HTTP.
+- **Benchmark refinement**: `src/lib/plan-refinement/apply-market-benchmarks.test.ts` — multiplier behavior on fixed stage rows.
+- **HTTP complement**: extend `plans-route-handlers.test.ts` for POST create / recalc / 429 (§6.2); do not duplicate full pipeline in every layer — pick the cheapest layer that still signals the risk.
+- **Oracle rule**: expected direction comes from PRD/requirements or fixture constants, not from re-invoking the same implementation under test.
 
 ### 6.6 Per-rollout-phase notes
 
-**Phase 1 (access control & ownership):** Handler tests mock Prisma — they do not catch a missing `userId` check in a new route. When adding plan APIs, copy the ownership assert from §6.2. Manual middleware/session checks live in `context/changes/testing-access-control-ownership/MANUAL-SMOKE.md` (not automated).
+**Phase 1 (access control & ownership):** Handler tests mock Prisma — they do not catch a missing `userId` check in a new route. When adding plan APIs, copy the ownership assert from §6.2. Manual middleware/session checks live in `context/archive/2026-06-02-testing-access-control-ownership/MANUAL-SMOKE.md` (not automated).
+
+**Phase 2 (generation & recalc integrity):** `POST /api/plans` can return **201** with zero `PlanStageResult` rows when generation filters to empty stages — documented in `persist-plan-version.test.ts` and handler Risk #4 regression tests; follow-up GET results returns **404**. A product guard (reject create when `results.length === 0`) is optional and not shipped in this rollout. Research: `context/changes/testing-generation-recalc-integrity/research.md`.
 
 ## 7. What We Deliberately Don't Test
 
