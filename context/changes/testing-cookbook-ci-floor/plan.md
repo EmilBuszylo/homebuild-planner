@@ -250,5 +250,5 @@ Not applicable.
 
 #### Automated
 
-- [x] 4.1 Full verification commands pass
-- [x] 4.2 test-plan §3 row 4 marked `complete`
+- [x] 4.1 Full verification commands pass — 4f4224b
+- [x] 4.2 test-plan §3 row 4 marked `complete` — 4f4224b
