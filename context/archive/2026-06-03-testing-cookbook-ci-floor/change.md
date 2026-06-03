@@ -1,10 +1,10 @@
 ---
 change_id: testing-cookbook-ci-floor
 title: Cookbook & CI floor (test rollout Phase 4)
-status: implemented
+status: archived
 created: 2026-06-03
 updated: 2026-06-03
-archived_at: null
+archived_at: 2026-06-03T07:54:24Z
 ---
 
 ## Notes
