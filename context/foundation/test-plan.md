@@ -137,6 +137,8 @@ relevant rollout phase ships.
 | #6 Invalid questionnaire payload | `questionnaire-inputs.test.ts`, `investment-state.test.ts`, `responses-to-inputs.test.ts`, handler **400** (create + recalc) | `context/archive/2026-06-03-testing-questionnaire-hardening/MANUAL-SMOKE.md` (step 1 UI) |
 | #7 Recalc rate limit | `plan-recalc.test.ts` (policy env), `plans-route-handlers.test.ts` (**429**) | — |
 
+**Other automated (no risk row):** display sort — `src/lib/plan/sort-plan-stages-chronologically.test.ts` (full file list in §4 test-base profile).
+
 **Vitest constraint:** handler mocks use `vi.hoisted` in the **same file** as the test — do not extract hoisted mocks to a shared module (see §6.2).
 
 Detail recipes: §6.1–§6.5. Rollout notes: §6.6.
@@ -193,7 +195,7 @@ an explicit product decision recorded outside this guide.
 
 **Phase 3 (questionnaire hot-spot hardening):** `questionnaireFormSchema` has no `.refine()` — cross-field rules live in `investment-state.ts` (UI filters), `questionnaireInputsSchema` (API + submit), and `responsesToQuestionnaireInputs` (edit reload). Automated: `investment-state.test.ts`, extended `questionnaire-inputs.test.ts`, `responses-to-inputs.test.ts`, `questionnaire-pipeline.test.ts` (golden payload → non-empty `generatePlanResults`), recalculate **400** in `plans-route-handlers.test.ts`. Step-1 state matrix: `context/archive/2026-06-03-testing-questionnaire-hardening/MANUAL-SMOKE.md` (not automated).
 
-**Phase 4 (cookbook & CI floor):** §6.0 index, §4–§5 alignment with `ci.yml`, contributor pointers in AGENTS.md / README — see `context/changes/testing-cookbook-ci-floor/`.
+**Phase 4 (cookbook & CI floor):** §6.0 index, §4–§5 alignment with `ci.yml`, contributor pointers in AGENTS.md / README, CI on `push` to `main` — archived `context/archive/2026-06-03-testing-cookbook-ci-floor/`.
 
 ## 7. What We Deliberately Don't Test
 
