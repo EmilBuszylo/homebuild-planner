@@ -465,4 +465,44 @@ describe("plans route handlers", () => {
       expect(prismaTransaction).not.toHaveBeenCalled();
     });
   });
+
+  describe("server validation on recalculate (Risk #6)", () => {
+    beforeEach(() => {
+      asUser(USER_A);
+      planFindUnique.mockResolvedValue({ id: PLAN_B, userId: USER_A });
+    });
+
+    it("returns 400 with details and does not start a transaction when area is invalid", async () => {
+      const response = await invokeRecalculate(PLAN_B, {
+        ...validQuestionnairePayload,
+        area: 1,
+      });
+
+      expect(response.status).toBe(400);
+      const body = await readJson<{
+        error: string;
+        details: unknown;
+      }>(response);
+      expect(body.error).toBe("Nieprawidłowe dane ankiety");
+      expect(body.details).toBeDefined();
+      expect(prismaTransaction).not.toHaveBeenCalled();
+    });
+
+    it("returns 400 with details and does not start a transaction when state order is invalid", async () => {
+      const response = await invokeRecalculate(PLAN_B, {
+        ...validQuestionnairePayload,
+        starting_state: "CLOSED_SHELL",
+        investment_state: "FOUNDATIONS",
+      });
+
+      expect(response.status).toBe(400);
+      const body = await readJson<{
+        error: string;
+        details: unknown;
+      }>(response);
+      expect(body.error).toBe("Nieprawidłowe dane ankiety");
+      expect(body.details).toBeDefined();
+      expect(prismaTransaction).not.toHaveBeenCalled();
+    });
+  });
 });

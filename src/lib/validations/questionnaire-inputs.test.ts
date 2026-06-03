@@ -55,4 +55,36 @@ describe("questionnaireInputsSchema", () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it("rejects garage_spots when not a number", () => {
+    const result = questionnaireInputsSchema.safeParse({
+      ...validQuestionnairePayload,
+      garage_spots: "1",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects window_count above the maximum", () => {
+    const result = questionnaireInputsSchema.safeParse({
+      ...validQuestionnairePayload,
+      window_count: 31,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects an invalid key_date format", () => {
+    const result = questionnaireInputsSchema.safeParse({
+      ...validQuestionnairePayload,
+      key_date: "not-a-date",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects terrace_door_count below the minimum", () => {
+    const result = questionnaireInputsSchema.safeParse({
+      ...validQuestionnairePayload,
+      terrace_door_count: -1,
+    });
+    expect(result.success).toBe(false);
+  });
 });

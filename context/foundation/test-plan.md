@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-02 (Phase 2 rollout complete)
+> Last updated: 2026-06-03 (Phase 3 rollout complete)
 
 ## 1. Strategy
 
@@ -73,7 +73,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Access control & ownership | Prove plan isolation and stable auth on protected routes | #1, #2, #6 (server validation slice) | integration, unit (validation) | complete | testing-access-control-ownership |
 | 2 | Generation & recalc integrity | Oracle-backed benchmark tests plus generate/recalc integration | #3, #4, #5, #7 | unit, integration | complete | testing-generation-recalc-integrity |
-| 3 | Questionnaire hot-spot hardening | Regressions in high-churn questionnaire flow | #6, cross #4 | unit, integration | not started | — |
+| 3 | Questionnaire hot-spot hardening | Regressions in high-churn questionnaire flow | #6, cross #4 | unit, integration | complete | testing-questionnaire-hardening |
 | 4 | Cookbook & CI floor | Fill §6 patterns; align §5 gates with what ships | cross-cutting | cookbook + minimal gaps | not started | — |
 
 ## 4. Stack
@@ -133,7 +133,7 @@ relevant rollout phase ships.
 - **Auth fixture**: `asUser("user-id")` / `asAnonymous()` — sets `createClient().auth.getUser` mock.
 - **Ownership denial (Risk #1)**: caller session user A, `planFindUnique` returns `userId: B` → expect **404**, `{ error: "Nie znaleziono planu" }`, response must **not** include success fields (`stages`, `totalCost`). Do not assert only 200 on own-id happy path.
 - **Unauthenticated (Risk #2)**: `asAnonymous()` → **401**, `{ error: "Brak autoryzacji" }`, Prisma not called.
-- **Invalid body (Risk #6)**: authenticated + Zod-invalid payload → **400** with `details`, `prisma.$transaction` not called.
+- **Invalid body (Risk #6)**: authenticated + Zod-invalid payload → **400** with `details`, `prisma.$transaction` not called — cover both `POST /api/plans` and `POST .../recalculate`.
 - **Generation (Risk #4)**: mock `$transaction` with fake `tx` that runs real `persistPlanVersionWithResults`; assert `planStageResult.createMany` received ≥1 row with `estimatedCost > 0` on golden `POST /api/plans`.
 - **Recalc delta (Risk #5)**: two `invokeRecalculate` calls with different `area`; compare sums from captured `createMany` payloads (strict inequality).
 - **Rate limit (Risk #7)**: `vi.mock("@/lib/rate-limit/plan-recalc")`; `checkPlanRecalcLimit` → `{ allowed: false, ... }` → **429** + PL error; `planStageResult.createMany` not called.
@@ -165,7 +165,9 @@ an explicit product decision recorded outside this guide.
 
 **Phase 1 (access control & ownership):** Handler tests mock Prisma — they do not catch a missing `userId` check in a new route. When adding plan APIs, copy the ownership assert from §6.2. Manual middleware/session checks live in `context/archive/2026-06-02-testing-access-control-ownership/MANUAL-SMOKE.md` (not automated).
 
-**Phase 2 (generation & recalc integrity):** `POST /api/plans` can return **201** with zero `PlanStageResult` rows when generation filters to empty stages — documented in `persist-plan-version.test.ts` and handler Risk #4 regression tests; follow-up GET results returns **404**. A product guard (reject create when `results.length === 0`) is optional and not shipped in this rollout. Research: `context/changes/testing-generation-recalc-integrity/research.md`.
+**Phase 2 (generation & recalc integrity):** `POST /api/plans` can return **201** with zero `PlanStageResult` rows when generation filters to empty stages — documented in `persist-plan-version.test.ts` and handler Risk #4 regression tests; follow-up GET results returns **404**. A product guard (reject create when `results.length === 0`) is optional and not shipped in this rollout. Research: `context/archive/2026-06-02-testing-generation-recalc-integrity/research.md`.
+
+**Phase 3 (questionnaire hot-spot hardening):** `questionnaireFormSchema` has no `.refine()` — cross-field rules live in `investment-state.ts` (UI filters), `questionnaireInputsSchema` (API + submit), and `responsesToQuestionnaireInputs` (edit reload). Automated: `investment-state.test.ts`, extended `questionnaire-inputs.test.ts`, `responses-to-inputs.test.ts`, `questionnaire-pipeline.test.ts` (golden payload → non-empty `generatePlanResults`), recalculate **400** in `plans-route-handlers.test.ts`. Step-1 state matrix: `context/changes/testing-questionnaire-hardening/MANUAL-SMOKE.md` (not automated).
 
 ## 7. What We Deliberately Don't Test
 
