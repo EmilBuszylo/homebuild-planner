@@ -22,7 +22,7 @@ Operational checklist for the **first** production/preview deployment. Supersede
 - **Supabase** hosted Postgres for runtime data (not local Docker).
 - **Prisma** migrations applied via `prisma migrate deploy` during Vercel `pnpm build`.
 - Smoke endpoint: `GET /api/health/db` → `{ "ok": true }`.
-- **GitHub Actions**: PR CI (`ci.yml`) + production deploy on `main` (`deploy.yml`).
+- **GitHub Actions**: PR CI (`ci.yml`) + production deploy on `master` (`deploy.yml`).
 
 **Out of scope (later changes)**
 
@@ -111,7 +111,7 @@ After the first Vercel deployment URL is known:
 
 `pnpm build` = `prisma generate` → `prisma migrate deploy` → `next build`.
 
-Link GitHub repo in Vercel for visibility; **production deploy is triggered by GitHub Actions** on push to `main` (see §7), not only by Vercel’s native Git hook — avoid duplicate prod deploys by disabling Vercel “auto deploy production” if you rely solely on `deploy.yml`, or keep one path only.
+Link GitHub repo in Vercel for visibility; **production deploy is triggered by GitHub Actions** on push to `master` (see §7), not only by Vercel’s native Git hook — avoid duplicate prod deploys by disabling Vercel “auto deploy production” if you rely solely on `deploy.yml`, or keep one path only.
 
 **Recommended:** Let **GitHub Actions `deploy.yml`** call Vercel CLI/action for production; use Vercel Git integration for **preview** deployments on PRs if desired, or rely on Action with preview flags later.
 
@@ -132,7 +132,7 @@ Obtain org/project IDs after `pnpm dlx vercel link` locally or from Vercel proje
 | File | Trigger | Purpose |
 |------|---------|---------|
 | [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) | `pull_request` | `pnpm install` → `pnpm lint` → `pnpm build:ci` (no DB migrate) |
-| [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml) | `push` to `main` | Deploy to Vercel **production**; remote build runs `pnpm build` with Vercel env |
+| [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml) | `push` to `master` | Deploy to Vercel **production**; remote build runs `pnpm build` with Vercel env |
 
 PR CI does **not** run `migrate deploy` — no production DB credentials required in GitHub for lint/build compile check.
 
@@ -143,7 +143,7 @@ PR CI does **not** run `migrate deploy` — no production DB credentials require
 3. Add all env vars from §3 to Vercel (Preview + Production) — **this enables automatic `migrate deploy` on build**.
 4. Add GitHub secrets from §7.
 5. Push branch, open PR — confirm **`CI`** workflow passes.
-6. Merge to **`main`** — confirm **`Deploy`** workflow succeeds.
+6. Merge to **`master`** — confirm **`Deploy`** workflow succeeds.
 7. Open Vercel deployment logs — verify `prisma migrate deploy` and `next build` succeeded.
 8. Smoke test:
    ```bash
@@ -166,7 +166,7 @@ From `infrastructure.md` risk register:
 - [ ] `GET /api/health/db` returns 200 and `"ok":true`
 - [ ] Supabase dashboard: connections stable (pooler in use; no connection storm)
 - [ ] No secrets printed in CI or Vercel build logs
-- [ ] GitHub `main` shows green `Deploy` workflow
+- [ ] GitHub `master` shows green `Deploy` workflow
 
 ## 11. Gaps closed vs raw infrastructure.md
 

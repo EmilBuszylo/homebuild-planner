@@ -32,7 +32,7 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - `pnpm start` — serve production build locally.
 - `pnpm lint` — ESLint via @eslint.config.mjs and `eslint-config-next`.
 - `pnpm test` — Vitest in `src/lib/` (colocated `*.test.ts`): pure logic plus mocked API route handlers in `src/lib/api/*.test.ts` (no DB required).
-- Full test strategy and cookbook recipes → `context/foundation/test-plan.md` (§6). Local gates: `pnpm test`, `pnpm lint`. GitHub Actions CI (`.github/workflows/ci.yml`) runs the same plus `pnpm build:ci` on pull requests and `push` to `main` — see test-plan §5.
+- Full test strategy and cookbook recipes → `context/foundation/test-plan.md` (§6). Local gates: `pnpm test`, `pnpm lint`. GitHub Actions CI (`.github/workflows/ci.yml`) runs the same plus `pnpm build:ci` on pull requests and `push` to `master` — see test-plan §5.
 - Prisma: `pnpm db:generate` / `prisma generate` — agents may run. `pnpm db:migrate` / `prisma migrate dev` and `pnpm db:studio` — **owner only**; agents stop and request these when required (see Hard rules). Vercel/production applies pending migrations via `prisma migrate deploy` in `pnpm build` when env is configured.
 - **Local Postgres (Docker):** @docker-compose.yml — Postgres 16 on host port **55432** (`homebuild` / `homebuild` / `homebuild_planner`). `pnpm db:docker:up` starts the DB; `pnpm db:docker:down` stops the container, removes the volume and compose images. Point `DATABASE_URL` and `DIRECT_URL` in `.env.local` at `127.0.0.1:55432` (see @.env.example); no pooler locally.
 - **First / production deploy:** follow @context/deployment/deploy-plan.md (Vercel env + GitHub Actions; `prisma migrate deploy` runs automatically in `pnpm build` on Vercel).

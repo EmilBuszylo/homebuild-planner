@@ -114,11 +114,11 @@ There is **no** separate `pnpm typecheck` script; compile-time TypeScript is cov
 
 ### CI job (`.github/workflows/ci.yml`)
 
-**Triggers:** `pull_request` and `push` to `main`.
+**Triggers:** `pull_request` and `push` to `master`.
 
 **Steps (in order):** `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm test` → `pnpm run build:ci`.
 
-**Note:** `deploy.yml` on `push` to `main` uses Vercel build and does **not** run Vitest; rely on the CI workflow above for test gates on merged code.
+**Note:** `deploy.yml` on `push` to `master` uses Vercel build and does **not** run Vitest; rely on the CI workflow above for test gates on merged code.
 
 ## 6. Cookbook Patterns
 
@@ -195,7 +195,7 @@ an explicit product decision recorded outside this guide.
 
 **Phase 3 (questionnaire hot-spot hardening):** `questionnaireFormSchema` has no `.refine()` — cross-field rules live in `investment-state.ts` (UI filters), `questionnaireInputsSchema` (API + submit), and `responsesToQuestionnaireInputs` (edit reload). Automated: `investment-state.test.ts`, extended `questionnaire-inputs.test.ts`, `responses-to-inputs.test.ts`, `questionnaire-pipeline.test.ts` (golden payload → non-empty `generatePlanResults`), recalculate **400** in `plans-route-handlers.test.ts`. Step-1 state matrix: `context/archive/2026-06-03-testing-questionnaire-hardening/MANUAL-SMOKE.md` (not automated).
 
-**Phase 4 (cookbook & CI floor):** §6.0 index, §4–§5 alignment with `ci.yml`, contributor pointers in AGENTS.md / README, CI on `push` to `main` — archived `context/archive/2026-06-03-testing-cookbook-ci-floor/`.
+**Phase 4 (cookbook & CI floor):** §6.0 index, §4–§5 alignment with `ci.yml`, contributor pointers in AGENTS.md / README, CI on `push` to `master` — archived `context/archive/2026-06-03-testing-cookbook-ci-floor/`.
 
 ## 7. What We Deliberately Don't Test
 
