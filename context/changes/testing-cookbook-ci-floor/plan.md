@@ -236,15 +236,15 @@ Not applicable.
 
 #### Automated
 
-- [x] 2.1 `pnpm lint` passes after AGENTS.md / README edits
-- [x] 2.2 Links to `context/foundation/test-plan.md` §6 resolve
+- [x] 2.1 `pnpm lint` passes after AGENTS.md / README edits — 812f00c
+- [x] 2.2 Links to `context/foundation/test-plan.md` §6 resolve — 812f00c
 
 ### Phase 3: CI workflow alignment
 
 #### Automated
 
-- [ ] 3.1 `pnpm test`, `pnpm lint`, `pnpm build:ci` pass locally
-- [ ] 3.2 `ci.yml` includes `push` to `main` trigger
+- [x] 3.1 `pnpm test`, `pnpm lint`, `pnpm build:ci` pass locally
+- [x] 3.2 `ci.yml` includes `push` to `main` trigger
 
 ### Phase 4: Verify and close rollout
 

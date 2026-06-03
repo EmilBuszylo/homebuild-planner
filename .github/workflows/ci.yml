@@ -1,7 +1,10 @@
 name: CI
 
+# Job steps match context/foundation/test-plan.md §5 (lint → test → build:ci).
 on:
   pull_request:
+  push:
+    branches: [main]
 
 jobs:
   ci:

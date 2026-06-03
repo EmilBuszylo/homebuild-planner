@@ -114,7 +114,7 @@ There is **no** separate `pnpm typecheck` script; compile-time TypeScript is cov
 
 ### CI job (`.github/workflows/ci.yml`)
 
-**Triggers:** `pull_request` (and `push` to `main` after `testing-cookbook-ci-floor` Phase 3 lands).
+**Triggers:** `pull_request` and `push` to `main`.
 
 **Steps (in order):** `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm test` → `pnpm run build:ci`.
 
