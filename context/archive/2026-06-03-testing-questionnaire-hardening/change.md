@@ -1,10 +1,10 @@
 ---
 change_id: testing-questionnaire-hardening
 title: Questionnaire hot-spot hardening (test rollout Phase 3)
-status: implemented
+status: archived
 created: 2026-06-03
 updated: 2026-06-03
-archived_at: null
+archived_at: 2026-06-03T06:36:38Z
 ---
 
 ## Notes
