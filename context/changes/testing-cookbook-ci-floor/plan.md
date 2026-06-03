@@ -229,15 +229,15 @@ Not applicable.
 
 #### Automated
 
-- [x] 1.1 `pnpm test` and `pnpm lint` pass after test-plan edits
-- [x] 1.2 §6.0 table and §4–§8 fixes present in `test-plan.md`
+- [x] 1.1 `pnpm test` and `pnpm lint` pass after test-plan edits — e2368db
+- [x] 1.2 §6.0 table and §4–§8 fixes present in `test-plan.md` — e2368db
 
 ### Phase 2: Contributor pointers
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint` passes after AGENTS.md / README edits
-- [ ] 2.2 Links to `context/foundation/test-plan.md` §6 resolve
+- [x] 2.1 `pnpm lint` passes after AGENTS.md / README edits
+- [x] 2.2 Links to `context/foundation/test-plan.md` §6 resolve
 
 ### Phase 3: CI workflow alignment
 
