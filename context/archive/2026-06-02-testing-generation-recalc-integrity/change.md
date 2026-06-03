@@ -1,9 +1,10 @@
 ---
 change_id: testing-generation-recalc-integrity
 title: Generation & recalc integrity (test rollout Phase 2)
-status: implemented
+status: archived
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-03
+archived_at: 2026-06-03T06:06:34Z
 ---
 
 ## Notes
