@@ -37,6 +37,7 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - **Local Postgres (Docker):** @docker-compose.yml — Postgres 16 on host port **55432** (`homebuild` / `homebuild` / `homebuild_planner`). `pnpm db:docker:up` starts the DB; `pnpm db:docker:down` stops the container, removes the volume and compose images. Point `DATABASE_URL` and `DIRECT_URL` in `.env.local` at `127.0.0.1:55432` (see @.env.example); no pooler locally.
 - **First / production deploy:** follow @context/deployment/deploy-plan.md (Vercel env + GitHub Actions; `prisma migrate deploy` runs automatically in `pnpm build` on Vercel).
 - Do not add E2E (Playwright) or component test stacks without an explicit user request; extend Vitest coverage for new pure `src/lib/` logic when changing critical paths (benchmarks, rate limits, generation).
+- **Cursor agent hooks** (`.cursor/hooks.json`): after each agent `Write`, `after-file-lint.sh` runs ESLint on the edited file and `after-file-typecheck.sh` runs `pnpm typecheck` for `.ts`/`.tsx` edits. Logs: Output → Hooks. Requires trusted workspace and `chmod +x .cursor/hooks/*.sh`.
 
 ## UI copy and routing
 

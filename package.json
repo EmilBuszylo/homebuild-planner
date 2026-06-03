@@ -9,6 +9,7 @@
     "build:ci": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "postinstall": "prisma generate",

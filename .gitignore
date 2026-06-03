@@ -41,8 +41,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# cursor
-.cursor/
+# cursor (project hooks are tracked; other .cursor/ files stay local)
+.cursor/*
+!.cursor/hooks.json
+!.cursor/hooks/
+!.cursor/hooks/**
 
 # 10x
 .10x-cli-manifest.json
