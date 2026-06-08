@@ -17,6 +17,8 @@ export default defineConfig({
   },
   projects: [
     { name: "setup", testMatch: /auth\.setup\.ts/ },
+    { name: "foreign-plan-setup", testMatch: /foreign-plan\.setup\.ts/ },
+    { name: "generate-user-setup", testMatch: /generate-user\.setup\.ts/ },
     {
       name: "anonymous",
       testMatch: /risk-02-anonymous.*\.spec\.ts/,
@@ -29,6 +31,24 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         storageState: "e2e/.auth/user.json",
+      },
+    },
+    {
+      name: "risk-01",
+      testMatch: /risk-01-.*\.spec\.ts/,
+      dependencies: ["setup", "foreign-plan-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "e2e/.auth/user.json",
+      },
+    },
+    {
+      name: "risk-04",
+      testMatch: /risk-04-.*\.spec\.ts/,
+      dependencies: ["generate-user-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "e2e/.auth/generate-user.json",
       },
     },
   ],

@@ -35,13 +35,18 @@ pnpm exec playwright install chromium   # once; scripts use PLAYWRIGHT_BROWSERS_
 pnpm db:docker:up                     # local Postgres
 # .env.local: NEXT_PUBLIC_SUPABASE_*, SUPABASE_SECRET_KEY, DATABASE_URL
 
-# Authenticated specs (risk-02-session-*):
+# Authenticated specs (risk-01, risk-02-session, risk-04):
 export E2E_USER_EMAIL=you@example.com
 export E2E_USER_PASSWORD='YourP@ss1!'
+pnpm test:e2e:risk-01   # needs foreign-plan.setup (victim user + plan in DB)
 pnpm test:e2e:risk-02
+pnpm test:e2e:risk-04   # uses fresh generate-user (no existing plan)
 ```
 
 Anonymous specs (`risk-02-anonymous-*`) run without credentials — they only need `pnpm dev`.
+
+Risk #1 setup creates a **second** victim account with a real plan (`foreign-plan.setup.ts`).
+Risk #4 uses a dedicated generate-only user (`generate-user.setup.ts`) — not the full questionnaire UI.
 
 ## Anti-patterns (re-prompt by name)
 

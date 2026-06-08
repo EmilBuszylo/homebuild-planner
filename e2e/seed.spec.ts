@@ -14,8 +14,10 @@
  * czego integration tests (Vitest) nie mogą: cookies, middleware redirect, UI.
  *
  * Produkcyjne specy per ryzyko (uruchamiane przez playwright.config.ts):
+ *   #1 → e2e/risk-01-idor-foreign-plan.spec.ts
  *   #2 → e2e/risk-02-anonymous-panel-redirect.spec.ts
  *        e2e/risk-02-session-survives-navigation.spec.ts
+ *   #4 → e2e/risk-04-generate-golden-path.spec.ts
  */
 
 import { expect, type Page, test } from "@playwright/test";
