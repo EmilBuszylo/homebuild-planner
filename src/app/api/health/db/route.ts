@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { reportError } from "@/lib/observability/report-error";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -14,6 +15,7 @@ export async function GET() {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("GET /api/health/db failed:", error);
+    reportError(error, { route: "GET /api/health/db" });
     return NextResponse.json({ ok: false }, { status: 503 });
   }
 }

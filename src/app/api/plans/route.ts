@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { reportError } from "@/lib/observability/report-error";
 import { persistPlanVersionWithResults } from "@/lib/plan/persist-plan-version";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
@@ -66,6 +67,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ planId: result.plan.id }, { status: 201 });
   } catch (error) {
     console.error("POST /api/plans failed:", error);
+    reportError(error, { route: "POST /api/plans" });
     return NextResponse.json(
       { error: "Nie udało się zapisać planu. Spróbuj ponownie." },
       { status: 500 },

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 
+import { reportError } from "@/lib/observability/report-error";
 import { prisma } from "@/lib/prisma";
 import { routes } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/server";
@@ -96,6 +97,10 @@ export async function register(values: {
           "Failed to clean up Supabase user after Prisma error:",
           cleanupErr,
         );
+        reportError(cleanupErr, {
+          route: "register",
+          extra: { phase: "supabase_cleanup", userId: supabaseUser.id },
+        });
         return {
           error:
             "Nie udało się utworzyć konta. Konto mogło zostać częściowo utworzone — spróbuj się zalogować lub skontaktuj z administratorem.",
@@ -108,6 +113,7 @@ export async function register(values: {
       );
     }
     console.error("Prisma user creation failed:", err);
+    reportError(err, { route: "register", extra: { phase: "prisma_create" } });
     return {
       error: "Nie udało się utworzyć konta. Spróbuj ponownie.",
     };

@@ -9,6 +9,11 @@ const planFindFirst = vi.hoisted(() => vi.fn());
 const prismaTransaction = vi.hoisted(() => vi.fn());
 const constructionStageFindMany = vi.hoisted(() => vi.fn());
 const checkPlanRecalcLimit = vi.hoisted(() => vi.fn());
+const reportError = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/observability/report-error", () => ({
+  reportError,
+}));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
@@ -332,6 +337,12 @@ describe("plans route handlers", () => {
       const body = await readJson<{ error: string }>(response);
       expect(body.error).toBe(
         "Nie udało się wczytać wyników planu. Spróbuj ponownie.",
+      );
+      expect(reportError).toHaveBeenCalledWith(
+        expect.any(Error),
+        expect.objectContaining({
+          route: `GET /api/plans/${PLAN_B}/results`,
+        }),
       );
     });
 

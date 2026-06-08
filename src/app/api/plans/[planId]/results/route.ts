@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { reportError } from "@/lib/observability/report-error";
 import type { PlanResultsDto } from "@/lib/plan-results";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
@@ -86,6 +87,7 @@ export async function GET(_request: Request, context: RouteContext) {
     return NextResponse.json(payload);
   } catch (error) {
     console.error(`GET /api/plans/${planId}/results failed:`, error);
+    reportError(error, { route: `GET /api/plans/${planId}/results` });
     return NextResponse.json(
       { error: "Nie udało się wczytać wyników planu. Spróbuj ponownie." },
       { status: 500 },

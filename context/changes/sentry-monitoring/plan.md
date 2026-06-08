@@ -357,8 +357,8 @@ Add optional dev-only test route, update AGENTS.md, close change with owner depl
 
 #### Automated
 
-- [ ] 2.1 `pnpm test` — handler tests pass (incl. 500 DB error)
-- [ ] 2.2 `pnpm lint` and `pnpm typecheck` pass
+- [x] 2.1 `pnpm test` — handler tests pass (incl. 500 DB error)
+- [x] 2.2 `pnpm lint` and `pnpm typecheck` pass
 
 #### Manual
 

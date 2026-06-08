@@ -23,7 +23,7 @@ function makeFixture(estimatedCost: number) {
       category: "STRUCTURE",
       costModifiers: [],
     },
-  ] as StageWithModifiers[];
+  ] as unknown as StageWithModifiers[];
 
   return { localResults, stages };
 }

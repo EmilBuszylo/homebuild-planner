@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { reportError } from "@/lib/observability/report-error";
 import { persistPlanVersionWithResults } from "@/lib/plan/persist-plan-version";
 import { prisma } from "@/lib/prisma";
 import { checkPlanRecalcLimit } from "@/lib/rate-limit/plan-recalc";
@@ -96,6 +97,7 @@ export async function POST(request: Request, context: RouteContext) {
     }
 
     console.error(`POST /api/plans/${planId}/recalculate failed:`, error);
+    reportError(error, { route: `POST /api/plans/${planId}/recalculate` });
     return NextResponse.json(
       { error: "Nie udało się przeliczyć planu. Spróbuj ponownie." },
       { status: 500 },
