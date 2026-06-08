@@ -1,5 +1,7 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 
@@ -32,94 +34,109 @@ export async function login(values: {
   email: string;
   password: string;
 }): Promise<AuthResult> {
-  const parsed = loginSchema.safeParse(values);
-  if (!parsed.success) {
-    return { error: "Nieprawidłowe dane logowania." };
-  }
+  return Sentry.withServerActionInstrumentation(
+    "login",
+    { headers: await headers(), recordResponse: true },
+    async () => {
+      const parsed = loginSchema.safeParse(values);
+      if (!parsed.success) {
+        return { error: "Nieprawidłowe dane logowania." };
+      }
 
-  const supabase = await createClient();
+      const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email: parsed.data.email,
-    password: parsed.data.password,
-  });
+      const { error } = await supabase.auth.signInWithPassword({
+        email: parsed.data.email,
+        password: parsed.data.password,
+      });
 
-  if (error) {
-    return { error: translateAuthError(error.message) };
-  }
+      if (error) {
+        return { error: translateAuthError(error.message) };
+      }
 
-  redirect(routes.dashboard);
+      redirect(routes.dashboard);
+    },
+  );
 }
 
 export async function register(values: {
   email: string;
   password: string;
 }): Promise<AuthResult> {
-  const parsed = registerServerSchema.safeParse(values);
-  if (!parsed.success) {
-    return { error: "Nieprawidłowe dane rejestracji." };
-  }
+  return Sentry.withServerActionInstrumentation(
+    "register",
+    { headers: await headers(), recordResponse: true },
+    async () => {
+      const parsed = registerServerSchema.safeParse(values);
+      if (!parsed.success) {
+        return { error: "Nieprawidłowe dane rejestracji." };
+      }
 
-  const supabase = await createClient();
+      const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
-  });
+      const { data, error } = await supabase.auth.signUp({
+        email: parsed.data.email,
+        password: parsed.data.password,
+      });
 
-  if (error) {
-    return { error: translateAuthError(error.message) };
-  }
+      if (error) {
+        return { error: translateAuthError(error.message) };
+      }
 
-  const supabaseUser = data.user;
-  if (!supabaseUser?.email) {
-    return { error: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie." };
-  }
+      const supabaseUser = data.user;
+      if (!supabaseUser?.email) {
+        return { error: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie." };
+      }
 
-  try {
-    await prisma.user.create({
-      data: {
-        id: supabaseUser.id,
-        email: supabaseUser.email,
-      },
-    });
-  } catch (err) {
-    const secretKey = process.env.SUPABASE_SECRET_KEY;
-    if (secretKey) {
       try {
-        const admin = createAdminClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          secretKey,
-        );
-        await admin.auth.admin.deleteUser(supabaseUser.id);
-      } catch (cleanupErr) {
-        console.error(
-          "Failed to clean up Supabase user after Prisma error:",
-          cleanupErr,
-        );
-        reportError(cleanupErr, {
+        await prisma.user.create({
+          data: {
+            id: supabaseUser.id,
+            email: supabaseUser.email,
+          },
+        });
+      } catch (err) {
+        const secretKey = process.env.SUPABASE_SECRET_KEY;
+        if (secretKey) {
+          try {
+            const admin = createAdminClient(
+              process.env.NEXT_PUBLIC_SUPABASE_URL!,
+              secretKey,
+            );
+            await admin.auth.admin.deleteUser(supabaseUser.id);
+          } catch (cleanupErr) {
+            console.error(
+              "Failed to clean up Supabase user after Prisma error:",
+              cleanupErr,
+            );
+            reportError(cleanupErr, {
+              route: "register",
+              extra: { phase: "supabase_cleanup", userId: supabaseUser.id },
+            });
+            return {
+              error:
+                "Nie udało się utworzyć konta. Konto mogło zostać częściowo utworzone — spróbuj się zalogować lub skontaktuj z administratorem.",
+            };
+          }
+        } else {
+          console.error(
+            "SUPABASE_SECRET_KEY not set — cannot clean up orphaned Supabase user:",
+            supabaseUser.id,
+          );
+        }
+        console.error("Prisma user creation failed:", err);
+        reportError(err, {
           route: "register",
-          extra: { phase: "supabase_cleanup", userId: supabaseUser.id },
+          extra: { phase: "prisma_create" },
         });
         return {
-          error:
-            "Nie udało się utworzyć konta. Konto mogło zostać częściowo utworzone — spróbuj się zalogować lub skontaktuj z administratorem.",
+          error: "Nie udało się utworzyć konta. Spróbuj ponownie.",
         };
       }
-    } else {
-      console.error(
-        "SUPABASE_SECRET_KEY not set — cannot clean up orphaned Supabase user:",
-        supabaseUser.id,
-      );
-    }
-    console.error("Prisma user creation failed:", err);
-    reportError(err, { route: "register", extra: { phase: "prisma_create" } });
-    return {
-      error: "Nie udało się utworzyć konta. Spróbuj ponownie.",
-    };
-  }
 
-  redirect(routes.dashboard);
+      redirect(routes.dashboard);
+    },
+  );
 }
 
 export async function signOut(): Promise<void> {
