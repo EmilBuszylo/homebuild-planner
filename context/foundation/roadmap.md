@@ -1,193 +1,167 @@
 ---
 project: home-build-planner
-version: 2
-status: active
-created: 2026-05-25
-updated: 2026-06-02
+version: 3
+status: draft
+created: 2026-06-08
+updated: 2026-06-08
 prd_version: 1
 main_goal: quality
-top_blocker: none
-phase: post-mvp-polish
+top_blocker: decisions
+phase: v3-accuracy-and-features
 ---
 
-# Roadmap: home-build-planner (post-MVP polish)
+# Roadmap: home-build-planner (v3 — dokładność i uzupełnienie funkcji)
 
-> Faza 2: domknięcie MVP w prostej, dopracowanej formie — bez nowych funkcji „extra”.
-> Poprzednia roadmapa MVP: `context/foundation/archive/2026-05-28-roadmap-mvp.md`.
-> Slice’y poniżej to wyłącznie praca po zamknięciu funkcjonalnego MVP (S-01…S-06 w **Done**).
+> Derived from `context/foundation/prd.md` (v1) + auto-researched codebase baseline.
+> Edit-in-place; archive when superseded.
+> Poprzednia roadmapa (v2 post-MVP polish): `context/foundation/archive/2026-06-08-roadmap.md`.
+> Slices poniżej są w kolejności zależności. Tabela "At a glance" to indeks.
 
 ## Vision recap
 
-Osoba prywatna budująca pierwszy dom w trybie gospodarczym potrzebuje jasnej mapy etapów, orientacyjnych kosztów i kolejności działań. Rdzeń produktu (ankieta → kosztorys + harmonogram → edycja i przeliczenie) jest zaimplementowany. Ta faza nie dodaje marketplace’u, kalendarza ani notatek użytkownika — skupia się na **czytelności, podpowiedziach i dopracowanym panelu**, żeby MVP było przyjemne w użyciu, a nie tylko „działa technicznie”.
+Osoba prywatna planująca budowę pierwszego domu w trybie gospodarczym potrzebuje jasnej mapy etapów, orientacyjnych kosztów i kolejności działań — połączenie wyceny z harmonogramem zależności ogranicza koszt błędów. Rdzeń produktu (ankieta → kosztorys + harmonogram → edycja i przeliczenie) jest zaimplementowany i działa. Faza v3 nie dodaje nowych typów funkcji od zera — skupia się na **wiarygodności kalkulacji** i **uzupełnieniu zaplanowanych nice-to-have** (notatki do etapów, eksport kalendarza), bo dokładne liczby i spójne narzędzie to warunek konieczny realnej wartości dla użytkownika.
 
 ## North star
 
-**S-08: Użytkownik widzi poziomy harmonogram z notkami praktycznymi** — zrealizowane w tej iteracji (oś pozioma, hinty na wierszach etapów, poprawiony DAG kolejności prac). Kolejny widoczny krok fazy: **S-09** (spójny panel wokół wyników).
+**S-01: Kalibracja kosztów rynkowych** — gwiazda przewodnia tej iteracji (= slice, którego realizacja udowadnia, że produkt spełnia swoją obietnicę — umieszczony jak najwcześniej, bo wszystko inne ma sens tylko wtedy, gdy liczby są prawidłowe).
+
+Jeśli stawki kosztorysowe są błędne — w szczególności stan deweloperski, który według oceny właściciela jest wyliczany nieprawidłowo — produkt nie spełnia swojej obietnicy orientacyjnej wyceny. Skalibrowanie stawek na podstawie researchu rynkowego (FR-008 + FR-009) to warunek wiarygodności całego narzędzia.
 
 ## At a glance
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-07 | vitest-minimal-setup | (foundation) Uruchomić `pnpm test` z minimalnym Vitest i kilkoma testami logiki czystej | — | Success Criteria (guardrails), NFR | done |
-| S-07 | questionnaire-hints | Przy pytaniach ankiety czytać podpowiedź: co oznacza pytanie i jak wpływa na wycenę | — | FR-003, FR-004, Business Logic | done |
-| S-08 | horizontal-timeline-coaching | Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi | — | FR-006, NFR (czytelna prezentacja) | done |
-| S-09 | app-panel-polish | Korzystać z dopracowanego panelu (hub, nawigacja, układ strony planu) zamiast surowego szkieletu | S-08 | FR-006, NFR (mobile) | done |
-| S-10 | mvp-polish-finish | Doświadczyć spójnego, „gotowego” MVP: copy, disclaimery orientacyjne, mobile, brak surowych krawędzi | S-07, S-08, S-09, F-07 | US-01, FR-003–FR-006, FR-008–FR-009, Success Criteria | done |
-| S-11 | plan-results-polish-details | (faza 3) Dalsze usprawnienia prezentacji kosztorysu i harmonogramu poza zakresem S-08 | S-10 | FR-006 | done |
+| F-01 | e2e-ci-gate | (foundation) Playwright E2E specs uruchamiają się w GitHub Actions CI na każdym PR | — | FR-001, FR-002, Success Criteria (Guardrails) | ready |
+| S-01 | cost-calibration | Widzieć kosztorys oparty na zweryfikowanych stawkach rynkowych, w tym poprawione wyliczenie stanu deweloperskiego | F-01 | FR-005, FR-006, FR-008, FR-009, US-01 | proposed |
+| S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-01 | FR-003, FR-004, FR-008 | proposed |
+| S-03 | timeline-notes | Dodać notatkę lub oznaczyć etap harmonogramu jako ważny, i wrócić do niej przy kolejnej wizycie | F-01 | FR-007 | proposed |
+| S-04 | calendar-export | Wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do zewnętrznego kalendarza | F-01 | FR-010 | blocked |
 
 ## Streams
 
+Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
+
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
-| A | Bezpieczeństwo zmian | `F-07` | Minimalny test stack przed większymi zmianami UI; równolegle z S-07. |
-| B | Zrozumienie ankiety | `S-07` | Hinty przy pytaniach (stan surowy otwarty vs zamknięty itd.). |
-| C | Harmonogram i panel | `S-08` → `S-09` | Najpierw nowy timeline; potem spójny układ panelu wokół wyników. |
-| D | Domknięcie | `S-10` | Capstone po pozostałych slice’ach fazy. |
-| E | (faza 3) Polish details | `S-11` | Po S-10; usprawnienia kosztorysu + timeline poza MVP polish — nie blokuje S-07…S-10. |
+| A | Jakość kalkulacji | `F-01` → `S-01` → `S-02` | Rdzeń v3: najpierw kalibracja stawek (north star), potem rozszerzenie ankiety o typ dachu współdzielący model kosztowy |
+| B | Notatki na etapach | `S-03` | Wymaga F-01 (Stream A); niezależny od S-01/S-02 — może być realizowany równolegle z Stream A |
+| C | Eksport do kalendarza | `S-04` | Wymaga F-01 (Stream A); zablokowany decyzją o protokole (iCal vs Google Calendar API) |
 
 ## Baseline
 
-Stan codebase na **2026-05-28** (auto-researched; faza polish zakłada, że MVP funkcjonalne jest na miejscu).
+Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właściciela). Foundations poniżej zakładają, że poniższe warstwy są gotowe i ich NIE reskafoldują.
 
-- **Frontend:** present — Next.js 16 App Router, React 19, Tailwind 4, shadcn/ui; landing marketingowy, `(app)` z headerem, ankieta, strona planu (`plan-cost-table`, `plan-timeline` pionowy)
-- **Backend / API:** present — API planów, questionnaire, recalculate, results; Server Actions auth
-- **Data:** present — Prisma, modele domenowe, seed etapów i pytań, `MarketBenchmark`, migracje w repo
-- **Auth:** present — Supabase Auth + model `User`, middleware
-- **Deploy / infra:** present — Docker Postgres lokalnie, GitHub Actions, Vercel
-- **Observability:** partial — health endpoint; brak Sentry/logów (poza zakresem tej fazy)
+- **Frontend:** present — Next.js 16, React 19, Tailwind 4, shadcn/ui (`src/app/`, `src/components/ui/`)
+- **Backend / API:** present — Next.js Route Handlers: plans, results, recalculate, health/db (`src/app/api/`)
+- **Data:** present — Prisma ORM, PostgreSQL/Supabase, migracje w repo (`prisma/schema.prisma`, `prisma/migrations/`)
+- **Auth:** present — Supabase Auth via Server Actions, middleware (`src/app/(auth)/actions.ts`, `src/middleware.ts`)
+- **Deploy / infra:** present — GitHub Actions CI + Vercel deploy (`.github/workflows/ci.yml`, `deploy.yml`)
+- **Observability:** present — Sentry `@sentry/nextjs` 10.56.0, `GET /api/health/db`
+- **E2E (partial):** Playwright specs: risk-01 (IDOR), risk-02 (auth), risk-04 (generate golden path) istnieją lokalnie (`e2e/`); `pnpm test:e2e` działa. CI nie uruchamia E2E — F-01 to zamyka.
+
+**Pokryte przez zarchiwizowane slices (roadmapa v1/v2):** FR-001 (rejestracja), FR-002 (logowanie), FR-004 (pominięcie opcjonalnych pytań), FR-005 (edycja i przeliczenie), FR-006 (widok kosztorysu + timeline).
 
 ## Foundations
 
-### F-07: Minimalny setup testów (Vitest)
+### F-01: E2E CI gate
 
-- **Outcome:** (foundation) Vitest skonfigurowany; `pnpm test` uruchamia ≥2 testy jednostkowe dla logiki czystej (np. doprecyzowanie benchmarków, rate limit przeliczeń).
-- **Change ID:** vitest-minimal-setup
-- **PRD refs:** Success Criteria (guardrails), NFR (jakość utrzymania)
-- **Unlocks:** S-10 — bezpieczniejsze domknięcie fazy; regresje przy zmianach w `apply-market-benchmarks` / `plan-recalc`
+- **Outcome:** (foundation) Playwright E2E specs (risk-01 IDOR, risk-02 auth, risk-04 generate golden path) uruchamiają się automatycznie w GitHub Actions CI na każdym pull requeście; regresje w auth i ścieżce generowania są wykrywane przed merge.
+- **Change ID:** e2e-ci-gate
+- **PRD refs:** FR-001, FR-002, Success Criteria (Guardrails: "wynik generuje się w rozsadnym czasie i nie blokuje uzytkownika")
+- **Unlocks:** S-01, S-02, S-03, S-04 — automatyczna weryfikacja regresji zanim nowe slices zmienią silnik kalkulacji lub dodają nowe tabele
 - **Prerequisites:** —
-- **Parallel with:** S-07, S-08
+- **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** Scope creep — tylko minimalny setup i 2–3 testy; bez E2E i bez pełnego coverage.
-- **Status:** done
-- **Delivered (2026-06-01):** Vitest 3.2.4, `pnpm test`, 7 unit tests (`apply-market-benchmarks`, `getPlanRecalcPolicy`), CI step Test.
+- **Risk:** Sekwencjonowane jako pierwsze — dodawanie zmian w silniku kalkulacyjnym (S-01) bez automatycznych testów CI zwiększa ryzyko cichej regresji w istniejącej ścieżce golden path. Specs już istnieją; praca to wyłącznie wdrożenie job-a w `ci.yml`.
+- **Status:** ready
 
 ## Slices
 
-### S-07: Podpowiedzi w ankiecie
+### S-01: Kalibracja kosztów rynkowych
 
-- **Outcome:** Użytkownik przy (prawie) każdym pytaniu ankiety widzi hint: co oznacza pytanie (np. stan surowy otwarty vs zamknięty), jak orientacyjnie wpływa na kalkulację i na całość planu.
-- **Change ID:** questionnaire-hints
-- **PRD refs:** FR-003, FR-004, Business Logic (wejścia: stan inwestycji, ocieplenie, standard…)
-- **Prerequisites:** —
-- **Parallel with:** F-07, S-08
+- **Outcome:** Użytkownik widzi kosztorys oparty na zweryfikowanych, skalibrowanych stawkach rynkowych — w szczególności poprawione wyliczenie stanu deweloperskiego i pozostałych etapów budowy, bazujące na aktualnych widełkach cenowych z polskiego rynku (robocizna + materiały).
+- **Change ID:** cost-calibration
+- **PRD refs:** FR-005, FR-006, FR-008, FR-009, US-01
+- **Prerequisites:** F-01
+- **Parallel with:** S-03
 - **Blockers:** —
 - **Unknowns:**
-  - Treści hintów: pole w seed (`QuestionDefinition`) vs mapa w kodzie — Owner: team. Block: no (MVP treści może być kuratowana w seed).
-- **Risk:** Zbyt długie hinty obciążą mobile — trzymać 2–4 zdania + opcjonalne „rozwiń”.
-- **Status:** done
-- **Delivered (2026-05-29):** hinty front-only (`src/lib/questionnaire/hints/pl.ts`); tooltip przy pytaniu, podkreślenie + podgląd wybranej opcji dla SINGLE_CHOICE, podsumowanie z jednym tooltipem. Dalsze poprawki UX po sesjach z użytkownikami → **roadmap v3** (parked poniżej).
+  - Jakie są aktualne widełki rynkowe dla stanu deweloperskiego w Polsce (robocizna + materiały, PLN/m²)? Owner: agent (`/10x-research`). Block: no — research do wykonania jako pierwszy krok `/10x-plan cost-calibration`.
+  - Które etapy budowy mają największe odchylenia od obecnych stawek w codebase? Owner: agent (analiza `src/lib/plan-generation/`). Block: no.
+  - Czy kalibracja zmienia strukturę danych modelu (`MarketBenchmark`) czy tylko wartości seed? Owner: agent (research schema). Block: no.
+- **Risk:** Zmiana stawek rynkowych może wpłynąć na istniejące plany użytkowników — `/10x-plan` powinien rozważyć strategię migracji (recalculate on next open vs. versioned benchmarks). Sekwencjonowane przed S-02 — typ dachu musi korzystać z poprawionego modelu bazowego.
+- **Status:** proposed
 
-### S-08: Poziomy harmonogram z notkami praktycznymi
+### S-02: Rozszerzenie ankiety o typ dachu
 
-- **Outcome:** Użytkownik na stronie planu widzi **poziomy** harmonogram etapów (kolejność w czasie, daty, opcjonalnie koszt na etapie) w estetyce czytelniejszej niż surowy Jira timeline; przy wybranych etapach pojawiają się **notki coachingowe** (np. w trakcie fundamentów: warto już szukać okien i drzwi — długi czas oczekiwania).
-- **Change ID:** horizontal-timeline-coaching
-- **PRD refs:** FR-006, NFR (prezentacja wyniku bez domyślania się kolejności)
-- **Prerequisites:** —
-- **Parallel with:** S-07, F-07
+- **Outcome:** Użytkownik może wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy, czterospadowy, mansardowy, płaski) i otrzymuje kosztorys uwzględniający różnice kosztowe wynikające z wybranego typu — konstrukcja dachu, krycie, obróbki.
+- **Change ID:** questionnaire-roof-type
+- **PRD refs:** FR-003, FR-004, FR-008
+- **Prerequisites:** S-01
+- **Parallel with:** S-03, S-04
 - **Blockers:** —
 - **Unknowns:**
-  - Zakres notek na MVP (które etapy, kto dostarcza copy PL) — Owner: user. Block: no (można zacząć od 3–5 kluczowych etapów w seed).
-  - Czy kosztorys pozostaje tabelą pod timeline, czy scalony widok — Owner: user. Block: no (domyślnie: tabela + timeline, timeline poziomy).
-- **Risk:** Złożoność layoutu na mobile — wymaga przewijania poziomego lub zwinięcia etapów; zaplanować w `/10x-plan`.
-- **Status:** done
-- **Delivered (2026-05-29):** poziomy Gantt (wiersz = etap), hinty coachingowe w `src/lib/plan/coaching-hints.ts` (wiersz docelowy + pozycja na osi), poprawiony DAG `predecessorSlugs` (instalacje po stanie zamkniętym, tynki po dachu/oknach). Dalsze usprawnienia UI timeline/kosztorysu → **S-11** (parked).
+  - Które typy dachów są najpopularniejsze w polskim budownictwie jednorodzinnym i jakie są między nimi różnice kosztowe (%, PLN/m² połaci)? Owner: agent (`/10x-research`). Block: no.
+  - Czy typ dachu powinien być pytaniem wymaganym czy opcjonalnym (FR-004)? Owner: user. Block: no (można zacząć od wymaganego; `/10x-plan` zaproponuje).
+  - Czy nowe pytanie wpływa na DAG kolejności etapów (`predecessorSlugs`) — np. etap dachu zależy od typu? Owner: agent. Block: no.
+- **Risk:** Sekwencjonowane po S-01 — dodawanie kosztów dachu przed kalibracją bazowych stawek wymagałoby podwójnej pracy przy walidacji. Nowe pole w modelu ankiety (`RoofType` enum) wymaga migracji schematu — owner musi uruchomić `pnpm db:migrate`.
+- **Status:** proposed
 
-### S-11: Polish details — kosztorys i harmonogram (faza 3)
+### S-03: Notatki i zdarzenia przypiete do etapów harmonogramu
 
-- **Outcome:** Użytkownik ma **dopracowaną** prezentację wyników planu: czytelniejszy kosztorys, ewentualnie scalony widok z harmonogramem, drobne UX timeline — ponad to, co dostarczyło S-08.
-- **Change ID:** plan-results-polish-details *(do utworzenia przez `/10x-new`)*
-- **PRD refs:** FR-006 (prezentacja wyniku)
-- **Prerequisites:** S-10 (domknięcie MVP polish)
-- **Parallel with:** —
+- **Outcome:** Użytkownik może dodać notatkę lub oznaczyć etap harmonogramu jako ważny, a treść notatki jest dostępna przy kolejnych wizytach na stronie planu — pomaga koordynować kontakt z wykonawcami.
+- **Change ID:** timeline-notes
+- **PRD refs:** FR-007
+- **Prerequisites:** F-01
+- **Parallel with:** S-01, S-02, S-04
 - **Blockers:** —
 - **Unknowns:**
-  - Scalony kosztorys + timeline vs osobne widoki z lepszą hierarchią — Owner: user. Block: no.
-  - Zakres kosmetyki kosztorysu (grupowanie, wykresy, mobile) — Owner: user. Block: no.
-- **Risk:** Scope creep — trzymać jako „polishing details”, nie nowe funkcje produktu (FR-007, kalendarz itd. nadal w Parked).
-- **Status:** done
+  - Jaki model persystencji notatki — per etap per plan (najprostszy, każdy plan ma własne notatki) czy per etap globalnie dla użytkownika? Owner: user. Block: no (rekomendacja: per plan, zgodna z istniejącą architekturą Prisma `Plan`).
+  - Czy notatka ma datę przypomnienia (powiadomienie) czy jest wyłącznie tekstem? Owner: user. Block: no (MVP: tylko tekst; reminder → Parked).
+- **Risk:** Wymaga nowej tabeli `StageNote` w schemacie Prisma — owner musi uruchomić `pnpm db:migrate`. Niezależny od kalkulacji — może być realizowany równolegle z S-01 przez osobny agent run.
+- **Status:** proposed
 
-### S-09: Dopracowany panel aplikacji
+### S-04: Eksport etapów do zewnętrznego kalendarza
 
-- **Outcome:** Użytkownik ma przyjazny hub i spójny układ w `(app)`: dashboard z sensownymi CTA i kontekstem planu, strona planu z hierarchią wizualną (nagłówek, podsumowanie, wyniki), mniej „surowego” centrowania i pustej przestrzeni.
-- **Change ID:** app-panel-polish
-- **PRD refs:** FR-006, NFR (mobile + desktop)
-- **Prerequisites:** S-08
-- **Parallel with:** —
+- **Outcome:** Użytkownik może wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do zewnętrznego kalendarza.
+- **Change ID:** calendar-export
+- **PRD refs:** FR-010
+- **Prerequisites:** F-01
+- **Parallel with:** S-01, S-02, S-03
 - **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Kosmetyka bez S-08 może rozjechać się z nowym timeline — dlatego S-08 wcześniej.
-- **Status:** done
-- **Delivered (2026-06-01):** `AppPageShell`, sticky nav, dashboard hub + `PlanSnapshotCard`, `PlanSummaryStrip`, disclaimer, metadata.
-
-### S-10: Domknięcie MVP (polish capstone)
-
-- **Outcome:** Użytkownik odbiera produkt jako **skończone MVP**: spójny język (orientacyjne wyceny), disclaimery, sprawdzenie mobile, spójność landing ↔ panel ↔ ankieta ↔ plan; bez funkcji spoza PRD must-have.
-- **Change ID:** mvp-polish-finish
-- **PRD refs:** US-01, FR-003, FR-004, FR-005, FR-006, FR-008, FR-009, Success Criteria (Primary + Guardrails)
-- **Prerequisites:** S-07, S-08, S-09, F-07
-- **Parallel with:** —
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** S-10 nie może stać się nieskończonym „jeszcze tylko…” — checklista zamknięcia w planie change.
-- **Status:** done
+- **Unknowns:**
+  - iCal/ICS (plik `.ics` bez OAuth, działa z Google/Apple/Outlook po pobraniu) vs Google Calendar API (OAuth, osobny projekt Google Cloud, consent screen)? Owner: user. Block: yes — ta decyzja determinuje całą implementację, zewnętrzne zależności i zakres pracy.
+  - Jeśli Google Calendar API: wymaga Google Cloud project, OAuth 2.0 scope `calendar.events` — Owner: user (konfiguracja zewnętrzna). Block: yes — do czasu konfiguracji projektu zewnętrznego.
+- **Risk:** Jeśli iCal — bardzo szybkie do zrealizowania (bezstanowy eksport pliku, zero OAuth). Jeśli Google Calendar API — duże ryzyko opóźnienia z powodu zewnętrznych zależności i procesu weryfikacji OAuth. PRD §shape-notes potwierdza: "google calendar integrations marked nice-to-have" właśnie ze względu na tę zewnętrzną zależność. Sekwencjonowane na końcu; należy rozwiązać Unknown 1 zanim otworzy się `/10x-plan calendar-export`.
+- **Status:** blocked
 
 ## Backlog Handoff
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
-| F-07 | vitest-minimal-setup | Vitest + 2–3 testy jednostkowe logiki czystej | — | done |
-| S-07 | questionnaire-hints | Hinty przy pytaniach ankiety | — | done |
-| S-08 | horizontal-timeline-coaching | Poziomy timeline + notki praktyczne | — | done |
-| S-09 | app-panel-polish | Dopracowanie panelu i układu planu | — | done |
-| S-10 | mvp-polish-finish | Capstone: spójne, gotowe MVP | yes | Po S-07, S-08, S-09, F-07 (F-07 done) |
-| S-11 | plan-results-polish-details | Polish details: kosztorys + timeline UX | no | Po S-10; faza 3 |
+| F-01 | e2e-ci-gate | Dodaj E2E do CI (GitHub Actions) | yes | Uruchom `/10x-plan e2e-ci-gate`; specs istnieją, tylko `ci.yml` do wdrożenia |
+| S-01 | cost-calibration | Kalibracja stawek rynkowych kosztorysu | yes (po F-01) | Zacznij od `/10x-research cost-calibration` — research cenowy jest krokiem 1 |
+| S-02 | questionnaire-roof-type | Rozszerzenie ankiety: typ dachu | no | Po S-01; czeka na skalibrowany model bazowy |
+| S-03 | timeline-notes | Notatki do etapów harmonogramu (FR-007) | yes (po F-01) | Można równolegle z S-01; nowa tabela DB → owner uruchamia migrację |
+| S-04 | calendar-export | Eksport etapów do kalendarza (FR-010) | no | Zablokowane decyzją iCal vs Google Calendar API; rozwiąż Open Roadmap Q-1 |
 
 ## Open Roadmap Questions
 
-1. ~~**Które etapy dostają notki coachingowe w pierwszej iteracji?**~~ — Zamknięte w S-08 (8+ hintów w kodzie, filtrowane wg planu).
-2. ~~**Czy kosztorys zostaje osobną tabelą pod poziomym timeline?**~~ — Tak na MVP polish (S-08); ewentualne scalenie → **S-11**.
-3. **Jaka nazwa projektu w PRD frontmatter?** — Owner: user. Block: no (metadane dokumentu).
+1. **iCal (.ics pobierany przez użytkownika) vs Google Calendar API (OAuth) dla FR-010?** Owner: user. Block: S-04 — bez tej decyzji `/10x-plan calendar-export` nie może ruszyć.
+2. **Jaka nazwa projektu ma być wpisana jako `project` w PRD frontmatter?** Owner: user. Block: metadane dokumentu (z PRD §Open Questions).
+3. **Jaki jest liczbowy limit pełnych przeliczeń planu na użytkownika?** Owner: user. Block: yes — nie zmienione od PRD (z PRD §Open Questions); wpływa na NFR kosztowy.
+4. **Która data jest obligatoryjna w ankiecie?** Owner: user. Block: no (z PRD §Open Questions).
 
 ## Parked
 
-- **Hinty ankiety — iteracja po user research (roadmap v3)** — Why parked: S-07 dostarczone na tyle, by iść dalej (S-09); discoverability mobile, skróty copy, uproszczenie panelu podglądu opcji — po sesjach z użytkownikami.
-- **Scalony / rozbudowany widok kosztorysu + timeline** — Why parked: poza zakresem S-08; slice **S-11** po domknięciu S-10.
-- **Drobne UX timeline** (np. gęstość osi, mobile, kolizje markerów) — Why parked: S-11 polish details.
-- **FR-007: Notatki użytkownika na etapach** — Why parked: nice-to-have; notki w S-08 to copy systemowe (coaching), nie edycja przez użytkownika.
-- **FR-010: Google Calendar** — Why parked: PRD nice-to-have; zależność zewnętrzna.
-- **FR-011: Logowanie Google** — Why parked: PRD nice-to-have; faza polish = email/hasło.
-- **Pełny pakiet testów (E2E, coverage)** — Why parked: tylko F-07 minimal; reszta po MVP polish.
-- **Observability (Sentry, metryki)** — Why parked: health-check; nie blokuje „gotowego” MVP UX.
+- **FR-011: Logowanie przez Google** — Why parked: zewnętrzna zależność (OAuth Google), poza zakresem v3; PRD §shape-notes: "google auth moved to nice-to-have".
+- **Notatki z przypomnieniami / powiadomieniami** — Why parked: FR-007 w S-03 zakrywa MVP notatek (tekst przypiany); datowane przypomnienia to osobna funkcja wymagająca job schedulera lub zewnętrznej usługi push.
+- **Regionalizacja kosztów** — Why parked: PRD §Vision wzmiankuje "100x scale"; kalibracja v3 zakrywa ogólnopolskie widełki; regionalizacja (województwo, miasto) to następna faza po zebraniu pierwszych danych od użytkowników.
+- **Pełny coverage testów (component tests, visual regression)** — Why parked: F-01 zamyka lukę E2E w CI; komponenty i visual regression to zakres po v3.
+- **Zaawansowana współpraca (shared workspace)** — Why parked: PRD §Non-Goals wprost.
+- **Marketplace wykonawców / CRM** — Why parked: PRD §Non-Goals wprost.
 
 ## Done
 
-*(MVP funkcjonalne — bez ponownego planowania slice’ów S-01…S-06.)*
-
-- **F-01** supabase-auth-wiring — Auth end-to-end. → `context/archive/…`
-- **F-01b** user-model-sync — Model `User` + sync przy rejestracji.
-- **F-02** domain-schema-and-seed — Modele domenowe + seed bazy wiedzy.
-- **S-01** questionnaire-flow — Ankieta krok po kroku + POST planu.
-- **S-01b** questionnaire-refinements — Stan docelowy/startowy, ocieplenie %, drzwi, balkony.
-- **S-02** plan-generation — Kosztorys + timeline z lokalnej bazy.
-- **S-03** first-plan-e2e — North star MVP: ankieta → wyniki.
-- **S-03b** marketing-landing — Landing produktowy na `/`.
-- **S-04** internet-refinement — Doprecyzowanie benchmarkami rynkowymi.
-- **S-05** edit-and-recalculate — Edycja ankiety i przeliczenie.
-- **S-06** rate-limit-enforcement — Limit 3 przeliczeń / 24h.
-- **S-08: Na stronie planu widzieć poziomy harmonogram etapów z notkami praktycznymi** — Archived 2026-05-29 → `context/archive/2026-05-28-horizontal-timeline-coaching/`. Lesson: —.
-- **S-07: Użytkownik przy (prawie) każdym pytaniu ankiety widzi hint: co oznacza pytanie (np. stan surowy otwarty vs zamknięty), jak orientacyjnie wpływa na kalkulację i na całość planu.** — Archived 2026-05-29 → `context/archive/2026-05-29-questionnaire-hints/`. Lesson: —.
-- **S-09: Użytkownik ma przyjazny hub i spójny układ w `(app)`: dashboard z sensownymi CTA i kontekstem planu, strona planu z hierarchią wizualną (nagłówek, podsumowanie, wyniki), mniej „surowego” centrowania i pustej przestrzeni.** — Archived 2026-06-01 → `context/archive/2026-06-01-app-panel-polish/`. Lesson: —.
-- **F-07: (foundation) Uruchomić `pnpm test` z minimalnym Vitest i kilkoma testami logiki czystej** — Archived 2026-06-01 → `context/archive/2026-06-01-vitest-minimal-setup/`. Lesson: —.
-- **S-10: Użytkownik odbiera produkt jako **skończone MVP**: spójny język (orientacyjne wyceny), disclaimery, sprawdzenie mobile, spójność landing ↔ panel ↔ ankieta ↔ plan; bez funkcji spoza PRD must-have.** — Archived 2026-06-01 → `context/archive/2026-06-01-mvp-polish-finish/`. Lesson: —.
-- **S-11: Użytkownik ma **dopracowaną** prezentację wyników planu: czytelniejszy kosztorys, ewentualnie scalony widok z harmonogramem, drobne UX timeline — ponad to, co dostarczyło S-08.** — Archived 2026-06-02 → `context/archive/2026-06-02-plan-results-polish-details/`. Lesson: —.
+*(Puste przy generowaniu. `/10x-archive` doda wpis gdy change z pasującym Change ID zostanie zarchiwizowany.)*
