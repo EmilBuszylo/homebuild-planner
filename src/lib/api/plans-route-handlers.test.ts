@@ -322,6 +322,19 @@ describe("plans route handlers", () => {
       expect(body.error).toBe("Nie znaleziono planu");
     });
 
+    it("returns 500 JSON when GET results hits a database error", async () => {
+      asUser(USER_A);
+      planFindUnique.mockRejectedValue(new Error("DB connection lost"));
+
+      const response = await invokeGetResults(PLAN_B);
+
+      expect(response.status).toBe(500);
+      const body = await readJson<{ error: string }>(response);
+      expect(body.error).toBe(
+        "Nie udało się wczytać wyników planu. Spróbuj ponownie.",
+      );
+    });
+
     it("returns 404 when POST recalculate for a missing plan", async () => {
       asUser(USER_A);
       planFindUnique.mockResolvedValue(null);

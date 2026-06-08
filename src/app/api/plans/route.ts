@@ -64,7 +64,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ planId: result.plan.id }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error("POST /api/plans failed:", error);
     return NextResponse.json(
       { error: "Nie udało się zapisać planu. Spróbuj ponownie." },
       { status: 500 },

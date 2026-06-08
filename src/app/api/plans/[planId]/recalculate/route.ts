@@ -95,6 +95,7 @@ export async function POST(request: Request, context: RouteContext) {
       });
     }
 
+    console.error(`POST /api/plans/${planId}/recalculate failed:`, error);
     return NextResponse.json(
       { error: "Nie udało się przeliczyć planu. Spróbuj ponownie." },
       { status: 500 },

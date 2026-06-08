@@ -92,7 +92,14 @@ export async function register(values: {
         );
         await admin.auth.admin.deleteUser(supabaseUser.id);
       } catch (cleanupErr) {
-        console.error("Failed to clean up Supabase user after Prisma error:", cleanupErr);
+        console.error(
+          "Failed to clean up Supabase user after Prisma error:",
+          cleanupErr,
+        );
+        return {
+          error:
+            "Nie udało się utworzyć konta. Konto mogło zostać częściowo utworzone — spróbuj się zalogować lub skontaktuj z administratorem.",
+        };
       }
     } else {
       console.error(

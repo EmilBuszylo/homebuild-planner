@@ -12,7 +12,8 @@ export async function GET() {
       update: { checkedAt: new Date() },
     });
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (error) {
+    console.error("GET /api/health/db failed:", error);
     return NextResponse.json({ ok: false }, { status: 503 });
   }
 }
