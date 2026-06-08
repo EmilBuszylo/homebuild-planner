@@ -342,11 +342,11 @@ Add optional dev-only test route, update AGENTS.md, close change with owner depl
 
 #### Automated
 
-- [x] 1.1 `pnpm install` succeeds
-- [x] 1.2 `pnpm lint` passes
+- [x] 1.1 `pnpm install` succeeds — 3a620f7
+- [x] 1.2 `pnpm lint` passes — 3a620f7
 - [ ] 1.3 `pnpm typecheck` passes
-- [x] 1.4 `pnpm test` passes (55 tests)
-- [x] 1.5 `pnpm build:ci` passes without `SENTRY_*` env vars
+- [x] 1.4 `pnpm test` passes (55 tests) — 3a620f7
+- [x] 1.5 `pnpm build:ci` passes without `SENTRY_*` env vars — 3a620f7
 
 #### Manual
 
