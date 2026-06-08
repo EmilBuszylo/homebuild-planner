@@ -368,7 +368,7 @@ Add optional dev-only test route, update AGENTS.md, close change with owner depl
 
 #### Automated
 
-- [x] 3.1 `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build:ci` pass
+- [x] 3.1 `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build:ci` pass — 19f6aa1
 
 #### Manual
 
@@ -380,7 +380,7 @@ Add optional dev-only test route, update AGENTS.md, close change with owner depl
 
 #### Automated
 
-- [ ] 4.1 `pnpm lint && pnpm typecheck && pnpm test && pnpm build:ci`
+- [x] 4.1 `pnpm lint && pnpm typecheck && pnpm test && pnpm build:ci`
 
 #### Manual
 
