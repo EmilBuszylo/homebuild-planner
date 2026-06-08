@@ -7,7 +7,7 @@ ci_provider: github-actions
 sources:
   - context/foundation/infrastructure.md
   - context/foundation/tech-stack.md
-updated: 2026-05-21
+updated: 2026-06-08
 ---
 
 # First deploy runbook — Vercel + Supabase + Prisma
@@ -60,6 +60,7 @@ Set in **Vercel** (Project → Settings → Environment Variables) for **Preview
 | `SENTRY_AUTH_TOKEN` | Optional | Yes | Sentry → Settings → Auth Tokens | Build-time source map upload; CI `build:ci` runs without it |
 | `SENTRY_ORG` | Optional | Yes | Sentry org slug | Or set in `next.config.ts` after wizard |
 | `SENTRY_PROJECT` | Optional | Yes | Sentry project slug | Or set in `next.config.ts` after wizard |
+| `SENTRY_ENABLE_TEST_ROUTE` | Optional | Optional | Set to `true` to enable smoke endpoint | Enables `GET /api/health/sentry-test` outside `development`; default off in Production |
 
 Never prefix database URLs, `SENTRY_AUTH_TOKEN`, or `SUPABASE_SECRET_KEY` with `NEXT_PUBLIC_`.
 
@@ -150,11 +151,19 @@ PR CI does **not** run `migrate deploy` — no production DB credentials require
 5. Push branch, open PR — confirm **`CI`** workflow passes.
 6. Merge to **`master`** — confirm **`Deploy`** workflow succeeds.
 7. Open Vercel deployment logs — verify `prisma migrate deploy` and `next build` succeeded.
-8. Smoke test:
+8. Smoke tests:
    ```bash
    curl -sS "https://<production-url>/api/health/db"
    ```
    Expected: `{"ok":true}` with HTTP 200.
+
+   **Sentry ingest (after `SENTRY_DSN` is set on Vercel):**
+   - Local dev: `curl -sS "http://localhost:3000/api/health/sentry-test"` → HTTP 500, event in Sentry Issues.
+   - Preview/Production: set `SENTRY_ENABLE_TEST_ROUTE=true` on the target environment, then:
+     ```bash
+     curl -sS "https://<deployment-url>/api/health/sentry-test"
+     ```
+     Expected: HTTP 500 with `{"ok":false,"message":"Sentry smoke test triggered"}`; confirm a new issue in Sentry with a readable stack trace (requires `SENTRY_AUTH_TOKEN` on build). Alternatively, trigger a known API 500 (e.g. DB unavailable) and verify the event — intentional 401/404/429 responses must **not** create noise.
 9. Configure Supabase redirect URLs (§5) when auth work starts.
 
 ## 9. Rollback and migrations
@@ -169,6 +178,8 @@ From `infrastructure.md` risk register:
 - [ ] Vercel production deployment status: Ready
 - [ ] Build log contains successful `prisma migrate deploy`
 - [ ] `GET /api/health/db` returns 200 and `"ok":true`
+- [ ] Sentry: smoke via `GET /api/health/sentry-test` (dev or env with `SENTRY_ENABLE_TEST_ROUTE=true`) or forced API error — issue visible with de-minified stack when `SENTRY_AUTH_TOKEN` is set
+- [ ] Sentry: no events for intentional 401/404/429 API responses
 - [ ] Supabase dashboard: connections stable (pooler in use; no connection storm)
 - [ ] No secrets printed in CI or Vercel build logs
 - [ ] GitHub `master` shows green `Deploy` workflow
