@@ -39,6 +39,7 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - Do not add E2E (Playwright) or component test stacks without an explicit user request; extend Vitest coverage for new pure `src/lib/` logic when changing critical paths (benchmarks, rate limits, generation).
 - **Cursor agent hooks** (`.cursor/hooks.json`): after each agent `Write`, `after-file-lint.sh` runs ESLint on the edited file and `after-file-typecheck.sh` runs `pnpm typecheck` for `.ts`/`.tsx` edits. Logs: Output → Hooks. Requires trusted workspace and `chmod +x .cursor/hooks/*.sh`.
 - **Git pre-commit** (Husky + lint-staged): `.husky/pre-commit` runs ESLint with `--fix` on staged `*.{js,jsx,ts,tsx,mjs,cjs}` files, then `pnpm test`. Enabled via `prepare` → `husky` on `pnpm install`.
+- **E2E** (Playwright, explicit opt-in): `pnpm test:e2e` / `pnpm test:e2e:risk-02`. Conventions in `e2e/E2E-RULES.md` and exemplar `e2e/seed.spec.ts`. Requires `.env.local` (Supabase + DB), `pnpm db:docker:up`, and `pnpm exec playwright install` (browsers). Not in CI gate yet.
 
 ## UI copy and routing
 
