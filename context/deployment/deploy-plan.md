@@ -55,8 +55,13 @@ Set in **Vercel** (Project → Settings → Environment Variables) for **Preview
 | `SUPABASE_SECRET_KEY` | Yes | Yes | Supabase → Secret key | Server-only; for future auth |
 | `DATABASE_URL` | Yes | Yes | Supabase → **Transaction pooler**, port **6543** | Append `?pgbouncer=true`; Prisma runtime |
 | `DIRECT_URL` | Yes | Yes | Supabase → **Direct**, port **5432** | `prisma migrate deploy` at build time |
+| `SENTRY_DSN` | Yes | Yes | Sentry → Project Settings → Client Keys (DSN) | Server runtime; optional locally |
+| `NEXT_PUBLIC_SENTRY_DSN` | Yes | Yes | Same DSN as `SENTRY_DSN` | Client/browser SDK |
+| `SENTRY_AUTH_TOKEN` | Optional | Yes | Sentry → Settings → Auth Tokens | Build-time source map upload; CI `build:ci` runs without it |
+| `SENTRY_ORG` | Optional | Yes | Sentry org slug | Or set in `next.config.ts` after wizard |
+| `SENTRY_PROJECT` | Optional | Yes | Sentry project slug | Or set in `next.config.ts` after wizard |
 
-Never prefix database URLs or secrets with `NEXT_PUBLIC_`.
+Never prefix database URLs, `SENTRY_AUTH_TOKEN`, or `SUPABASE_SECRET_KEY` with `NEXT_PUBLIC_`.
 
 **Local templates:** [`/.env.example`](../../.env.example). For Docker dev use the commented `127.0.0.1:55432` URLs — do not point Vercel at Docker.
 
