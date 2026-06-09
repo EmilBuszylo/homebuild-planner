@@ -32,8 +32,16 @@ setup("authenticate generate-only E2E user", async ({ page }) => {
     .catch(() => false);
 
   if (!reachedPanel) {
+    const serverError = await page
+      .getByRole("alert")
+      .textContent()
+      .catch(() => null);
     throw new Error(
-      "Generate-user setup failed — could not register and reach /panel.",
+      [
+        "Generate-user setup failed — could not register and reach /panel.",
+        `Current URL: ${page.url()}.`,
+        serverError ? `Server error: ${serverError}` : "No server error shown.",
+      ].join(" "),
     );
   }
 

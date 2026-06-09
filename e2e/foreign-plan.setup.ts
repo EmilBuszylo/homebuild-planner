@@ -53,6 +53,7 @@ setup("seed foreign plan owned by victim user", async ({ page }) => {
         [
           "Foreign-plan setup failed — victim user could not reach /panel.",
           "Configure .env.local (Supabase + DATABASE_URL) and run pnpm db:docker:up.",
+          `Current URL: ${page.url()}.`,
           serverError ? `Server error: ${serverError}` : "No server error shown.",
         ].join(" "),
       );

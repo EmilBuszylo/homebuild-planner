@@ -54,6 +54,7 @@ setup("authenticate E2E session user", async ({ page }) => {
         "E2E auth setup failed — could not reach /panel.",
         "Provide E2E_USER_EMAIL + E2E_USER_PASSWORD for an existing account,",
         "or configure .env.local (Supabase + DATABASE_URL) and run pnpm db:docker:up.",
+        `Current URL: ${page.url()}.`,
         serverError ? `Server error: ${serverError}` : "No server error shown.",
       ].join(" "),
     );

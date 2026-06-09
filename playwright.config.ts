@@ -1,7 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 3000;
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`;
+const baseURL =
+  process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -18,9 +19,21 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [
-    { name: "setup", testMatch: /auth\.setup\.ts/ },
-    { name: "foreign-plan-setup", testMatch: /foreign-plan\.setup\.ts/ },
-    { name: "generate-user-setup", testMatch: /generate-user\.setup\.ts/ },
+    {
+      name: "setup",
+      testMatch: /auth\.setup\.ts/,
+      timeout: process.env.CI ? 90_000 : 30_000,
+    },
+    {
+      name: "foreign-plan-setup",
+      testMatch: /foreign-plan\.setup\.ts/,
+      timeout: process.env.CI ? 90_000 : 30_000,
+    },
+    {
+      name: "generate-user-setup",
+      testMatch: /generate-user\.setup\.ts/,
+      timeout: process.env.CI ? 60_000 : 30_000,
+    },
     {
       name: "anonymous",
       testMatch: /risk-02-anonymous.*\.spec\.ts/,

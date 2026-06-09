@@ -30,6 +30,52 @@ function translateAuthError(message: string): string {
   return "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.";
 }
 
+function createSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
+  if (!url || !secretKey) return null;
+  return createAdminClient(url, secretKey);
+}
+
+/** signUp without a session (email confirmation on) leaves middleware with no cookie. */
+async function ensureSessionAfterSignUp(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  params: { email: string; password: string; userId: string },
+  hadSession: boolean,
+): Promise<AuthResult | undefined> {
+  if (hadSession) return undefined;
+
+  const admin = createSupabaseAdmin();
+  if (!admin) {
+    return {
+      error: "Konto utworzone — potwierdź adres e-mail przed zalogowaniem.",
+    };
+  }
+
+  const { error: confirmError } = await admin.auth.admin.updateUserById(
+    params.userId,
+    { email_confirm: true },
+  );
+  if (confirmError) {
+    console.error("Failed to confirm user email after signUp:", confirmError);
+    reportError(confirmError, {
+      route: "register",
+      extra: { phase: "email_confirm" },
+    });
+    return { error: "Nie udało się aktywować konta. Spróbuj ponownie." };
+  }
+
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: params.email,
+    password: params.password,
+  });
+  if (signInError) {
+    return { error: translateAuthError(signInError.message) };
+  }
+
+  return undefined;
+}
+
 export async function login(values: {
   email: string;
   password: string;
@@ -96,13 +142,9 @@ export async function register(values: {
           },
         });
       } catch (err) {
-        const secretKey = process.env.SUPABASE_SECRET_KEY;
-        if (secretKey) {
+        const admin = createSupabaseAdmin();
+        if (admin) {
           try {
-            const admin = createAdminClient(
-              process.env.NEXT_PUBLIC_SUPABASE_URL!,
-              secretKey,
-            );
             await admin.auth.admin.deleteUser(supabaseUser.id);
           } catch (cleanupErr) {
             console.error(
@@ -132,6 +174,28 @@ export async function register(values: {
         return {
           error: "Nie udało się utworzyć konta. Spróbuj ponownie.",
         };
+      }
+
+      if (!data.session) {
+        if (!process.env.CI) {
+          return {
+            error:
+              "Konto utworzone — potwierdź adres e-mail przed zalogowaniem.",
+          };
+        }
+
+        const sessionError = await ensureSessionAfterSignUp(
+          supabase,
+          {
+            email: parsed.data.email,
+            password: parsed.data.password,
+            userId: supabaseUser.id,
+          },
+          false,
+        );
+        if (sessionError?.error) {
+          return sessionError;
+        }
       }
 
       redirect(routes.dashboard);
