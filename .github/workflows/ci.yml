@@ -71,7 +71,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright Chromium
-        run: pnpm exec playwright install chromium --with-deps
+        run: PLAYWRIGHT_BROWSERS_PATH=0 pnpm exec playwright install chromium --with-deps
 
       - name: Generate Prisma client
         run: pnpm exec prisma generate
