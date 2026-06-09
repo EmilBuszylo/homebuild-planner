@@ -32,7 +32,7 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - `pnpm start` — serve production build locally.
 - `pnpm lint` — ESLint via @eslint.config.mjs and `eslint-config-next`.
 - `pnpm test` — Vitest in `src/lib/` (colocated `*.test.ts`): pure logic plus mocked API route handlers in `src/lib/api/*.test.ts` (no DB required).
-- Full test strategy and cookbook recipes → `context/foundation/test-plan.md` (§6). Local gates: `pnpm test`, `pnpm lint`. GitHub Actions CI (`.github/workflows/ci.yml`) runs the same plus `pnpm build:ci` on pull requests and `push` to `master` — see test-plan §5.
+- Full test strategy and cookbook recipes → `context/foundation/test-plan.md` (§6). Local gates: `pnpm test`, `pnpm lint`. GitHub Actions CI (`.github/workflows/ci.yml`) runs `ci` job (lint → test → `build:ci`) and parallel `e2e` job (`pnpm test:e2e`) on pull requests and `push` to `master` — see test-plan §5.
 - Prisma: `pnpm db:generate` / `prisma generate` — agents may run. `pnpm db:migrate` / `prisma migrate dev` and `pnpm db:studio` — **owner only**; agents stop and request these when required (see Hard rules). Vercel/production applies pending migrations via `prisma migrate deploy` in `pnpm build` when env is configured.
 - **Local Postgres (Docker):** @docker-compose.yml — Postgres 16 on host port **55432** (`homebuild` / `homebuild` / `homebuild_planner`). `pnpm db:docker:up` starts the DB; `pnpm db:docker:down` stops the container, removes the volume and compose images. Point `DATABASE_URL` and `DIRECT_URL` in `.env.local` at `127.0.0.1:55432` (see @.env.example); no pooler locally.
 - **First / production deploy:** follow @context/deployment/deploy-plan.md (Vercel env + GitHub Actions; `prisma migrate deploy` runs automatically in `pnpm build` on Vercel).
@@ -40,7 +40,7 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - Do not add E2E (Playwright) or component test stacks without an explicit user request; extend Vitest coverage for new pure `src/lib/` logic when changing critical paths (benchmarks, rate limits, generation).
 - **Cursor agent hooks** (`.cursor/hooks.json`): after each agent `Write`, `after-file-lint.sh` runs ESLint on the edited file and `after-file-typecheck.sh` runs `pnpm typecheck` for `.ts`/`.tsx` edits. Logs: Output → Hooks. Requires trusted workspace and `chmod +x .cursor/hooks/*.sh`.
 - **Git pre-commit** (Husky + lint-staged): `.husky/pre-commit` runs ESLint with `--fix` on staged `*.{js,jsx,ts,tsx,mjs,cjs}` files, then `pnpm test`. Enabled via `prepare` → `husky` on `pnpm install`.
-- **E2E** (Playwright, explicit opt-in): `pnpm test:e2e`, `pnpm test:e2e:risk-01` (IDOR), `pnpm test:e2e:risk-02` (auth), `pnpm test:e2e:risk-04` (generate golden path). Conventions in `e2e/E2E-RULES.md` and exemplar `e2e/seed.spec.ts`. Requires `.env.local` (Supabase + DB), `pnpm db:docker:up`, and `pnpm exec playwright install` (browsers). Not in CI gate yet.
+- **E2E** (Playwright): `pnpm test:e2e`, `pnpm test:e2e:risk-01` (IDOR), `pnpm test:e2e:risk-02` (auth), `pnpm test:e2e:risk-04` (generate golden path). Conventions in `e2e/E2E-RULES.md` and exemplar `e2e/seed.spec.ts`. **Local:** `.env.local` (Supabase + DB), `pnpm db:docker:up`, `pnpm exec playwright install chromium`. **CI:** `e2e` job on every PR — requires GitHub Actions secrets + Supabase CI project per `e2e/E2E-RULES.md` §CI. Do not add new Playwright specs without an explicit user request.
 
 ## UI copy and routing
 
@@ -68,6 +68,5 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 
 ## Commits and CI
 
-- No `.github/workflows/` in repo yet; no enforced CI gate until workflows land.
-- Prefer Conventional Commits-style prefixes (`feat:`, `fix:`, `docs:`) when the user commits.
+- GitHub Actions: `.github/workflows/ci.yml` (`ci` + `e2e` jobs on PR and `master` push). Prefer Conventional Commits-style prefixes (`feat:`, `fix:`, `docs:`) when the user commits.
 - Keep changes minimal and aligned with the 3-week after-hours MVP in @context/foundation/tech-stack.md.

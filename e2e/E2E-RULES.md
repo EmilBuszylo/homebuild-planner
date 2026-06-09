@@ -48,6 +48,50 @@ Anonymous specs (`risk-02-anonymous-*`) run without credentials — they only ne
 Risk #1 setup creates a **second** victim account with a real plan (`foreign-plan.setup.ts`).
 Risk #4 uses a dedicated generate-only user (`generate-user.setup.ts`) — not the full questionnaire UI.
 
+## CI (GitHub Actions)
+
+The `e2e` job in `.github/workflows/ci.yml` runs on every pull request and `push` to `master`, in parallel with the `ci` job (lint → Vitest → `build:ci`).
+
+### Required GitHub secrets
+
+Repository → **Settings → Secrets and variables → Actions** — add:
+
+| Secret | Same as local `.env.local` |
+|--------|---------------------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | yes |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | yes |
+| `SUPABASE_SECRET_KEY` | yes |
+
+Do **not** add `DATABASE_URL` / `DIRECT_URL` as secrets — the workflow sets them to the Postgres service container (`postgresql://homebuild:homebuild@localhost:5432/homebuild_planner`).
+
+Until all three Supabase secrets are configured, the `e2e` job is expected to fail on auth setup.
+
+### Supabase project settings (owner)
+
+Use a dedicated Supabase project (or isolated preview) for CI:
+
+1. **Authentication → Providers → Email:** disable “Confirm email” on sign-up (recommended). If left enabled, the app auto-confirms and signs in during `register` when `CI=true` and `SUPABASE_SECRET_KEY` is set.
+2. **Authentication → URL configuration:** Site URL `http://localhost:3000`; Redirect URLs include `http://localhost:3000/**`.
+3. Playwright `baseURL` is `http://localhost:3000` — match Supabase URLs to `localhost`, not `127.0.0.1`.
+
+### What the job does
+
+1. Start Postgres 16 service container (credentials match `docker-compose.yml`).
+2. `pnpm install` → `playwright install chromium --with-deps` (`PLAYWRIGHT_BROWSERS_PATH=0`).
+3. `prisma generate` → `prisma migrate deploy` → `pnpm db:seed`.
+4. `pnpm test:e2e` with `TEST_RUN_ID=${{ github.run_id }}` for unique E2E user emails.
+5. On failure: upload `playwright-report/` and `test-results/` artifacts (7-day retention).
+
+### Local vs CI env
+
+| Variable | Local | CI |
+|----------|-------|-----|
+| Postgres | Docker `127.0.0.1:55432` | Service container `localhost:5432` |
+| Supabase | `.env.local` | GitHub secrets |
+| `TEST_RUN_ID` | optional (`Date.now()` default) | `github.run_id` |
+
+Vitest and `build:ci` do not need Supabase or a live DB; only the `e2e` job does.
+
 ## Anti-patterns (re-prompt by name)
 
 1. **Hallucinated assertion** — asserting text/role not present in the app.

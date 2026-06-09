@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-03 (Phase 4 cookbook — complete)
+> Last updated: 2026-06-09 (E2E CI gate — `e2e-ci-gate`)
 
 ## 1. Strategy
 
@@ -85,7 +85,7 @@ The classic test base for this project. AI-native tools (if any) carry a
 |-------|------|---------|-------|
 | unit + integration | Vitest | ^3.2.4 | `pnpm test` / `vitest.config.mts`; colocate `*.test.ts` in `src/lib/` per AGENTS.md |
 | API mocking | in-process (Vitest) | — | `vi.hoisted` + `vi.mock` in handler test file (§6.2); not MSW |
-| e2e | none (by policy) | — | AGENTS.md: no Playwright without explicit request; interview Q5 excludes full-panel E2E |
+| e2e | Playwright (`@playwright/test`) | ^1.60.0 | `pnpm test:e2e`; specs in `e2e/` (risks #1, #2, #4). **CI gate** on every PR via parallel `e2e` job in `.github/workflows/ci.yml`. Prerequisites: `e2e/E2E-RULES.md` (local + §CI). No full-questionnaire UI walkthrough (interview Q5). |
 | accessibility | none yet | — | Not in MVP rollout |
 | AI-native | none | n/a | No phase justified under cost × signal for current MVP |
 
@@ -105,20 +105,22 @@ The classic test base for this project. AI-native tools (if any) carry a
 | lint (`pnpm lint`) | local + CI | required | ESLint + TypeScript rules via `eslint-config-next/typescript` |
 | unit + handler integration (`pnpm test`) | local + CI | required | Vitest: pure logic and mocked route handlers in `src/lib/` |
 | production build (`pnpm build:ci`) | local + CI | required | `prisma generate` + Next compile (no DB migrate in CI) |
-| e2e (Playwright) | — | excluded unless explicitly requested | — |
+| e2e (`pnpm test:e2e`) | local + CI (`e2e` job) | required on PR | Playwright: auth setups, risk-01 IDOR, risk-02 session, risk-04 generate golden path; complements Vitest handler mocks |
 | post-edit hook | — | not planned | — |
 | visual diff / multimodal review | — | excluded per interview Q5 | — |
 | pre-prod smoke | manual | recommended before deploy | see §6.0 (manual smoke column) |
 
 There is **no** separate `pnpm typecheck` script; compile-time TypeScript is covered by **`pnpm build:ci`** plus ESLint TypeScript rules.
 
-### CI job (`.github/workflows/ci.yml`)
+### CI jobs (`.github/workflows/ci.yml`)
 
 **Triggers:** `pull_request` and `push` to `master`.
 
-**Steps (in order):** `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm test` → `pnpm run build:ci`.
+**Job `ci` (in order):** `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm test` → `pnpm run build:ci`.
 
-**Note:** `deploy.yml` on `push` to `master` uses Vercel build and does **not** run Vitest; rely on the CI workflow above for test gates on merged code.
+**Job `e2e` (parallel, no `needs:`):** Postgres 16 service container → `playwright install chromium` → `prisma generate` → `prisma migrate deploy` → `pnpm db:seed` → `pnpm test:e2e`. Supabase env from GitHub Actions secrets (see `e2e/E2E-RULES.md` §CI). On failure: uploads `playwright-report/` and `test-results/` artifacts.
+
+**Note:** `deploy.yml` on `push` to `master` uses Vercel build and does **not** run Vitest or Playwright; rely on the CI workflow above for test gates on merged code.
 
 ## 6. Cookbook Patterns
 
@@ -129,10 +131,10 @@ relevant rollout phase ships.
 
 | Risk | Primary automated coverage | Manual smoke |
 |------|---------------------------|--------------|
-| #1 Plan IDOR | `src/lib/api/plans-route-handlers.test.ts` | `context/archive/2026-06-02-testing-access-control-ownership/MANUAL-SMOKE.md` (plan-by-ID) |
-| #2 Auth / session | `plans-route-handlers.test.ts` (401 cases) | same MANUAL-SMOKE (panel, `/ankieta`, API bez sesji) |
+| #1 Plan IDOR | `plans-route-handlers.test.ts` + `e2e/risk-01-idor-foreign-plan.spec.ts` | `context/archive/2026-06-02-testing-access-control-ownership/MANUAL-SMOKE.md` (plan-by-ID) |
+| #2 Auth / session | `plans-route-handlers.test.ts` (401) + `e2e/risk-02-*.spec.ts` | same MANUAL-SMOKE (panel, `/ankieta`, API bez sesji) |
 | #3 Benchmark / cost sanity | `generate-plan-results.test.ts`, `apply-market-benchmarks.test.ts` | — |
-| #4 Generate path | `persist-plan-version.test.ts`, `plans-route-handlers.test.ts`, `questionnaire-pipeline.test.ts` | — |
+| #4 Generate path | `persist-plan-version.test.ts`, `plans-route-handlers.test.ts`, `questionnaire-pipeline.test.ts`, `e2e/risk-04-generate-golden-path.spec.ts` | — |
 | #5 Recalc delta | `plans-route-handlers.test.ts` (recalc `area` inequality) | — |
 | #6 Invalid questionnaire payload | `questionnaire-inputs.test.ts`, `investment-state.test.ts`, `responses-to-inputs.test.ts`, handler **400** (create + recalc) | `context/archive/2026-06-03-testing-questionnaire-hardening/MANUAL-SMOKE.md` (step 1 UI) |
 | #7 Recalc rate limit | `plan-recalc.test.ts` (policy env), `plans-route-handlers.test.ts` (**429**) | — |
@@ -169,8 +171,20 @@ Detail recipes: §6.1–§6.5. Rollout notes: §6.6.
 
 ### 6.3 Adding an e2e test
 
-Excluded by default (AGENTS.md + interview Q5). Do not add Playwright without
-an explicit product decision recorded outside this guide.
+Playwright specs live in `e2e/` and run in CI on every PR (`e2e` job in
+`ci.yml`). Follow `e2e/E2E-RULES.md` and model on `e2e/seed.spec.ts`.
+
+**Prerequisites (local):** `pnpm db:docker:up`, Supabase + DB env in
+`.env.local`, `pnpm exec playwright install chromium` (scripts use
+`PLAYWRIGHT_BROWSERS_PATH=0`).
+
+**Prerequisites (CI):** GitHub secrets + Supabase project settings — see
+`e2e/E2E-RULES.md` §CI.
+
+**Scope:** risks #1, #2, #4 only (thin golden paths). Do **not** add a
+full-questionnaire UI walkthrough without an explicit product decision
+(interview Q5). New specs should map to a `test-plan.md` risk row and use
+`TEST_RUN_ID` for isolation.
 
 ### 6.4 Adding a test for a new API route or Server Action
 
@@ -205,7 +219,7 @@ Exclusions from Phase 2 interview Q5. Re-evaluate if assumptions change.
 - **Full-panel UI snapshots** — brittle on Tailwind churn, low signal. (interview Q5)
 - **Generated Prisma client / types** — generator is source of truth. (interview Q5)
 - **Pixel-perfect mobile timeline layout** — prefer cost/sort logic tests (existing sort unit test direction). (interview Q5)
-- **Playwright E2E of entire questionnaire** — expensive; server integration covers generate/recalc signal. (AGENTS.md + interview Q4/Q5)
+- **Playwright E2E of entire questionnaire** — expensive; server integration + `risk-04` API golden path cover generate signal. (interview Q4/Q5; see §6.3 for allowed E2E scope)
 
 ## 8. Freshness Ledger
 
@@ -213,6 +227,7 @@ Exclusions from Phase 2 interview Q5. Re-evaluate if assumptions change.
 - Stack versions last verified: 2026-06-03
 - AI-native tool references last verified: 2026-06-03 (none in use)
 - Test rollouts 1–4 complete (`testing-cookbook-ci-floor` closed)
+- E2E CI gate shipped (`e2e-ci-gate`, 2026-06-09): Playwright risks #1/#2/#4 in parallel `e2e` job
 
 Refresh (`/10x-test-plan --refresh`) when:
 

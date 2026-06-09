@@ -1,9 +1,9 @@
 ---
 change_id: e2e-ci-gate
 title: E2E Playwright w GitHub Actions CI
-status: implementing
+status: implemented
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-06-09
 archived_at: null
 ---
 
