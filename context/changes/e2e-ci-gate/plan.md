@@ -230,10 +230,10 @@ Align contributor docs with E2E-in-CI reality and give owner a checklist for Sup
 
 #### Automated
 
-- [x] 1.1 `pnpm lint` passes
-- [x] 1.2 `pnpm typecheck` passes
-- [x] 1.3 `pnpm test` passes
-- [x] 1.4 `pnpm build:ci` passes
+- [x] 1.1 `pnpm lint` passes — c47cb2d
+- [x] 1.2 `pnpm typecheck` passes — c47cb2d
+- [x] 1.3 `pnpm test` passes — c47cb2d
+- [x] 1.4 `pnpm build:ci` passes — c47cb2d
 
 #### Manual
 
