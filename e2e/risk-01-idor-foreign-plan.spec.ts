@@ -45,6 +45,6 @@ test.describe("Ryzyko #1 — Plan IDOR: izolacja planów", () => {
     await expect(
       page.getByRole("link", { name: "Wróć do panelu" }),
     ).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Kosztorys etapów" })).not.toBeVisible();
+    await expect(page.getByText("Kosztorys etapów")).not.toBeVisible();
   });
 });
