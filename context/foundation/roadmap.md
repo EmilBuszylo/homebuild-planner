@@ -3,7 +3,7 @@ project: home-build-planner
 version: 3
 status: draft
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-06-09
 prd_version: 1
 main_goal: quality
 top_blocker: decisions
@@ -31,7 +31,7 @@ Jeśli stawki kosztorysowe są błędne — w szczególności stan deweloperski,
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | e2e-ci-gate | (foundation) Playwright E2E specs uruchamiają się w GitHub Actions CI na każdym PR | — | FR-001, FR-002, Success Criteria (Guardrails) | ready |
+| F-01 | e2e-ci-gate | (foundation) Playwright E2E specs uruchamiają się w GitHub Actions CI na każdym PR | — | FR-001, FR-002, Success Criteria (Guardrails) | done |
 | S-01 | cost-calibration | Widzieć kosztorys oparty na zweryfikowanych stawkach rynkowych, w tym poprawione wyliczenie stanu deweloperskiego | F-01 | FR-005, FR-006, FR-008, FR-009, US-01 | proposed |
 | S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-01 | FR-003, FR-004, FR-008 | proposed |
 | S-03 | timeline-notes | Dodać notatkę lub oznaczyć etap harmonogramu jako ważny, i wrócić do niej przy kolejnej wizycie | F-01 | FR-007 | proposed |
@@ -74,7 +74,7 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sekwencjonowane jako pierwsze — dodawanie zmian w silniku kalkulacyjnym (S-01) bez automatycznych testów CI zwiększa ryzyko cichej regresji w istniejącej ścieżce golden path. Specs już istnieją; praca to wyłącznie wdrożenie job-a w `ci.yml`.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -164,4 +164,4 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 
 ## Done
 
-*(Puste przy generowaniu. `/10x-archive` doda wpis gdy change z pasującym Change ID zostanie zarchiwizowany.)*
+- **F-01: (foundation) Playwright E2E specs (risk-01 IDOR, risk-02 auth, risk-04 generate golden path) uruchamiają się automatycznie w GitHub Actions CI na każdym pull requeście; regresje w auth i ścieżce generowania są wykrywane przed merge.** — Archived 2026-06-09 → `context/archive/2026-06-08-e2e-ci-gate/`. Lesson: —.
