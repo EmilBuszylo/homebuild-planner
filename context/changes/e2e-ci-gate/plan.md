@@ -237,15 +237,15 @@ Align contributor docs with E2E-in-CI reality and give owner a checklist for Sup
 
 #### Manual
 
-- [x] 1.5 Owner: GitHub secrets + Supabase CI project configured
-- [x] 1.6 Test PR: `e2e` job green on GitHub Actions
+- [x] 1.5 Owner: GitHub secrets + Supabase CI project configured — 002148c
+- [x] 1.6 Test PR: `e2e` job green on GitHub Actions — 002148c
 
 ### Phase 2: Documentation & owner setup runbook
 
 #### Automated
 
-- [x] 2.1 `pnpm lint` passes (if applicable)
+- [x] 2.1 `pnpm lint` passes (if applicable) — 002148c
 
 #### Manual
 
-- [x] 2.2 Owner: E2E-RULES §CI checklist complete; secrets verified in GitHub UI
+- [x] 2.2 Owner: E2E-RULES §CI checklist complete; secrets verified in GitHub UI — 002148c
