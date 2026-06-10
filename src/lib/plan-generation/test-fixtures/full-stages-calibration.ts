@@ -21,7 +21,7 @@ type StageRateDef = {
 };
 
 /** Rates aligned with `calibration-rates.md` / `prisma/seed.ts` (S-01). */
-const calibrationStageRateDefs: StageRateDef[] = [
+export const calibrationStageRateDefs: StageRateDef[] = [
   {
     slug: "foundations",
     name: "Fundamenty",

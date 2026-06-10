@@ -7,7 +7,7 @@ repository: home-build-planner
 topic: "S-01 cost-calibration — market rates, codebase gaps, schema vs seed"
 tags: [research, cost-calibration, plan-generation, market-benchmark, developer-state]
 status: complete
-last_updated: 2026-06-09
+last_updated: 2026-06-08
 last_updated_by: Cursor Agent
 ---
 
@@ -188,10 +188,10 @@ Per-unit (Std): okno 2 000 PLN, drzwi zewn. 6 500 PLN, balkon 14 000 PLN (`prism
 
 ## Open Questions — resolved (2026-06-09)
 
-1. **Oracle kalibracji:** etap-po-etapie z cenników PL 2026 — workbook `calibration-rates.md`; golden sanity **5 050 PLN/m²** (606 040 PLN / 120 m²).
+1. **Oracle kalibracji:** etap-po-etapie z cenników PL 2026 — workbook `calibration-rates.md`; golden po epilogu ownera (plumbing −10%, heating −15%): **~4 997 PLN/m²** (599 650 PLN / 120 m²). Widełki planu po epilogu: **~4 950–6 500 PLN/m²**.
 2. **Istniejące plany:** brak migracji — owner drop DB w fazie testów.
 3. **Źródło prawdy w UI:** Phase 2 — `sourceName` + data researchu w `market-benchmarks.json` (bez zmian schema).
-4. **Test oracle:** Phase 3 — per-stage stałe z workbooku; total widełki `[5 000, 6 500] PLN/m²` (plan Phase 3).
+4. **Test oracle:** Phase 3 done — per-stage stałe z workbooku; total exact **599 650 PLN** + smoke band w `questionnaire-pipeline.test.ts`.
 5. **Regionalizacja:** poza S-01; ogólnopolskie widełki OK na MVP v3.
 
 ## Plan decisions (2026-06-09)
@@ -203,4 +203,4 @@ Per-unit (Std): okno 2 000 PLN, drzwi zewn. 6 500 PLN, balkon 14 000 PLN (`prism
 
 ## Recommended next step
 
-Phase 1 workbook done → owner manual gate (plan 1.3) → `/10x-implement cost-calibration phase 2`.
+Phases 1–4 implemented. Owner: plan Progress **2.4** + **4.2** (drop DB, `pnpm db:seed`, UI smoke ~600k). Then `/10x-archive cost-calibration`. Follow-up slice **S-05** `utility-connections` (przyłącza) w `context/foundation/roadmap.md`.

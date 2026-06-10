@@ -10,8 +10,6 @@ import {
 import {
   CALIBRATED_GOLDEN_EXPECTATIONS,
   CALIBRATED_GOLDEN_TOTAL,
-  CALIBRATED_GOLDEN_TOTAL_MAX,
-  CALIBRATED_GOLDEN_TOTAL_MIN,
 } from "./test-fixtures/calibrated-golden-expectations";
 import { fullStagesForCalibration } from "./test-fixtures/full-stages-calibration";
 import { minimalStagesForGeneration } from "./test-fixtures/minimal-stages";
@@ -103,15 +101,13 @@ describe("generatePlanResults", () => {
       }
     });
 
-    it("sums to calibrated golden total within ±2% band", () => {
+    it("sums to calibrated golden total", () => {
       const responses = responsesFromPayload(validQuestionnairePayload);
       const total = sumEstimatedCosts(
         generatePlanResults(fullStagesForCalibration, responses),
       );
 
       expect(total).toBe(CALIBRATED_GOLDEN_TOTAL);
-      expect(total).toBeGreaterThanOrEqual(CALIBRATED_GOLDEN_TOTAL_MIN);
-      expect(total).toBeLessThanOrEqual(CALIBRATED_GOLDEN_TOTAL_MAX);
     });
   });
 });

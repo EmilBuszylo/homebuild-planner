@@ -22,7 +22,7 @@ Skalibrować orientacyjne stawki kosztorysu na podstawie **cenników rynkowych P
 ## Desired End State
 
 1. `context/changes/cost-calibration/calibration-rates.md` — tabela per slug (Economy/Standard/Premium PLN/m², per-unit PLN, źródła URL, cytat/widełki).
-2. `prisma/seed.ts` odzwierciedla workbook; suma golden payload (120 m², STANDARD, DEVELOPER) w widełkach **~5 000–6 500 PLN/m²** (~600–780 k PLN), bez sztucznego dopasowania jednym mnożnikiem.
+2. `prisma/seed.ts` odzwierciedla workbook; suma golden payload (120 m², STANDARD, DEVELOPER) w widełkach **~4 950–6 500 PLN/m²** (~594–780 k PLN), bez sztucznego dopasowania jednym mnożnikiem. Po epilogu ownera (plumbing −10%, heating −15%) workbook dokumentuje **599 650 PLN / ~4 997 PLN/m²** — akceptowane; S-05 (przyłącza) może podnieść sumę u części użytkowników.
 3. `market-benchmarks.json` — multipliers **1.0** dla wszystkich kategorii (kalibracja w bazie, nie overlay); zaktualizowany `sourceName` + data researchu.
 4. Vitest: asercje **per etap** dla golden payload (stałe z workbooku, nie kopia formuły z `compute-costs.ts`).
 5. `pnpm test`, `pnpm lint`, `pnpm build:ci`, `pnpm test:e2e` zielone; owner po drop DB: `pnpm db:seed`.
@@ -35,6 +35,12 @@ Skalibrować orientacyjne stawki kosztorysu na podstawie **cenników rynkowych P
 - Nowe pytania ankiety (typ dachu → S-02).
 - Zmiana schematu `MarketBenchmark` (per-stage FK).
 - Pełny Playwright walkthrough ankiety.
+
+## Epilog (owner feedback, post–Phase 2)
+
+- **Plumbing −10%** (internal install only; no przyłącza) — workbook + seed.
+- **Heating −15%** — workbook + seed.
+- **S-05 `utility-connections`** dodane do `context/foundation/roadmap.md` (przyłącza mediów) — poza oryginalnym S-01, zaakceptowane jako follow-up slice.
 
 ## Implementation Approach
 
@@ -264,7 +270,7 @@ Brak — zmiana danych seed, nie hot path.
 #### Automated
 
 - [x] 1.1 `calibration-rates.md` exists with 18 slugs + modifiers section
-- [x] 1.2 Golden sum documented in workbook within 5 000–6 500 PLN/m²
+- [x] 1.2 Golden sum documented in workbook (~4 997 PLN/m² after epilogs; band ~4 950–6 500)
 
 #### Manual
 

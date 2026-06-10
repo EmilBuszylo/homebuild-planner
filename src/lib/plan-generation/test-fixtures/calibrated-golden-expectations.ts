@@ -2,6 +2,11 @@
  * Per-stage oracle for golden DEVELOPER path (120 m², STANDARD, insulation STANDARD).
  * Source: `context/changes/cost-calibration/calibration-rates.md` golden table — workbook
  * row sums (not `computeStageCost` in tests).
+ *
+ * **Invariant (S-01):** expectations are **pre-`applyMarketBenchmarks`**. Production
+ * persists refined costs when category multipliers ≠ 1.0. While
+ * `prisma/data/market-benchmarks.json` keeps all multipliers at 1.0, oracle totals
+ * match persisted plans. Re-run calibration oracles if benchmarks diverge again.
  */
 export const CALIBRATED_GOLDEN_EXPECTATIONS: Record<string, number> = {
   foundations: 63_000,
