@@ -35,6 +35,24 @@ describe("questionnaire → generation pipeline", () => {
     expect(results.every((row) => row.estimatedCost > 0)).toBe(true);
   });
 
+  it("includes utility connection stages in full calibration results", () => {
+    const parsed = questionnaireInputsSchema.safeParse(validQuestionnairePayload);
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) {
+      return;
+    }
+
+    const responsesMap = toQuestionnaireResponsesMap(parsed.data);
+    const results = generatePlanResults(
+      fullStagesForCalibration,
+      responsesMap,
+    );
+    const slugs = results.map((row) => row.stageSlug);
+
+    expect(slugs).toContain("sewage_connection");
+    expect(slugs).toContain("water_connection");
+  });
+
   it("full calibration fixture total stays within golden workbook band", () => {
     const parsed = questionnaireInputsSchema.safeParse(validQuestionnairePayload);
     expect(parsed.success).toBe(true);

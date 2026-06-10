@@ -396,8 +396,8 @@ Brak — 2 etapy i kilka modyfikatorów flat; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [ ] 4.1 `pnpm test` passes (20-stage oracle + stage-filter + distance gating)
-- [ ] 4.2 `pnpm build:ci` passes
+- [x] 4.1 `pnpm test` passes (20-stage oracle + stage-filter + distance gating)
+- [x] 4.2 `pnpm build:ci` passes
 
 #### Manual
 
