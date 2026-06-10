@@ -297,7 +297,7 @@ Brak — zmiana danych seed, nie hot path.
 
 #### Automated
 
-- [x] 4.1 `pnpm test:e2e` passes
+- [x] 4.1 `pnpm test:e2e` passes — 8a4035c
 
 #### Manual
 
