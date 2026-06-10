@@ -365,11 +365,11 @@ Brak — 2 etapy i kilka modyfikatorów flat; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [x] 1.1 `utility-rates.md` exists with trigger table + golden sanity section
+- [x] 1.1 `utility-rates.md` exists with trigger table + golden sanity section — 43f5379
 
 #### Manual
 
-- [x] 1.2 Owner reviews utility rates for plausibility vs market research
+- [x] 1.2 Owner reviews utility rates for plausibility vs market research — 43f5379
 
 ### Phase 2: Rozszerzenie ankiety
 
