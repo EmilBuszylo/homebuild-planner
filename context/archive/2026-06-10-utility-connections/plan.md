@@ -390,7 +390,7 @@ Brak — 2 etapy i kilka modyfikatorów flat; ten sam pipeline O(n) etapów.
 
 #### Manual
 
-- [ ] 3.2 Owner: `pnpm db:seed` — 20 stages + 3 new questions in DB
+- [x] 3.2 Owner: `pnpm db:seed` — 20 stages + 3 new questions in DB
 
 ### Phase 4: Testy oracle i regresja
 
