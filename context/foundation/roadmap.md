@@ -3,7 +3,7 @@ project: home-build-planner
 version: 3
 status: draft
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-06-10
 prd_version: 1
 main_goal: quality
 top_blocker: decisions
@@ -32,7 +32,7 @@ Jeśli stawki kosztorysowe są błędne — w szczególności stan deweloperski,
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | e2e-ci-gate | (foundation) Playwright E2E specs uruchamiają się w GitHub Actions CI na każdym PR | — | FR-001, FR-002, Success Criteria (Guardrails) | done |
-| S-01 | cost-calibration | Widzieć kosztorys oparty na zweryfikowanych stawkach rynkowych, w tym poprawione wyliczenie stanu deweloperskiego | F-01 | FR-005, FR-006, FR-008, FR-009, US-01 | proposed |
+| S-01 | cost-calibration | Widzieć kosztorys oparty na zweryfikowanych stawkach rynkowych, w tym poprawione wyliczenie stanu deweloperskiego | F-01 | FR-005, FR-006, FR-008, FR-009, US-01 | done |
 | S-05 | utility-connections | Wskazać sposób odprowadzenia ścieków (i opcjonalnie wodę) i zobaczyć osobną pozycję kosztorysu za przyłącza zewnętrzne, oddzieloną od wewnętrznej instalacji wod-kan | S-01 | FR-003, FR-004, FR-008 | proposed |
 | S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-05 | FR-003, FR-004, FR-008 | proposed |
 | S-03 | timeline-notes | Dodać notatkę lub oznaczyć etap harmonogramu jako ważny, i wrócić do niej przy kolejnej wizycie | F-01 | FR-007 | proposed |
@@ -92,7 +92,7 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
   - Które etapy budowy mają największe odchylenia od obecnych stawek w codebase? Owner: agent (analiza `src/lib/plan-generation/`). Block: no.
   - Czy kalibracja zmienia strukturę danych modelu (`MarketBenchmark`) czy tylko wartości seed? Owner: agent (research schema). Block: no.
 - **Risk:** Zmiana stawek rynkowych może wpłynąć na istniejące plany użytkowników — `/10x-plan` powinien rozważyć strategię migracji (recalculate on next open vs. versioned benchmarks). Sekwencjonowane przed S-05 i S-02 — przyłącza i typ dachu muszą korzystać z poprawionego modelu bazowego. Epilog: `plumbing` −10% (tylko instalacja wewnętrzna) — przyłącza w S-05.
-- **Status:** proposed
+- **Status:** done
 
 ### S-05: Przyłącza mediów (kanalizacja i woda)
 
@@ -185,3 +185,4 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 ## Done
 
 - **F-01: (foundation) Playwright E2E specs (risk-01 IDOR, risk-02 auth, risk-04 generate golden path) uruchamiają się automatycznie w GitHub Actions CI na każdym pull requeście; regresje w auth i ścieżce generowania są wykrywane przed merge.** — Archived 2026-06-09 → `context/archive/2026-06-08-e2e-ci-gate/`. Lesson: —.
+- **S-01: Użytkownik widzi kosztorys oparty na zweryfikowanych, skalibrowanych stawkach rynkowych — w szczególności poprawione wyliczenie stanu deweloperskiego i pozostałych etapów budowy, bazujące na aktualnych widełkach cenowych z polskiego rynku (robocizna + materiały).** — Archived 2026-06-10 → `context/archive/2026-06-09-cost-calibration/`. Lesson: —.

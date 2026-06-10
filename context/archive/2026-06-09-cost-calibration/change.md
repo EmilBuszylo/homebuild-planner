@@ -1,10 +1,10 @@
 ---
 change_id: cost-calibration
 title: Kalibracja kosztów rynkowych (S-01)
-status: impl_reviewed
+status: archived
 created: 2026-06-09
-updated: 2026-06-08
-archived_at: null
+updated: 2026-06-10
+archived_at: 2026-06-10T10:11:58Z
 ---
 
 ## Notes
