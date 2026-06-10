@@ -3,7 +3,7 @@ project: home-build-planner
 version: 3
 status: draft
 created: 2026-06-08
-updated: 2026-06-09
+updated: 2026-06-08
 prd_version: 1
 main_goal: quality
 top_blocker: decisions
@@ -33,7 +33,8 @@ Jeśli stawki kosztorysowe są błędne — w szczególności stan deweloperski,
 |---|---|---|---|---|---|
 | F-01 | e2e-ci-gate | (foundation) Playwright E2E specs uruchamiają się w GitHub Actions CI na każdym PR | — | FR-001, FR-002, Success Criteria (Guardrails) | done |
 | S-01 | cost-calibration | Widzieć kosztorys oparty na zweryfikowanych stawkach rynkowych, w tym poprawione wyliczenie stanu deweloperskiego | F-01 | FR-005, FR-006, FR-008, FR-009, US-01 | proposed |
-| S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-01 | FR-003, FR-004, FR-008 | proposed |
+| S-05 | utility-connections | Wskazać sposób odprowadzenia ścieków (i opcjonalnie wodę) i zobaczyć osobną pozycję kosztorysu za przyłącza zewnętrzne, oddzieloną od wewnętrznej instalacji wod-kan | S-01 | FR-003, FR-004, FR-008 | proposed |
+| S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-05 | FR-003, FR-004, FR-008 | proposed |
 | S-03 | timeline-notes | Dodać notatkę lub oznaczyć etap harmonogramu jako ważny, i wrócić do niej przy kolejnej wizycie | F-01 | FR-007 | proposed |
 | S-04 | calendar-export | Wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do zewnętrznego kalendarza | F-01 | FR-010 | blocked |
 
@@ -43,7 +44,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
-| A | Jakość kalkulacji | `F-01` → `S-01` → `S-02` | Rdzeń v3: najpierw kalibracja stawek (north star), potem rozszerzenie ankiety o typ dachu współdzielący model kosztowy |
+| A | Jakość kalkulacji | `F-01` → `S-01` → `S-05` → `S-02` | Kalibracja wewnętrznych stawek, potem przyłącza mediów (czytelność wod-kan), potem typ dachu |
 | B | Notatki na etapach | `S-03` | Wymaga F-01 (Stream A); niezależny od S-01/S-02 — może być realizowany równolegle z Stream A |
 | C | Eksport do kalendarza | `S-04` | Wymaga F-01 (Stream A); zablokowany decyzją o protokole (iCal vs Google Calendar API) |
 
@@ -68,7 +69,7 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 - **Outcome:** (foundation) Playwright E2E specs (risk-01 IDOR, risk-02 auth, risk-04 generate golden path) uruchamiają się automatycznie w GitHub Actions CI na każdym pull requeście; regresje w auth i ścieżce generowania są wykrywane przed merge.
 - **Change ID:** e2e-ci-gate
 - **PRD refs:** FR-001, FR-002, Success Criteria (Guardrails: "wynik generuje się w rozsadnym czasie i nie blokuje uzytkownika")
-- **Unlocks:** S-01, S-02, S-03, S-04 — automatyczna weryfikacja regresji zanim nowe slices zmienią silnik kalkulacji lub dodają nowe tabele
+- **Unlocks:** S-01, S-05, S-02, S-03, S-04 — automatyczna weryfikacja regresji zanim nowe slices zmienią silnik kalkulacji lub dodają nowe tabele
 - **Prerequisites:** —
 - **Parallel with:** —
 - **Blockers:** —
@@ -90,7 +91,22 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
   - Jakie są aktualne widełki rynkowe dla stanu deweloperskiego w Polsce (robocizna + materiały, PLN/m²)? Owner: agent (`/10x-research`). Block: no — research do wykonania jako pierwszy krok `/10x-plan cost-calibration`.
   - Które etapy budowy mają największe odchylenia od obecnych stawek w codebase? Owner: agent (analiza `src/lib/plan-generation/`). Block: no.
   - Czy kalibracja zmienia strukturę danych modelu (`MarketBenchmark`) czy tylko wartości seed? Owner: agent (research schema). Block: no.
-- **Risk:** Zmiana stawek rynkowych może wpłynąć na istniejące plany użytkowników — `/10x-plan` powinien rozważyć strategię migracji (recalculate on next open vs. versioned benchmarks). Sekwencjonowane przed S-02 — typ dachu musi korzystać z poprawionego modelu bazowego.
+- **Risk:** Zmiana stawek rynkowych może wpłynąć na istniejące plany użytkowników — `/10x-plan` powinien rozważyć strategię migracji (recalculate on next open vs. versioned benchmarks). Sekwencjonowane przed S-05 i S-02 — przyłącza i typ dachu muszą korzystać z poprawionego modelu bazowego. Epilog: `plumbing` −10% (tylko instalacja wewnętrzna) — przyłącza w S-05.
+- **Status:** proposed
+
+### S-05: Przyłącza mediów (kanalizacja i woda)
+
+- **Outcome:** Użytkownik wskazuje sposób odprowadzenia ścieków (kanalizacja gminna, szambo, oczyszczalnia) i opcjonalnie źródło wody (wodociąg, studnia); kosztorys pokazuje **osobną pozycję** za przyłącza zewnętrzne — oddzieloną od wewnętrznej instalacji wod-kan (`plumbing`, obniżonej o ~10% w S-01).
+- **Change ID:** utility-connections
+- **PRD refs:** FR-003, FR-004, FR-008
+- **Prerequisites:** S-01
+- **Parallel with:** S-03
+- **Blockers:** —
+- **Unknowns:**
+  - Widełki PL 2026: przyłącze sanitarne (municipal), szambo, oczyszczalnia, studnia vs wodociąg? Owner: agent (`/10x-research`). Block: no.
+  - Czy w pierwszym slice wchodzi `water_supply` i `utility_distance_band`, czy tylko `sewage_disposal`? Owner: user. Block: no dla planu; yes dla pełnego zakresu implementacji.
+  - Odpowietrzenie kanalizacji i kominki wentylacyjne na dachu — osobny pod-slice S-05b czy modyfikator w S-05? Owner: agent. Block: no.
+- **Risk:** Nowe pytania ankiety + nowe slugi etapów (`sewage_connection`, `water_connection`) → migracja Prisma; owner uruchamia `pnpm db:migrate`. Opłaty administracyjne gminy świadomie poza zakresem (Parked).
 - **Status:** proposed
 
 ### S-02: Rozszerzenie ankiety o typ dachu
@@ -98,14 +114,14 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 - **Outcome:** Użytkownik może wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy, czterospadowy, mansardowy, płaski) i otrzymuje kosztorys uwzględniający różnice kosztowe wynikające z wybranego typu — konstrukcja dachu, krycie, obróbki.
 - **Change ID:** questionnaire-roof-type
 - **PRD refs:** FR-003, FR-004, FR-008
-- **Prerequisites:** S-01
+- **Prerequisites:** S-05
 - **Parallel with:** S-03, S-04
 - **Blockers:** —
 - **Unknowns:**
   - Które typy dachów są najpopularniejsze w polskim budownictwie jednorodzinnym i jakie są między nimi różnice kosztowe (%, PLN/m² połaci)? Owner: agent (`/10x-research`). Block: no.
   - Czy typ dachu powinien być pytaniem wymaganym czy opcjonalnym (FR-004)? Owner: user. Block: no (można zacząć od wymaganego; `/10x-plan` zaproponuje).
   - Czy nowe pytanie wpływa na DAG kolejności etapów (`predecessorSlugs`) — np. etap dachu zależy od typu? Owner: agent. Block: no.
-- **Risk:** Sekwencjonowane po S-01 — dodawanie kosztów dachu przed kalibracją bazowych stawek wymagałoby podwójnej pracy przy walidacji. Nowe pole w modelu ankiety (`RoofType` enum) wymaga migracji schematu — owner musi uruchomić `pnpm db:migrate`.
+- **Risk:** Sekwencjonowane po S-05 — typ dachu i przyłącza współdzielą model kosztowy; kalibracja bazowa (S-01) musi być gotowa wcześniej. Nowe pole w modelu ankiety (`RoofType` enum) wymaga migracji schematu — owner musi uruchomić `pnpm db:migrate`.
 - **Status:** proposed
 
 ### S-03: Notatki i zdarzenia przypiete do etapów harmonogramu
@@ -142,7 +158,8 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 |---|---|---|---|---|
 | F-01 | e2e-ci-gate | Dodaj E2E do CI (GitHub Actions) | yes | Uruchom `/10x-plan e2e-ci-gate`; specs istnieją, tylko `ci.yml` do wdrożenia |
 | S-01 | cost-calibration | Kalibracja stawek rynkowych kosztorysu | yes (po F-01) | Zacznij od `/10x-research cost-calibration` — research cenowy jest krokiem 1 |
-| S-02 | questionnaire-roof-type | Rozszerzenie ankiety: typ dachu | no | Po S-01; czeka na skalibrowany model bazowy |
+| S-05 | utility-connections | Przyłącza mediów (kanalizacja / woda) | no | Po S-01; `/10x-research utility-connections` przed planem |
+| S-02 | questionnaire-roof-type | Rozszerzenie ankiety: typ dachu | no | Po S-05; czeka na skalibrowany model i przyłącza |
 | S-03 | timeline-notes | Notatki do etapów harmonogramu (FR-007) | yes (po F-01) | Można równolegle z S-01; nowa tabela DB → owner uruchamia migrację |
 | S-04 | calendar-export | Eksport etapów do kalendarza (FR-010) | no | Zablokowane decyzją iCal vs Google Calendar API; rozwiąż Open Roadmap Q-1 |
 
@@ -152,12 +169,15 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 2. **Jaka nazwa projektu ma być wpisana jako `project` w PRD frontmatter?** Owner: user. Block: metadane dokumentu (z PRD §Open Questions).
 3. **Jaki jest liczbowy limit pełnych przeliczeń planu na użytkownika?** Owner: user. Block: yes — nie zmienione od PRD (z PRD §Open Questions); wpływa na NFR kosztowy.
 4. **Która data jest obligatoryjna w ankiecie?** Owner: user. Block: no (z PRD §Open Questions).
+5. **S-05: Czy `water_supply` i `utility_distance_band` wchodzą w pierwszy slice, czy tylko `sewage_disposal`?** Owner: user. Block: no dla planu S-05; yes dla pełnego zakresu implementacji.
 
 ## Parked
 
 - **FR-011: Logowanie przez Google** — Why parked: zewnętrzna zależność (OAuth Google), poza zakresem v3; PRD §shape-notes: "google auth moved to nice-to-have".
 - **Notatki z przypomnieniami / powiadomieniami** — Why parked: FR-007 w S-03 zakrywa MVP notatek (tekst przypiany); datowane przypomnienia to osobna funkcja wymagająca job schedulera lub zewnętrznej usługi push.
 - **Regionalizacja kosztów** — Why parked: PRD §Vision wzmiankuje "100x scale"; kalibracja v3 zakrywa ogólnopolskie widełki; regionalizacja (województwo, miasto) to następna faza po zebraniu pierwszych danych od użytkowników.
+- **Opłaty administracyjne przyłączy (gmina, Wodociągi)** — Why parked: wysoka zmienność lokalna; S-05 pokrywa roboty + materiał orientacyjnie, bez opłat urzędowych.
+- **Odpowietrzenie kanalizacji — rozbicie na piony/kominki (S-05b)** — Why parked: podfaza po S-05; wymaga pytania o liczbę łazienek lub osobnego modyfikatora dachowego (`roof_covering`).
 - **Pełny coverage testów (component tests, visual regression)** — Why parked: F-01 zamyka lukę E2E w CI; komponenty i visual regression to zakres po v3.
 - **Zaawansowana współpraca (shared workspace)** — Why parked: PRD §Non-Goals wprost.
 - **Marketplace wykonawców / CRM** — Why parked: PRD §Non-Goals wprost.

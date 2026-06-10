@@ -35,7 +35,7 @@
 | roof_covering | STRUCTURE | usable 120 m² | 185 | **250** | 180 | 360 | 30 000 | OnGeo / pokrycie dachu | Dachówka/blacha + obróbki |
 | windows_doors | STRUCTURE | base 0, per-unit | 0 | **0** | 0 | 0 | 45 600‡ | [Oferteo okna 2026](https://www.oferteo.pl/artykuly/ile-kosztuje-wymiana-okien), rynkowe widełki drzwi | ‡12×2600 + 2×7200 (Std); baza 0 — patrz modifiers |
 | electrical | INSTALLATIONS | usable 120 m² | 150 | **265** | 190 | 385 | 31 800 | [Oferteo 2026](https://www.oferteo.pl/artykuly/cennik-uslug-elektrycznych), [pomoc-instalacja.pl](https://pomoc-instalacja.pl/koszt-instalacji-elektrycznej-w-domu-100m2) | Dom 100–120 m²: 28–38k brutto ≈ 230–320 PLN/m²; Std 265 |
-| plumbing | INSTALLATIONS | usable 120 m² | 130 | **215** | 155 | 310 | 25 800 | [Aluhaus breakdown](https://www.aluhaus.com.pl/koszt-budowy-domu-praktyczny-przewodnik-dla-inwestora/) (750 PLN/punkt ×15 pkt / 150 m²) | Wod-kan podejścia; ~200 PLN/m² użytkowej |
+| plumbing | INSTALLATIONS | usable 120 m² | 130 | **194** (−10% od 215) | 140 | 279 | 23 280 | [Aluhaus breakdown](https://www.aluhaus.com.pl/koszt-budowy-domu-praktyczny-przewodnik-dla-inwestora/) (750 PLN/punkt ×15 pkt / 150 m²) | Tylko instalacja **wewnętrzna**; przyłącze zewnętrzne → roadmap S-05 |
 | heating | INSTALLATIONS | usable 120 m² + **flat** | 220 | **340** + **25 000 flat** | 245 | 495 | 65 800§ | Aluhaus: 195 PLN/m² CO + kotłownia ~35k/150 m² | §120×340 + 25k flat (kotłownia/źródło); **nowy modifier Phase 2** |
 | insulation | ENVELOPE | usable 120 m² | 160 | **235** | 170 | 340 | 28 200 | Aluhaus: 310 PLN/m² ścian zewn. (materiał+robocizna) — mapowane na m² użytkowej | Ocieplenie + poddasze; Std bez PASSIVE |
 | facade | ENVELOPE | usable 120 m² | 120 | **175** | 125 | 255 | 21 000 | Aluhaus: 27 PLN/m² elewacja (tylko wykończenie) + tynk w bundle z ociepleniem | Tynk elewacyjny / wykończenie ocieplenia |
@@ -104,7 +104,7 @@
 | roof_covering | 120 × 250 | 30 000 |
 | windows_doors | 12 × 2600 + 2 × 7200 | 45 600 |
 | electrical | 120 × 265 | 31 800 |
-| plumbing | 120 × 215 | 25 800 |
+| plumbing | 120 × 194 | 23 280 |
 | heating | 120 × 340 + 25 000 | 65 800 |
 | insulation | 120 × 235 | 28 200 |
 | facade | 120 × 175 | 21 000 |
@@ -115,14 +115,18 @@
 | bathroom_fixtures | 120 × 155 | 18 600 |
 | interior_doors | 120 × 92 | 11 040 |
 | garage_gate | flat 12 000 | 12 000 |
-| **SUMA** | | **606 040** |
-| **PLN/m² użytkowej** | 606 040 ÷ 120 | **5 050** |
+| **SUMA** | | **603 520** |
+| **PLN/m² użytkowej** | 603 520 ÷ 120 | **5 029** |
 
 **Widełki rynkowe SDW 2026:** 5 000–6 500 PLN/m² ([OnGeo](https://blog.ongeo.pl/ile-kosztuje-budowa-domu-2026-ceny-za-m2-przyklady), [domyiwnetrza.com](https://domyiwnetrza.com/ile-kosztuje-budowa-domu-w-2026-aktualne-ceny/)) → **PASS** (dolna połowa widełek, bez sztucznego skalowania jednym mnożnikiem).
 
 **Porównanie z obecnym seedem:** ~399 800 PLN (~3 330 PLN/m²) → wzrost **+51%** łącznie, największe skoki: `heating` (+flat), `walls`, `installations`, `FINISHING`.
 
 ---
+
+## Epilog (2026-06-08): plumbing −10%
+
+Stawki `plumbing` obniżone o ~10% względem kalibracji S-01 (215→**194** Std), bo etap obejmuje wyłącznie instalację **wewnętrzną**. Przyłącza zewnętrzne (kanalizacja, woda) → roadmap **S-05** `utility-connections`.
 
 ## Phase 2 notes (dla implementera)
 
