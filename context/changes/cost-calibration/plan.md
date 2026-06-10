@@ -286,12 +286,12 @@ Brak — zmiana danych seed, nie hot path.
 
 #### Automated
 
-- [x] 3.1 `pnpm test` passes (per-stage oracle + existing tests)
-- [x] 3.2 `pnpm build:ci` passes
+- [x] 3.1 `pnpm test` passes (per-stage oracle + existing tests) — e9ac8b7
+- [x] 3.2 `pnpm build:ci` passes — e9ac8b7
 
 #### Manual
 
-- [x] 3.3 — (none)
+- [x] 3.3 — (none) — e9ac8b7
 
 ### Phase 4: Weryfikacja E2E i domknięcie
 
