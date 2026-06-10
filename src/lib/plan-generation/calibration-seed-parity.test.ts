@@ -15,10 +15,10 @@ import {
  * Does not import the seed module (Prisma runtime) — parses seed source instead.
  */
 describe("calibration seed ↔ fixture parity", () => {
-  it("matches stage PLN/m² tiers for all 18 slugs", () => {
+  it("matches stage PLN/m² tiers for all 20 slugs", () => {
     const seedRates = parseSeedStageRates();
-    expect(seedRates.size).toBe(18);
-    expect(calibrationStageRateDefs).toHaveLength(18);
+    expect(seedRates.size).toBe(20);
+    expect(calibrationStageRateDefs).toHaveLength(20);
 
     for (const fixture of calibrationStageRateDefs) {
       const seed = seedRates.get(fixture.slug);

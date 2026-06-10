@@ -375,8 +375,8 @@ Brak — 2 etapy i kilka modyfikatorów flat; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [x] 2.1 `pnpm lint` passes
-- [x] 2.2 `pnpm typecheck` passes (+ `pnpm test` 63/63)
+- [x] 2.1 `pnpm lint` passes — 0396994
+- [x] 2.2 `pnpm typecheck` passes (+ `pnpm test` 63/63) — 0396994
 
 #### Manual
 
@@ -386,7 +386,7 @@ Brak — 2 etapy i kilka modyfikatorów flat; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [ ] 3.1 `pnpm lint` and `pnpm typecheck` pass after engine changes
+- [x] 3.1 `pnpm lint` and `pnpm typecheck` pass after engine changes (+ oracle fixtures 20-stage)
 
 #### Manual
 
