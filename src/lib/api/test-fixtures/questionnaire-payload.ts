@@ -18,4 +18,7 @@ export const validQuestionnairePayload = {
   window_count: 12,
   exterior_door_count: 2,
   terrace_door_count: 0,
+  sewage_disposal: "MUNICIPAL",
+  water_supply: "MUNICIPAL",
+  utility_distance_band: "UP_TO_50M",
 } satisfies QuestionnaireInputs;

@@ -6,6 +6,7 @@ const STEP_NAMES = [
   "Stan i standard",
   "Parametry budynku",
   "Okna, drzwi i termin",
+  "Przyłącza mediów",
   "Podsumowanie",
 ];
 

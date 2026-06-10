@@ -87,4 +87,23 @@ describe("questionnaireInputsSchema", () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it("requires utility_distance_band when municipal sewer or water is selected", () => {
+    const withoutDistance = { ...validQuestionnairePayload };
+    delete (withoutDistance as { utility_distance_band?: string })
+      .utility_distance_band;
+
+    const result = questionnaireInputsSchema.safeParse(withoutDistance);
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts missing utility_distance_band when neither service uses the municipal network", () => {
+    const result = questionnaireInputsSchema.safeParse({
+      ...validQuestionnairePayload,
+      sewage_disposal: "SEPTIC_TANK",
+      water_supply: "WELL",
+      utility_distance_band: undefined,
+    });
+    expect(result.success).toBe(true);
+  });
 });

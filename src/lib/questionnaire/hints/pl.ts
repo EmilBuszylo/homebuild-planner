@@ -143,4 +143,58 @@ export const questionHintsPl = {
     expanded:
       "To orientacyjny plan, nie termin umowy z ekipą. Datę możesz później skorygować przy edycji i przeliczeniu planu.",
   },
+  sewage_disposal: {
+    short:
+      "Sposób odprowadzenia ścieków z domu — wpływa na koszt przyłącza zewnętrznego.",
+    expanded:
+      "Kanalizacja gminna wymaga przyłącza do sieci. Szambo i oczyszczalnia to rozwiązania lokalne bez sieci — koszt inny niż przyłącze.",
+    choices: {
+      MUNICIPAL: {
+        short: "Przyłącze do sieci kanalizacyjnej gminy.",
+      },
+      SEPTIC_TANK: {
+        short: "Zbiornik bezodpływowy — typowe na działkach bez sieci.",
+      },
+      TREATMENT_PLANT: {
+        short: "Przydomowa oczyszczalnia ścieków (POŚ).",
+      },
+    },
+  },
+  water_supply: {
+    short:
+      "Źródło wody dla budynku — wodociąg gminny, studnia lub brak zewnętrznego przyłącza.",
+    expanded:
+      "Przy studni nie liczymy etapu przyłącza wodociągowego. „Bez przyłącza” oznacza brak zewnętrznego wodociągu w kosztorysie.",
+    choices: {
+      MUNICIPAL: {
+        short: "Przyłącze do sieci wodociągowej gminy.",
+      },
+      WELL: {
+        short: "Studnia głębinowa lub kopana — osobny koszt wykonania.",
+      },
+      NONE: {
+        short: "Brak zewnętrznego przyłącza wody w planie kosztów.",
+      },
+    },
+  },
+  utility_distance_band: {
+    short:
+      "Szacunkowa odległość od granicy działki do sieci — dotyczy wodociągu i/lub kanalizacji gminnej.",
+    expanded:
+      "Dłuższa trasa zwykle podnosi koszt robót ziemnych i materiałów. Pytanie pojawia się tylko przy wyborze sieci gminnej.",
+    choices: {
+      UP_TO_50M: {
+        short: "Krótka trasa — typowo do ~50 m od sieci.",
+      },
+      UP_TO_100M: {
+        short: "Średnia odległość — ok. 51–100 m.",
+      },
+      UP_TO_200M: {
+        short: "Dłuższa trasa — ok. 101–200 m.",
+      },
+      OVER_200M: {
+        short: "Bardzo długa trasa — powyżej 200 m.",
+      },
+    },
+  },
 } satisfies QuestionHintsMap;

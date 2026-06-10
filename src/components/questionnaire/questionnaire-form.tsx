@@ -21,11 +21,11 @@ import { routes } from "@/lib/routes";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { StepProgress } from "./step-progress";
-import { StepContent, STEP_FIELDS } from "./step-content";
+import { StepContent, getStepFieldSlugs } from "./step-content";
 import { StepNavigation } from "./step-navigation";
 import { QuestionnaireSummary } from "./questionnaire-summary";
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 
 const EMPTY_DEFAULTS: Partial<QuestionnaireInputs> = {
   investment_state: "FOUNDATIONS",
@@ -34,6 +34,9 @@ const EMPTY_DEFAULTS: Partial<QuestionnaireInputs> = {
   garage_spots: 0,
   balcony_count: 0,
   terrace_door_count: 0,
+  sewage_disposal: "MUNICIPAL",
+  water_supply: "MUNICIPAL",
+  utility_distance_band: "UP_TO_50M",
 };
 
 interface QuestionnaireFormProps {
@@ -75,6 +78,14 @@ export function QuestionnaireForm({
     control: form.control,
     name: "investment_state",
   });
+  const sewageDisposal = useWatch({
+    control: form.control,
+    name: "sewage_disposal",
+  });
+  const waterSupply = useWatch({
+    control: form.control,
+    name: "water_supply",
+  });
 
   useEffect(() => {
     if (!startingState || !investmentState) {
@@ -99,8 +110,12 @@ export function QuestionnaireForm({
   }, [startingState, investmentState, clearErrors, setValue, getValues]);
 
   async function handleNext() {
-    const fieldsToValidate = STEP_FIELDS[currentStep];
-    if (!fieldsToValidate) return;
+    const fieldsToValidate = getStepFieldSlugs(
+      currentStep,
+      sewageDisposal,
+      waterSupply,
+    );
+    if (fieldsToValidate.length === 0) return;
 
     const isValid = await form.trigger(fieldsToValidate);
     if (!isValid) return;

@@ -375,8 +375,8 @@ Brak — 2 etapy i kilka modyfikatorów flat; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint` passes
-- [ ] 2.2 `pnpm typecheck` passes
+- [x] 2.1 `pnpm lint` passes
+- [x] 2.2 `pnpm typecheck` passes (+ `pnpm test` 63/63)
 
 #### Manual
 

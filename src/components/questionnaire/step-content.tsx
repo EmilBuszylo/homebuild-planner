@@ -8,7 +8,10 @@ import {
   getAllowedTargetStates,
 } from "@/lib/investment-state";
 import type { QuestionDefinition } from "@/lib/types/domain";
-import type { QuestionnaireInputs } from "@/lib/validations/questionnaire";
+import {
+  needsUtilityDistanceBand,
+  type QuestionnaireInputs,
+} from "@/lib/validations/questionnaire";
 
 import { QuestionField } from "./question-renderers";
 
@@ -16,13 +19,29 @@ const STEP_TITLES = [
   "Stan i standard budowy",
   "Parametry budynku",
   "Okna, drzwi i termin",
+  "Przyłącza mediów",
 ];
 
 export const STEP_FIELDS: Record<number, (keyof QuestionnaireInputs)[]> = {
   0: ["investment_state", "starting_state", "build_standard", "insulation_level"],
   1: ["area", "floors", "has_attic", "garage_spots", "balcony_count"],
   2: ["window_count", "exterior_door_count", "terrace_door_count", "key_date"],
+  3: ["sewage_disposal", "water_supply", "utility_distance_band"],
 };
+
+export function getStepFieldSlugs(
+  stepIndex: number,
+  sewageDisposal?: QuestionnaireInputs["sewage_disposal"],
+  waterSupply?: QuestionnaireInputs["water_supply"],
+): (keyof QuestionnaireInputs)[] {
+  const base = STEP_FIELDS[stepIndex];
+  if (!base) return [];
+  if (stepIndex !== 3) return base;
+  if (needsUtilityDistanceBand(sewageDisposal ?? "MUNICIPAL", waterSupply ?? "MUNICIPAL")) {
+    return base;
+  }
+  return base.filter((slug) => slug !== "utility_distance_band");
+}
 
 type QuestionOption = { value: string; label: string };
 
@@ -65,8 +84,10 @@ export function StepContent({
 }: StepContentProps) {
   const startingState = useWatch({ control, name: "starting_state" });
   const targetState = useWatch({ control, name: "investment_state" });
+  const sewageDisposal = useWatch({ control, name: "sewage_disposal" });
+  const waterSupply = useWatch({ control, name: "water_supply" });
 
-  const slugs = STEP_FIELDS[stepIndex] ?? [];
+  const slugs = getStepFieldSlugs(stepIndex, sewageDisposal, waterSupply);
   const stepQuestions = slugs
     .map((slug) => questions.find((q) => q.slug === slug))
     .filter((q): q is QuestionDefinition => q !== undefined)
