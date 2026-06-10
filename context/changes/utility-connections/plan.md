@@ -386,7 +386,7 @@ Brak — 2 etapy i kilka modyfikatorów flat; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [x] 3.1 `pnpm lint` and `pnpm typecheck` pass after engine changes (+ oracle fixtures 20-stage)
+- [x] 3.1 `pnpm lint` and `pnpm typecheck` pass after engine changes (+ oracle fixtures 20-stage) — aa67c78
 
 #### Manual
 
