@@ -274,9 +274,9 @@ Brak — zmiana danych seed, nie hot path.
 
 #### Automated
 
-- [x] 2.1 `pnpm lint` passes
-- [x] 2.2 `pnpm typecheck` passes
-- [x] 2.3 `pnpm test` passes
+- [x] 2.1 `pnpm lint` passes — 6e6965f
+- [x] 2.2 `pnpm typecheck` passes — 6e6965f
+- [x] 2.3 `pnpm test` passes — 6e6965f
 
 #### Manual
 
