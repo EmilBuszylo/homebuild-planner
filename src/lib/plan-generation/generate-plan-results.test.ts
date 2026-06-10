@@ -7,6 +7,13 @@ import {
   generatePlanResults,
   toQuestionnaireResponsesMap,
 } from "./index";
+import {
+  CALIBRATED_GOLDEN_EXPECTATIONS,
+  CALIBRATED_GOLDEN_TOTAL,
+  CALIBRATED_GOLDEN_TOTAL_MAX,
+  CALIBRATED_GOLDEN_TOTAL_MIN,
+} from "./test-fixtures/calibrated-golden-expectations";
+import { fullStagesForCalibration } from "./test-fixtures/full-stages-calibration";
 import { minimalStagesForGeneration } from "./test-fixtures/minimal-stages";
 
 function sumEstimatedCosts(
@@ -73,5 +80,38 @@ describe("generatePlanResults", () => {
     );
 
     expect(premiumTotal).toBeGreaterThan(economyTotal);
+  });
+
+  describe("S-01 calibration oracle (golden DEVELOPER path)", () => {
+    it("matches per-stage costs from calibration workbook", () => {
+      const responses = responsesFromPayload(validQuestionnairePayload);
+      const results = generatePlanResults(
+        fullStagesForCalibration,
+        responses,
+      );
+
+      expect(results).toHaveLength(
+        Object.keys(CALIBRATED_GOLDEN_EXPECTATIONS).length,
+      );
+
+      for (const [slug, expectedCost] of Object.entries(
+        CALIBRATED_GOLDEN_EXPECTATIONS,
+      )) {
+        const row = results.find((r) => r.stageSlug === slug);
+        expect(row, `missing stage ${slug}`).toBeDefined();
+        expect(row?.estimatedCost).toBe(expectedCost);
+      }
+    });
+
+    it("sums to calibrated golden total within ±2% band", () => {
+      const responses = responsesFromPayload(validQuestionnairePayload);
+      const total = sumEstimatedCosts(
+        generatePlanResults(fullStagesForCalibration, responses),
+      );
+
+      expect(total).toBe(CALIBRATED_GOLDEN_TOTAL);
+      expect(total).toBeGreaterThanOrEqual(CALIBRATED_GOLDEN_TOTAL_MIN);
+      expect(total).toBeLessThanOrEqual(CALIBRATED_GOLDEN_TOTAL_MAX);
+    });
   });
 });

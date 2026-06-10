@@ -115,8 +115,8 @@
 | bathroom_fixtures | 120 × 155 | 18 600 |
 | interior_doors | 120 × 92 | 11 040 |
 | garage_gate | flat 12 000 | 12 000 |
-| **SUMA** | | **593 650** |
-| **PLN/m² użytkowej** | 593 650 ÷ 120 | **4 947** |
+| **SUMA** | | **599 650** |
+| **PLN/m² użytkowej** | 599 650 ÷ 120 | **4 997** |
 
 **Widełki rynkowe SDW 2026:** 5 000–6 500 PLN/m² — po epilogach plumbing/heating golden **nieznacznie poniżej 5 000** (orientacyjnie); S-05 przyłącza mogą podnieść sumę u użytkowników z siecią gminną.
 

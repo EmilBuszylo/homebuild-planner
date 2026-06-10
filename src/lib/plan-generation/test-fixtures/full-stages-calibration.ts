@@ -1,0 +1,303 @@
+import { InvestmentState } from "@prisma/client";
+
+import type { StageCostModifier } from "@/lib/types/domain";
+
+import type { StageWithModifiers } from "../types";
+
+import { calibrationModifierDefs } from "./calibration-modifier-defs";
+
+type StageRateDef = {
+  slug: string;
+  name: string;
+  category: string;
+  sortOrder: number;
+  completedByState: InvestmentState | null;
+  predecessorSlugs: string[];
+  costPerM2Economy: number;
+  costPerM2Standard: number;
+  costPerM2Premium: number;
+  durationMinDays: number;
+  durationMaxDays: number;
+};
+
+/** Rates aligned with `calibration-rates.md` / `prisma/seed.ts` (S-01). */
+const calibrationStageRateDefs: StageRateDef[] = [
+  {
+    slug: "foundations",
+    name: "Fundamenty",
+    category: "STRUCTURE",
+    sortOrder: 1,
+    completedByState: InvestmentState.FOUNDATIONS,
+    predecessorSlugs: [],
+    costPerM2Economy: 760,
+    costPerM2Standard: 1050,
+    costPerM2Premium: 1520,
+    durationMinDays: 14,
+    durationMaxDays: 28,
+  },
+  {
+    slug: "walls",
+    name: "Ściany nośne",
+    category: "STRUCTURE",
+    sortOrder: 2,
+    completedByState: InvestmentState.OPEN_SHELL,
+    predecessorSlugs: ["foundations"],
+    costPerM2Economy: 520,
+    costPerM2Standard: 720,
+    costPerM2Premium: 1040,
+    durationMinDays: 21,
+    durationMaxDays: 42,
+  },
+  {
+    slug: "floor_slabs",
+    name: "Stropy i nadproża",
+    category: "STRUCTURE",
+    sortOrder: 3,
+    completedByState: InvestmentState.OPEN_SHELL,
+    predecessorSlugs: ["walls"],
+    costPerM2Economy: 290,
+    costPerM2Standard: 400,
+    costPerM2Premium: 580,
+    durationMinDays: 7,
+    durationMaxDays: 21,
+  },
+  {
+    slug: "roof_structure",
+    name: "Konstrukcja dachu",
+    category: "STRUCTURE",
+    sortOrder: 4,
+    completedByState: InvestmentState.OPEN_SHELL,
+    predecessorSlugs: ["floor_slabs"],
+    costPerM2Economy: 230,
+    costPerM2Standard: 320,
+    costPerM2Premium: 465,
+    durationMinDays: 10,
+    durationMaxDays: 21,
+  },
+  {
+    slug: "roof_covering",
+    name: "Pokrycie dachu",
+    category: "STRUCTURE",
+    sortOrder: 5,
+    completedByState: InvestmentState.CLOSED_SHELL,
+    predecessorSlugs: ["roof_structure"],
+    costPerM2Economy: 180,
+    costPerM2Standard: 250,
+    costPerM2Premium: 360,
+    durationMinDays: 7,
+    durationMaxDays: 14,
+  },
+  {
+    slug: "windows_doors",
+    name: "Okna i drzwi zewnętrzne",
+    category: "STRUCTURE",
+    sortOrder: 6,
+    completedByState: InvestmentState.CLOSED_SHELL,
+    predecessorSlugs: ["roof_covering"],
+    costPerM2Economy: 0,
+    costPerM2Standard: 0,
+    costPerM2Premium: 0,
+    durationMinDays: 3,
+    durationMaxDays: 7,
+  },
+  {
+    slug: "electrical",
+    name: "Instalacja elektryczna",
+    category: "INSTALLATIONS",
+    sortOrder: 7,
+    completedByState: InvestmentState.DEVELOPER,
+    predecessorSlugs: ["windows_doors"],
+    costPerM2Economy: 190,
+    costPerM2Standard: 265,
+    costPerM2Premium: 385,
+    durationMinDays: 7,
+    durationMaxDays: 14,
+  },
+  {
+    slug: "plumbing",
+    name: "Instalacja wodno-kanalizacyjna",
+    category: "INSTALLATIONS",
+    sortOrder: 8,
+    completedByState: InvestmentState.DEVELOPER,
+    predecessorSlugs: ["windows_doors"],
+    costPerM2Economy: 140,
+    costPerM2Standard: 194,
+    costPerM2Premium: 279,
+    durationMinDays: 7,
+    durationMaxDays: 14,
+  },
+  {
+    slug: "heating",
+    name: "Instalacja centralnego ogrzewania",
+    category: "INSTALLATIONS",
+    sortOrder: 9,
+    completedByState: InvestmentState.DEVELOPER,
+    predecessorSlugs: ["windows_doors", "floor_slabs"],
+    costPerM2Economy: 208,
+    costPerM2Standard: 289,
+    costPerM2Premium: 421,
+    durationMinDays: 10,
+    durationMaxDays: 21,
+  },
+  {
+    slug: "insulation",
+    name: "Ocieplenie",
+    category: "ENVELOPE",
+    sortOrder: 10,
+    completedByState: null,
+    predecessorSlugs: ["windows_doors"],
+    costPerM2Economy: 170,
+    costPerM2Standard: 235,
+    costPerM2Premium: 340,
+    durationMinDays: 10,
+    durationMaxDays: 21,
+  },
+  {
+    slug: "facade",
+    name: "Elewacja",
+    category: "ENVELOPE",
+    sortOrder: 11,
+    completedByState: null,
+    predecessorSlugs: ["windows_doors"],
+    costPerM2Economy: 125,
+    costPerM2Standard: 175,
+    costPerM2Premium: 255,
+    durationMinDays: 10,
+    durationMaxDays: 21,
+  },
+  {
+    slug: "interior_plaster",
+    name: "Tynki wewnętrzne",
+    category: "FINISHING",
+    sortOrder: 12,
+    completedByState: null,
+    predecessorSlugs: [
+      "electrical",
+      "plumbing",
+      "roof_covering",
+      "windows_doors",
+    ],
+    costPerM2Economy: 85,
+    costPerM2Standard: 115,
+    costPerM2Premium: 165,
+    durationMinDays: 7,
+    durationMaxDays: 14,
+  },
+  {
+    slug: "floor_screeds",
+    name: "Wylewki podłogowe",
+    category: "FINISHING",
+    sortOrder: 13,
+    completedByState: null,
+    predecessorSlugs: ["heating", "interior_plaster"],
+    costPerM2Economy: 55,
+    costPerM2Standard: 78,
+    costPerM2Premium: 115,
+    durationMinDays: 3,
+    durationMaxDays: 7,
+  },
+  {
+    slug: "flooring",
+    name: "Podłogi i posadzki",
+    category: "FINISHING",
+    sortOrder: 14,
+    completedByState: null,
+    predecessorSlugs: ["floor_screeds"],
+    costPerM2Economy: 150,
+    costPerM2Standard: 210,
+    costPerM2Premium: 305,
+    durationMinDays: 7,
+    durationMaxDays: 14,
+  },
+  {
+    slug: "painting",
+    name: "Malowanie",
+    category: "FINISHING",
+    sortOrder: 15,
+    completedByState: null,
+    predecessorSlugs: ["interior_plaster"],
+    costPerM2Economy: 30,
+    costPerM2Standard: 42,
+    costPerM2Premium: 60,
+    durationMinDays: 5,
+    durationMaxDays: 10,
+  },
+  {
+    slug: "bathroom_fixtures",
+    name: "Biały montaż",
+    category: "FINISHING",
+    sortOrder: 16,
+    completedByState: null,
+    predecessorSlugs: ["plumbing", "flooring"],
+    costPerM2Economy: 110,
+    costPerM2Standard: 155,
+    costPerM2Premium: 225,
+    durationMinDays: 5,
+    durationMaxDays: 10,
+  },
+  {
+    slug: "interior_doors",
+    name: "Drzwi wewnętrzne",
+    category: "FINISHING",
+    sortOrder: 17,
+    completedByState: null,
+    predecessorSlugs: ["painting"],
+    costPerM2Economy: 65,
+    costPerM2Standard: 92,
+    costPerM2Premium: 135,
+    durationMinDays: 2,
+    durationMaxDays: 5,
+  },
+  {
+    slug: "garage_gate",
+    name: "Brama garażowa",
+    category: "OPTIONAL",
+    sortOrder: 18,
+    completedByState: null,
+    predecessorSlugs: ["walls"],
+    costPerM2Economy: 0,
+    costPerM2Standard: 0,
+    costPerM2Premium: 0,
+    durationMinDays: 1,
+    durationMaxDays: 2,
+  },
+];
+
+function modifiersForStage(stageId: string, slug: string): StageCostModifier[] {
+  const defs = calibrationModifierDefs.filter((m) => m.stageSlug === slug);
+  return defs.map((def, index) => ({
+    id: `fixture-${slug}-mod-${index}`,
+    stageId,
+    triggerQuestionSlug: def.triggerQuestionSlug,
+    triggerValue: def.triggerValue,
+    costAdjustmentPerM2: def.costAdjustmentPerM2,
+    fixedCostAdjustment: def.fixedCostAdjustment,
+    description: def.description,
+  }));
+}
+
+/**
+ * Full 18-stage fixture for S-01 calibration oracles (Risk #3 extension).
+ * Values mirror `calibration-rates.md` — no Prisma / seed import in tests.
+ */
+export const fullStagesForCalibration: StageWithModifiers[] =
+  calibrationStageRateDefs.map((stage) => {
+    const id = `fixture-${stage.slug}`;
+    return {
+      id,
+      slug: stage.slug,
+      name: stage.name,
+      description: null,
+      coachingNote: null,
+      category: stage.category,
+      sortOrder: stage.sortOrder,
+      completedByState: stage.completedByState,
+      predecessorSlugs: [...stage.predecessorSlugs],
+      costPerM2Economy: stage.costPerM2Economy,
+      costPerM2Standard: stage.costPerM2Standard,
+      costPerM2Premium: stage.costPerM2Premium,
+      durationMinDays: stage.durationMinDays,
+      durationMaxDays: stage.durationMaxDays,
+      costModifiers: modifiersForStage(id, stage.slug),
+    };
+  });
