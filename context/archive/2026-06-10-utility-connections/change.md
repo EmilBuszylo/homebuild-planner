@@ -1,10 +1,10 @@
 ---
 change_id: utility-connections
 title: Przyłącza mediów (S-05)
-status: implementing
+status: archived
 created: 2026-06-10
 updated: 2026-06-08
-archived_at: null
+archived_at: 2026-06-08T12:15:00Z
 ---
 
 ## Notes
