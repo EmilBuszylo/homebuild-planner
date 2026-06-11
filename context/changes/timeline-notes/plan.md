@@ -390,8 +390,8 @@ Nowy scenariusz Playwright + owner smoke; `change.md` → `implemented`.
 
 #### Automated
 
-- [x] 2.1 `pnpm lint` passes
-- [x] 2.2 `pnpm typecheck` passes
+- [x] 2.1 `pnpm lint` passes — 452df7e
+- [x] 2.2 `pnpm typecheck` passes — 452df7e
 
 #### Manual
 
@@ -401,7 +401,7 @@ Nowy scenariusz Playwright + owner smoke; `change.md` → `implemented`.
 
 #### Automated
 
-- [ ] 3.1 `pnpm lint` and `pnpm typecheck` pass after UI changes
+- [x] 3.1 `pnpm lint` and `pnpm typecheck` pass after UI changes
 
 #### Manual
 

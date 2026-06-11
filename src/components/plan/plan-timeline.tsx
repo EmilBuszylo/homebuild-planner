@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import { Lightbulb } from "lucide-react";
 
+import { StageNoteControls } from "@/components/plan/stage-note-controls";
+
 import {
   PLAN_TIMELINE_COACHING_CARD_SUFFIX,
   PLAN_TIMELINE_COACHING_MARKER_ARIA_LABEL,
   PLAN_TIMELINE_SCROLL_HINT,
   PLAN_TIMELINE_SCROLL_REGION_ARIA_LABEL,
 } from "@/lib/copy/orientational";
-import type { PlanResultsDto } from "@/lib/plan-results";
+import type { PlanResultsDto, PlanStageNoteDto } from "@/lib/plan-results";
 import { addDaysToIsoDate } from "@/lib/format/plan-date";
 import {
   layoutTimelineStages,
@@ -336,6 +338,8 @@ function TimelineChartPane({
 
 export function PlanTimeline({ results }: PlanTimelineProps) {
   const pxPerDay = useTimelinePxPerDay();
+  const [stageNotes, setStageNotes] = useState(results.stageNotes);
+
   const anchorLabel = addDaysToIsoDate(results.keyDate, 0);
   const { stages, totalSpanDays, axisTicks } = layoutTimelineStages(
     results.stages,
@@ -345,6 +349,21 @@ export function PlanTimeline({ results }: PlanTimelineProps) {
 
   const timelineMinWidth = Math.max(totalSpanDays * pxPerDay, 320);
   const hasAnyCoaching = stages.some((s) => s.coachingMarkers.length > 0);
+
+  function handleNoteChange(
+    stageSlug: string,
+    note: PlanStageNoteDto | null,
+  ) {
+    setStageNotes((current) => {
+      const next = { ...current };
+      if (note) {
+        next[stageSlug] = note;
+      } else {
+        delete next[stageSlug];
+      }
+      return next;
+    });
+  }
 
   return (
     <Card>
@@ -373,12 +392,27 @@ export function PlanTimeline({ results }: PlanTimelineProps) {
                   stage.startDay,
                   stage.durationDays,
                 );
+                const note = stageNotes[stage.stageSlug];
+                const isPinned = note?.isPinned ?? false;
                 return (
-                  <div key={stage.stageSlug}>
-                    <div className="border-b bg-muted/30 px-3 py-2.5">
-                      <StageLabelText
-                        name={stage.name}
-                        dateRange={dateRange}
+                  <div
+                    key={stage.stageSlug}
+                    className={cn(
+                      isPinned && "border-l-2 border-amber-500",
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-2 border-b bg-muted/30 px-3 py-2.5">
+                      <div className="min-w-0 flex-1">
+                        <StageLabelText
+                          name={stage.name}
+                          dateRange={dateRange}
+                        />
+                      </div>
+                      <StageNoteControls
+                        planId={results.planId}
+                        stageSlug={stage.stageSlug}
+                        note={note}
+                        onNoteChange={handleNoteChange}
                       />
                     </div>
                     <div className="overflow-x-auto">
@@ -404,22 +438,37 @@ export function PlanTimeline({ results }: PlanTimelineProps) {
                   style={{ height: CALENDAR_HEIGHT }}
                   aria-hidden
                 />
-                {stages.map((stage) => (
-                  <div
-                    key={stage.stageSlug}
-                    className="flex flex-col justify-center border-b px-2 py-1 last:border-b-0"
-                    style={{ height: ROW_HEIGHT }}
-                  >
-                    <StageLabelText
-                      name={stage.name}
-                      dateRange={formatStageRange(
-                        results.keyDate,
-                        stage.startDay,
-                        stage.durationDays,
+                {stages.map((stage) => {
+                  const note = stageNotes[stage.stageSlug];
+                  const isPinned = note?.isPinned ?? false;
+                  return (
+                    <div
+                      key={stage.stageSlug}
+                      className={cn(
+                        "flex items-center gap-1 border-b px-1.5 py-1 last:border-b-0",
+                        isPinned && "border-l-2 border-amber-500",
                       )}
-                    />
-                  </div>
-                ))}
+                      style={{ height: ROW_HEIGHT }}
+                    >
+                      <div className="min-w-0 flex-1 px-0.5">
+                        <StageLabelText
+                          name={stage.name}
+                          dateRange={formatStageRange(
+                            results.keyDate,
+                            stage.startDay,
+                            stage.durationDays,
+                          )}
+                        />
+                      </div>
+                      <StageNoteControls
+                        planId={results.planId}
+                        stageSlug={stage.stageSlug}
+                        note={note}
+                        onNoteChange={handleNoteChange}
+                      />
+                    </div>
+                  );
+                })}
               </div>
 
               <div
