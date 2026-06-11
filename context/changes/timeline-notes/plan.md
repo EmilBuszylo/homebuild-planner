@@ -401,7 +401,7 @@ Nowy scenariusz Playwright + owner smoke; `change.md` → `implemented`.
 
 #### Automated
 
-- [x] 3.1 `pnpm lint` and `pnpm typecheck` pass after UI changes
+- [x] 3.1 `pnpm lint` and `pnpm typecheck` pass after UI changes — cebac7e
 
 #### Manual
 
@@ -411,8 +411,8 @@ Nowy scenariusz Playwright + owner smoke; `change.md` → `implemented`.
 
 #### Automated
 
-- [ ] 4.1 `pnpm test` passes (stage-notes handlers + validation)
-- [ ] 4.2 `pnpm build:ci` passes
+- [x] 4.1 `pnpm test` passes (stage-notes handlers + validation)
+- [x] 4.2 `pnpm build:ci` passes
 
 #### Manual
 
