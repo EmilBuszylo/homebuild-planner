@@ -136,7 +136,7 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
   - Jaki model persystencji notatki — per etap per plan (najprostszy, każdy plan ma własne notatki) czy per etap globalnie dla użytkownika? Owner: user. Block: no (rekomendacja: per plan, zgodna z istniejącą architekturą Prisma `Plan`).
   - Czy notatka ma datę przypomnienia (powiadomienie) czy jest wyłącznie tekstem? Owner: user. Block: no (MVP: tylko tekst; reminder → Parked).
 - **Risk:** Wymaga nowej tabeli `StageNote` w schemacie Prisma — owner musi uruchomić `pnpm db:migrate`. Niezależny od kalkulacji — może być realizowany równolegle z S-01 przez osobny agent run.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Eksport etapów do zewnętrznego kalendarza
 
@@ -160,7 +160,7 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 | S-01 | cost-calibration | Kalibracja stawek rynkowych kosztorysu | yes (po F-01) | Zacznij od `/10x-research cost-calibration` — research cenowy jest krokiem 1 |
 | S-05 | utility-connections | Przyłącza mediów (kanalizacja / woda) | no | Po S-01; `/10x-research utility-connections` przed planem |
 | S-02 | questionnaire-roof-type | Rozszerzenie ankiety: typ dachu | yes | Zarchiwizowano 2026-06-08 |
-| S-03 | timeline-notes | Notatki do etapów harmonogramu (FR-007) | yes (po F-01) | Można równolegle z S-01; nowa tabela DB → owner uruchamia migrację |
+| S-03 | timeline-notes | Notatki do etapów harmonogramu (FR-007) | no | Zaimplementowano 2026-06-08 |
 | S-04 | calendar-export | Eksport etapów do kalendarza (FR-010) | no | Zablokowane decyzją iCal vs Google Calendar API; rozwiąż Open Roadmap Q-1 |
 
 ## Open Roadmap Questions

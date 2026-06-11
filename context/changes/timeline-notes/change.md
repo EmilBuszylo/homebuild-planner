@@ -1,9 +1,9 @@
 ---
 change_id: timeline-notes
 title: Timeline notes
-status: implementing
+status: implemented
 created: 2026-06-11
-updated: 2026-06-11
+updated: 2026-06-08
 archived_at: null
 ---
 

@@ -16,6 +16,7 @@
     "test:e2e:risk-01": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test e2e/risk-01-",
     "test:e2e:risk-02": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test e2e/risk-02-",
     "test:e2e:risk-04": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test e2e/risk-04-",
+    "test:e2e:risk-07": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test e2e/risk-07-",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

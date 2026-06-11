@@ -35,12 +35,13 @@ pnpm exec playwright install chromium   # once; scripts use PLAYWRIGHT_BROWSERS_
 pnpm db:docker:up                     # local Postgres
 # .env.local: NEXT_PUBLIC_SUPABASE_*, SUPABASE_SECRET_KEY, DATABASE_URL
 
-# Authenticated specs (risk-01, risk-02-session, risk-04):
+# Authenticated specs (risk-01, risk-02-session, risk-04, risk-07):
 export E2E_USER_EMAIL=you@example.com
 export E2E_USER_PASSWORD='YourP@ss1!'
 pnpm test:e2e:risk-01   # needs foreign-plan.setup (victim user + plan in DB)
 pnpm test:e2e:risk-02
 pnpm test:e2e:risk-04   # uses fresh generate-user (no existing plan)
+pnpm test:e2e:risk-07   # stage notes on timeline (same generate-user setup)
 ```
 
 Anonymous specs (`risk-02-anonymous-*`) run without credentials — they only need `pnpm dev`.

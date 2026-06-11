@@ -105,7 +105,7 @@ The classic test base for this project. AI-native tools (if any) carry a
 | lint (`pnpm lint`) | local + CI | required | ESLint + TypeScript rules via `eslint-config-next/typescript` |
 | unit + handler integration (`pnpm test`) | local + CI | required | Vitest: pure logic and mocked route handlers in `src/lib/` |
 | production build (`pnpm build:ci`) | local + CI | required | `prisma generate` + Next compile (no DB migrate in CI) |
-| e2e (`pnpm test:e2e`) | local + CI (`e2e` job) | required on PR | Playwright: auth setups, risk-01 IDOR, risk-02 session, risk-04 generate golden path; complements Vitest handler mocks |
+| e2e (`pnpm test:e2e`) | local + CI (`e2e` job) | required on PR | Playwright: auth setups, risk-01 IDOR, risk-02 session, risk-04 generate golden path, risk-07 stage notes; complements Vitest handler mocks |
 | post-edit hook | — | not planned | — |
 | visual diff / multimodal review | — | excluded per interview Q5 | — |
 | pre-prod smoke | manual | recommended before deploy | see §6.0 (manual smoke column) |
@@ -139,7 +139,7 @@ relevant rollout phase ships.
 | #6 Invalid questionnaire payload | `questionnaire-inputs.test.ts`, `investment-state.test.ts`, `responses-to-inputs.test.ts`, handler **400** (create + recalc) | `context/archive/2026-06-03-testing-questionnaire-hardening/MANUAL-SMOKE.md` (step 1 UI) |
 | #7 Recalc rate limit | `plan-recalc.test.ts` (policy env), `plans-route-handlers.test.ts` (**429**) | — |
 
-**Other automated (no risk row):** display sort — `src/lib/plan/sort-plan-stages-chronologically.test.ts` (full file list in §4 test-base profile).
+**Other automated (no risk row):** display sort — `src/lib/plan/sort-plan-stages-chronologically.test.ts`; stage notes (FR-007) — `stage-notes-route-handlers.test.ts`, `plan-stage-note.test.ts`, `e2e/risk-07-stage-notes.spec.ts` (full file list in §4 test-base profile).
 
 **Vitest constraint:** handler mocks use `vi.hoisted` in the **same file** as the test — do not extract hoisted mocks to a shared module (see §6.2).
 
@@ -181,7 +181,7 @@ Playwright specs live in `e2e/` and run in CI on every PR (`e2e` job in
 **Prerequisites (CI):** GitHub secrets + Supabase project settings — see
 `e2e/E2E-RULES.md` §CI.
 
-**Scope:** risks #1, #2, #4 only (thin golden paths). Do **not** add a
+**Scope:** risks #1, #2, #4 plus FR-007 stage notes (`risk-07`) — thin golden paths. Do **not** add a
 full-questionnaire UI walkthrough without an explicit product decision
 (interview Q5). New specs should map to a `test-plan.md` risk row and use
 `TEST_RUN_ID` for isolation.

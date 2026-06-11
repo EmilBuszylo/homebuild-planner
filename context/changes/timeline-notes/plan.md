@@ -405,24 +405,24 @@ Nowy scenariusz Playwright + owner smoke; `change.md` → `implemented`.
 
 #### Manual
 
-- [ ] 3.2 Pin + note save visible on timeline; persists after reload
+- [x] 3.2 Pin + note save visible on timeline; persists after reload
 
 ### Phase 4: Testy Vitest
 
 #### Automated
 
-- [x] 4.1 `pnpm test` passes (stage-notes handlers + validation)
-- [x] 4.2 `pnpm build:ci` passes
+- [x] 4.1 `pnpm test` passes (stage-notes handlers + validation) — 277966a
+- [x] 4.2 `pnpm build:ci` passes — 277966a
 
 #### Manual
 
-- [ ] 4.3 — (none)
+- [x] 4.3 — (none)
 
 ### Phase 5: E2E i domknięcie
 
 #### Automated
 
-- [ ] 5.1 `pnpm test:e2e:risk-07` passes
+- [x] 5.1 `pnpm test:e2e:risk-07` passes
 
 #### Manual
 
