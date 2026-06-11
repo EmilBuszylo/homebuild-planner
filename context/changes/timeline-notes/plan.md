@@ -384,18 +384,18 @@ Nowy scenariusz Playwright + owner smoke; `change.md` → `implemented`.
 
 #### Manual
 
-- [ ] 1.2 Owner: `pnpm db:migrate` applies cleanly
+- [x] 1.2 Owner: `pnpm db:migrate` applies cleanly
 
 ### Phase 2: API i walidacja
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint` passes
-- [ ] 2.2 `pnpm typecheck` passes
+- [x] 2.1 `pnpm lint` passes
+- [x] 2.2 `pnpm typecheck` passes
 
 #### Manual
 
-- [ ] 2.3 — (none)
+- [x] 2.3 — (none)
 
 ### Phase 3: UI harmonogramu
 

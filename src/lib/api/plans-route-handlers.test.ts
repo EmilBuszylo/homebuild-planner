@@ -8,6 +8,7 @@ const planFindUnique = vi.hoisted(() => vi.fn());
 const planFindFirst = vi.hoisted(() => vi.fn());
 const prismaTransaction = vi.hoisted(() => vi.fn());
 const constructionStageFindMany = vi.hoisted(() => vi.fn());
+const planStageNoteFindMany = vi.hoisted(() => vi.fn());
 const checkPlanRecalcLimit = vi.hoisted(() => vi.fn());
 const reportError = vi.hoisted(() => vi.fn());
 
@@ -36,6 +37,9 @@ vi.mock("@/lib/prisma", () => ({
     constructionStage: {
       findMany: constructionStageFindMany,
     },
+    planStageNote: {
+      findMany: planStageNoteFindMany,
+    },
   },
 }));
 
@@ -55,6 +59,7 @@ export const harnessMocks = {
   planFindFirst,
   prismaTransaction,
   constructionStageFindMany,
+  planStageNoteFindMany,
   checkPlanRecalcLimit,
 };
 
@@ -230,6 +235,7 @@ function mockPlanWithStageResults(params: {
   constructionStageFindMany.mockResolvedValue([
     { slug: "foundations", name: "Fundamenty", category: "Budowa" },
   ]);
+  planStageNoteFindMany.mockResolvedValue([]);
 }
 
 describe("plans route handlers", () => {
@@ -289,8 +295,11 @@ describe("plans route handlers", () => {
       const response = await invokeGetResults(PLAN_B);
 
       expect(response.status).toBe(200);
-      const body = await readJson<{ stages: unknown[] }>(response);
+      const body = await readJson<{ stages: unknown[]; stageNotes: object }>(
+        response,
+      );
       expect(body.stages.length).toBeGreaterThanOrEqual(1);
+      expect(body.stageNotes).toEqual({});
     });
 
     it("returns 401 when unauthenticated on POST /api/plans", async () => {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { loadStageNotesForPlan } from "@/lib/plan/load-plan-stage-notes";
 import { reportError } from "@/lib/observability/report-error";
 import type { PlanResultsDto } from "@/lib/plan-results";
 import { prisma } from "@/lib/prisma";
@@ -73,12 +74,14 @@ export async function GET(_request: Request, context: RouteContext) {
     });
 
     const totalCost = stages.reduce((sum, s) => sum + s.estimatedCost, 0);
+    const stageNotes = await loadStageNotesForPlan(plan.id, slugs);
 
     const payload: PlanResultsDto = {
       planId: plan.id,
       keyDate,
       totalCost,
       stages,
+      stageNotes,
       refinementApplied: version.refinementApplied,
       benchmarkAsOf: version.benchmarkFetchedAt?.toISOString() ?? null,
       benchmarkSource: version.benchmarkSourceName,
