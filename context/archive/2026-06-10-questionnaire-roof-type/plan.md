@@ -378,7 +378,7 @@ Brak — 6 modyfikatorów i 1 pytanie; ten sam pipeline O(n) etapów.
 
 #### Manual
 
-- [ ] 2.3 Step 1 shows roof type; default GABLE; API accepts new payload
+- [x] 2.3 Step 1 shows roof type; default GABLE; API accepts new payload — c83b74a
 
 ### Phase 3: Seed modyfikatorów
 
@@ -388,7 +388,7 @@ Brak — 6 modyfikatorów i 1 pytanie; ten sam pipeline O(n) etapów.
 
 #### Manual
 
-- [ ] 3.2 Owner: `pnpm db:seed` — 17 questions + 50 modifiers in DB
+- [x] 3.2 Owner: `pnpm db:seed` — 17 questions + 50 modifiers in DB
 
 ### Phase 4: Testy oracle i regresja
 
@@ -405,8 +405,8 @@ Brak — 6 modyfikatorów i 1 pytanie; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [ ] 5.1 `pnpm test:e2e:risk-04` passes
+- [x] 5.1 `pnpm test:e2e:risk-04` passes — 06938b9
 
 #### Manual
 
-- [ ] 5.2 Owner smoke: GABLE ~619k; HIP/FLAT visible cost delta on roof rows
+- [x] 5.2 Owner smoke: GABLE ~619k; HIP/FLAT visible cost delta on roof rows — 06938b9
