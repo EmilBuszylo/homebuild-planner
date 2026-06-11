@@ -422,7 +422,7 @@ Nowy scenariusz Playwright + owner smoke; `change.md` → `implemented`.
 
 #### Automated
 
-- [x] 5.1 `pnpm test:e2e:risk-07` passes
+- [x] 5.1 `pnpm test:e2e:risk-07` passes — aa2f044
 
 #### Manual
 
