@@ -380,7 +380,7 @@ Nowy scenariusz Playwright + owner smoke; `change.md` → `implemented`.
 
 #### Automated
 
-- [x] 1.1 `pnpm db:generate` passes after schema change
+- [x] 1.1 `pnpm db:generate` passes after schema change — a96ab23
 
 #### Manual
 
