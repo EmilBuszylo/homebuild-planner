@@ -1,5 +1,6 @@
 /**
- * Per-stage oracle for golden DEVELOPER path (120 m², STANDARD, insulation STANDARD).
+ * Per-stage oracle for golden DEVELOPER path (120 m², STANDARD, insulation STANDARD,
+ * roof_type GABLE).
  * Source: S-01 `calibration-rates.md` + S-05 `utility-rates.md` (scope B default).
  *
  * **Invariant:** expectations are **pre-`applyMarketBenchmarks`**. Production
@@ -35,6 +36,12 @@ export const UTILITY_GOLDEN_TOTAL = 20_000;
 
 /** Sum of per-stage expectations (S-01 599 650 + S-05 utilities 20 000). */
 export const CALIBRATED_GOLDEN_TOTAL = 599_650 + UTILITY_GOLDEN_TOTAL;
+
+/** S-02 roof-type scenario totals (Std, scope B utilities). Source: roof-rates.md */
+export const ROOF_HIP_GOLDEN_TOTAL = 633_750;
+export const ROOF_MANSARD_GOLDEN_TOTAL = 656_370;
+export const ROOF_FLAT_GOLDEN_TOTAL = 609_630;
+export const ROOF_HIP_ENHANCED_STACK_TOTAL = 635_010;
 
 /** ±2% band from workbook total (plan Phase 3). */
 export const CALIBRATED_GOLDEN_TOTAL_MIN = Math.round(

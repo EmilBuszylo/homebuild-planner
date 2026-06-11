@@ -33,7 +33,7 @@ Spójne z S-01 (`context/archive/2026-06-09-cost-calibration/calibration-rates.m
 
 | Mechanizm | Zachowanie w engine |
 |-----------|---------------------|
-| `[PERCENT:N]` | Auto-skaluje — liczone od `basePerM2` danego tieru × `area` |
+| `[PERCENT:N]` | Auto-skaluje — liczone od `basePerM2` danego tieru × `area`; tag **musi być na początku** opisu (`parse-modifier.ts`) |
 | Flat `fixedCostAdjustment` | **Stała kwota** z seedu — **nie** skaluje się z tierem |
 
 **MVP (jeden wiersz FLAT structure):** `fixedCostAdjustment: -11 520` skalibrowane pod **STANDARD** przy 120 m² (= −30% od 38 400). Przy ECONOMY/PREMIUM efektywny % rabatu odbiega od −30% — akceptowany kompromis MVP; testy oracle Phase 4 skupiają się na Std.

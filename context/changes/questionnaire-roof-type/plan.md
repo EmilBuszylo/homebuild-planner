@@ -363,11 +363,11 @@ Brak — 6 modyfikatorów i 1 pytanie; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [x] 1.1 `roof-rates.md` exists with trigger table + golden sanity + stacking section
+- [x] 1.1 `roof-rates.md` exists with trigger table + golden sanity + stacking section — f6fb448
 
 #### Manual
 
-- [ ] 1.2 Owner reviews roof rates for plausibility vs market research
+- [x] 1.2 Owner reviews roof rates for plausibility vs market research — f6fb448
 
 ### Phase 2: Rozszerzenie ankiety
 

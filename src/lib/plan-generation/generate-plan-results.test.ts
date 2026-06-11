@@ -10,6 +10,9 @@ import {
 import {
   CALIBRATED_GOLDEN_EXPECTATIONS,
   CALIBRATED_GOLDEN_TOTAL,
+  ROOF_FLAT_GOLDEN_TOTAL,
+  ROOF_HIP_GOLDEN_TOTAL,
+  ROOF_MANSARD_GOLDEN_TOTAL,
 } from "./test-fixtures/calibrated-golden-expectations";
 import { fullStagesForCalibration } from "./test-fixtures/full-stages-calibration";
 import { minimalStagesForGeneration } from "./test-fixtures/minimal-stages";
@@ -109,5 +112,40 @@ describe("generatePlanResults", () => {
 
       expect(total).toBe(CALIBRATED_GOLDEN_TOTAL);
     });
+  });
+
+  describe("S-02 roof type scenarios (golden DEVELOPER path)", () => {
+    it.each([
+      ["HIP", ROOF_HIP_GOLDEN_TOTAL, { roof_structure: 48_000, roof_covering: 34_500 }],
+      [
+        "MANSARD",
+        ROOF_MANSARD_GOLDEN_TOTAL,
+        { roof_structure: 69_120, roof_covering: 36_000 },
+      ],
+      [
+        "FLAT",
+        ROOF_FLAT_GOLDEN_TOTAL,
+        { roof_structure: 26_880, roof_covering: 31_500 },
+      ],
+    ] as const)(
+      "sums to %s total and roof stage costs",
+      (roofType, expectedTotal, roofCosts) => {
+        const responses = responsesFromPayload({
+          ...validQuestionnairePayload,
+          roof_type: roofType,
+        });
+        const results = generatePlanResults(
+          fullStagesForCalibration,
+          responses,
+        );
+        const total = sumEstimatedCosts(results);
+
+        expect(total).toBe(expectedTotal);
+        for (const [slug, expectedCost] of Object.entries(roofCosts)) {
+          const row = results.find((r) => r.stageSlug === slug);
+          expect(row?.estimatedCost).toBe(expectedCost);
+        }
+      },
+    );
   });
 });

@@ -109,6 +109,26 @@ export const questionHintsPl = {
     expanded:
       "Zaznacz, gdy poddasze będzie mieszkalne, nie tylko techniczne.",
   },
+  roof_type: {
+    short:
+      "Kształt dachu wpływa orientacyjnie na koszt więźby i krycia — dwuspadowy to typowa baza.",
+    expanded:
+      "Kopertowy obejmuje też dach czterospadowy. Wybór nie zmienia liczby etapów w harmonogramie — tylko kwoty pozycji dachowych.",
+    choices: {
+      GABLE: {
+        short: "Najczęstszy w Polsce — dwie połacie, punkt odniesienia kosztów.",
+      },
+      HIP: {
+        short: "Dach kopertowy (czterospadowy) — więcej więźby i obróbek niż przy dwuspadowym.",
+      },
+      MANSARD: {
+        short: "Mansarda — złożona więźba i okna dachowe podbijają koszt konstrukcji.",
+      },
+      FLAT: {
+        short: "Dach płaski — prostsza konstrukcja, droższe hydroizolacyjne krycie.",
+      },
+    },
+  },
   garage_spots: {
     short:
       "Liczba miejsc garażowych w bryle. Przy 0 nie uwzględniamy etapu bramy garażowej w planie.",

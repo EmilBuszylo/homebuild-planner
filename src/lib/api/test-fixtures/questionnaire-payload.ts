@@ -13,6 +13,7 @@ export const validQuestionnairePayload = {
   key_date: "2026-09-01",
   floors: 2,
   has_attic: false,
+  roof_type: "GABLE",
   garage_spots: 1,
   balcony_count: 1,
   window_count: 12,

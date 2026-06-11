@@ -30,7 +30,7 @@ const STEP_GROUPS: { name: string; slugs: (keyof QuestionnaireInputs)[] }[] = [
   },
   {
     name: "Parametry budynku",
-    slugs: ["area", "floors", "has_attic", "garage_spots", "balcony_count"],
+    slugs: ["area", "floors", "has_attic", "roof_type", "garage_spots", "balcony_count"],
   },
   {
     name: "Okna, drzwi i termin",

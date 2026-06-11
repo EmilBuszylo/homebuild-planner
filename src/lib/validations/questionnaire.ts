@@ -65,6 +65,8 @@ export const utilityDistanceBandSchema = z.enum([
   "OVER_200M",
 ]);
 
+export const roofTypeSchema = z.enum(["GABLE", "HIP", "MANSARD", "FLAT"]);
+
 export function needsUtilityDistanceBand(
   sewageDisposal: z.infer<typeof sewageDisposalSchema>,
   waterSupply: z.infer<typeof waterSupplySchema>,
@@ -97,6 +99,7 @@ export const questionnaireFormSchema = z.object({
     .min(1, "Minimalna liczba kondygnacji to 1")
     .max(3, "Maksymalna liczba kondygnacji to 3"),
   has_attic: z.boolean().optional().default(false),
+  roof_type: roofTypeSchema,
   garage_spots: z
     .number()
     .int("Liczba miejsc garażowych musi być liczbą całkowitą")
@@ -164,6 +167,7 @@ export type InsulationLevel = z.infer<typeof insulationLevelSchema>;
 export type SewageDisposal = z.infer<typeof sewageDisposalSchema>;
 export type WaterSupply = z.infer<typeof waterSupplySchema>;
 export type UtilityDistanceBand = z.infer<typeof utilityDistanceBandSchema>;
+export type RoofType = z.infer<typeof roofTypeSchema>;
 export type QuestionnaireResponseInput = z.infer<
   typeof questionnaireResponseSchema
 >;

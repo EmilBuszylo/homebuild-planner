@@ -31,6 +31,7 @@ const EMPTY_DEFAULTS: Partial<QuestionnaireInputs> = {
   investment_state: "FOUNDATIONS",
   starting_state: "FROM_SCRATCH",
   has_attic: false,
+  roof_type: "GABLE",
   garage_spots: 0,
   balcony_count: 0,
   terrace_door_count: 0,

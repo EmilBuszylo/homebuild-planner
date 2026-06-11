@@ -92,3 +92,24 @@ describe("computeStageCost — utility connections", () => {
     expect(cost).toBe(8_000);
   });
 });
+
+describe("computeStageCost — roof type modifiers (S-02)", () => {
+  function roofStage(slug: "roof_structure" | "roof_covering") {
+    const stage = fullStagesForCalibration.find((row) => row.slug === slug);
+    if (!stage) {
+      throw new Error(`missing fixture stage: ${slug}`);
+    }
+    return stage;
+  }
+
+  it("stacks HIP and ENHANCED insulation on roof_structure from the same base", () => {
+    const responses = toQuestionnaireResponsesMap({
+      ...validQuestionnairePayload,
+      roof_type: "HIP",
+      insulation_level: "ENHANCED",
+    });
+    const cost = computeStageCost(roofStage("roof_structure"), responses);
+
+    expect(cost).toBe(53_760);
+  });
+});
