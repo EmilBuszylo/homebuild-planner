@@ -3,7 +3,7 @@ project: home-build-planner
 version: 3
 status: draft
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-06-11
 prd_version: 1
 main_goal: quality
 top_blocker: decisions
@@ -35,7 +35,7 @@ Jeśli stawki kosztorysowe są błędne — w szczególności stan deweloperski,
 | S-01 | cost-calibration | Widzieć kosztorys oparty na zweryfikowanych stawkach rynkowych, w tym poprawione wyliczenie stanu deweloperskiego | F-01 | FR-005, FR-006, FR-008, FR-009, US-01 | done |
 | S-05 | utility-connections | Wskazać sposób odprowadzenia ścieków (i opcjonalnie wodę) i zobaczyć osobną pozycję kosztorysu za przyłącza zewnętrzne, oddzieloną od wewnętrznej instalacji wod-kan | S-01 | FR-003, FR-004, FR-008 | done |
 | S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-05 | FR-003, FR-004, FR-008 | done |
-| S-03 | timeline-notes | Dodać notatkę lub oznaczyć etap harmonogramu jako ważny, i wrócić do niej przy kolejnej wizycie | F-01 | FR-007 | proposed |
+| S-03 | timeline-notes | Dodać notatkę lub oznaczyć etap harmonogramu jako ważny, i wrócić do niej przy kolejnej wizycie | F-01 | FR-007 | done |
 | S-04 | calendar-export | Wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do zewnętrznego kalendarza | F-01 | FR-010 | blocked |
 
 ## Streams
@@ -188,3 +188,4 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 - **S-01: Użytkownik widzi kosztorys oparty na zweryfikowanych, skalibrowanych stawkach rynkowych — w szczególności poprawione wyliczenie stanu deweloperskiego i pozostałych etapów budowy, bazujące na aktualnych widełkach cenowych z polskiego rynku (robocizna + materiały).** — Archived 2026-06-10 → `context/archive/2026-06-09-cost-calibration/`. Lesson: —.
 - **S-05: Użytkownik wskazuje sposób odprowadzenia ścieków (kanalizacja gminna, szambo, oczyszczalnia) i opcjonalnie źródło wody (wodociąg, studnia); kosztorys pokazuje osobną pozycję za przyłącza zewnętrzne — oddzieloną od wewnętrznej instalacji wod-kan (plumbing, obniżonej o ~10% w S-01).** — Archived 2026-06-08 → `context/archive/2026-06-10-utility-connections/`. Lesson: —.
 - **S-02: Użytkownik może wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy, czterospadowy, mansardowy, płaski) i otrzymuje kosztorys uwzględniający różnice kosztowe wynikające z wybranego typu — konstrukcja dachu, krycie, obróbki.** — Archived 2026-06-08 → `context/archive/2026-06-10-questionnaire-roof-type/`. Lesson: —.
+- **S-03: Użytkownik może dodać notatkę lub oznaczyć etap harmonogramu jako ważny, a treść notatki jest dostępna przy kolejnych wizytach na stronie planu — pomaga koordynować kontakt z wykonawcami.** — Archived 2026-06-11 → `context/archive/2026-06-11-timeline-notes/`. Lesson: —.
