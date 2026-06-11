@@ -1,10 +1,10 @@
 ---
 change_id: questionnaire-roof-type
 title: Typ dachu w ankiecie (S-02)
-status: implementing
+status: archived
 created: 2026-06-10
 updated: 2026-06-08
-archived_at: null
+archived_at: 2026-06-08T12:00:00Z
 ---
 
 ## Notes

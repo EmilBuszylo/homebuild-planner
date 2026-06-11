@@ -34,7 +34,7 @@ Jeśli stawki kosztorysowe są błędne — w szczególności stan deweloperski,
 | F-01 | e2e-ci-gate | (foundation) Playwright E2E specs uruchamiają się w GitHub Actions CI na każdym PR | — | FR-001, FR-002, Success Criteria (Guardrails) | done |
 | S-01 | cost-calibration | Widzieć kosztorys oparty na zweryfikowanych stawkach rynkowych, w tym poprawione wyliczenie stanu deweloperskiego | F-01 | FR-005, FR-006, FR-008, FR-009, US-01 | done |
 | S-05 | utility-connections | Wskazać sposób odprowadzenia ścieków (i opcjonalnie wodę) i zobaczyć osobną pozycję kosztorysu za przyłącza zewnętrzne, oddzieloną od wewnętrznej instalacji wod-kan | S-01 | FR-003, FR-004, FR-008 | done |
-| S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-05 | FR-003, FR-004, FR-008 | proposed |
+| S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-05 | FR-003, FR-004, FR-008 | done |
 | S-03 | timeline-notes | Dodać notatkę lub oznaczyć etap harmonogramu jako ważny, i wrócić do niej przy kolejnej wizycie | F-01 | FR-007 | proposed |
 | S-04 | calendar-export | Wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do zewnętrznego kalendarza | F-01 | FR-010 | blocked |
 
@@ -121,8 +121,8 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
   - Które typy dachów są najpopularniejsze w polskim budownictwie jednorodzinnym i jakie są między nimi różnice kosztowe (%, PLN/m² połaci)? Owner: agent (`/10x-research`). Block: no.
   - Czy typ dachu powinien być pytaniem wymaganym czy opcjonalnym (FR-004)? Owner: user. Block: no (można zacząć od wymaganego; `/10x-plan` zaproponuje).
   - Czy nowe pytanie wpływa na DAG kolejności etapów (`predecessorSlugs`) — np. etap dachu zależy od typu? Owner: agent. Block: no.
-- **Risk:** Sekwencjonowane po S-05 — typ dachu i przyłącza współdzielą model kosztowy; kalibracja bazowa (S-01) musi być gotowa wcześniej. Nowe pole w modelu ankiety (`RoofType` enum) wymaga migracji schematu — owner musi uruchomić `pnpm db:migrate`.
-- **Status:** proposed
+- **Risk:** Sekwencjonowane po S-05 — typ dachu i przyłącza współdzielą model kosztowy; kalibracja bazowa (S-01) musi być gotowa wcześniej. MVP: seed-only Path A (bez migracji Prisma `RoofType` enum).
+- **Status:** done
 
 ### S-03: Notatki i zdarzenia przypiete do etapów harmonogramu
 
@@ -159,7 +159,7 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 | F-01 | e2e-ci-gate | Dodaj E2E do CI (GitHub Actions) | yes | Uruchom `/10x-plan e2e-ci-gate`; specs istnieją, tylko `ci.yml` do wdrożenia |
 | S-01 | cost-calibration | Kalibracja stawek rynkowych kosztorysu | yes (po F-01) | Zacznij od `/10x-research cost-calibration` — research cenowy jest krokiem 1 |
 | S-05 | utility-connections | Przyłącza mediów (kanalizacja / woda) | no | Po S-01; `/10x-research utility-connections` przed planem |
-| S-02 | questionnaire-roof-type | Rozszerzenie ankiety: typ dachu | no | Po S-05; czeka na skalibrowany model i przyłącza |
+| S-02 | questionnaire-roof-type | Rozszerzenie ankiety: typ dachu | yes | Zarchiwizowano 2026-06-08 |
 | S-03 | timeline-notes | Notatki do etapów harmonogramu (FR-007) | yes (po F-01) | Można równolegle z S-01; nowa tabela DB → owner uruchamia migrację |
 | S-04 | calendar-export | Eksport etapów do kalendarza (FR-010) | no | Zablokowane decyzją iCal vs Google Calendar API; rozwiąż Open Roadmap Q-1 |
 
@@ -187,3 +187,4 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 - **F-01: (foundation) Playwright E2E specs (risk-01 IDOR, risk-02 auth, risk-04 generate golden path) uruchamiają się automatycznie w GitHub Actions CI na każdym pull requeście; regresje w auth i ścieżce generowania są wykrywane przed merge.** — Archived 2026-06-09 → `context/archive/2026-06-08-e2e-ci-gate/`. Lesson: —.
 - **S-01: Użytkownik widzi kosztorys oparty na zweryfikowanych, skalibrowanych stawkach rynkowych — w szczególności poprawione wyliczenie stanu deweloperskiego i pozostałych etapów budowy, bazujące na aktualnych widełkach cenowych z polskiego rynku (robocizna + materiały).** — Archived 2026-06-10 → `context/archive/2026-06-09-cost-calibration/`. Lesson: —.
 - **S-05: Użytkownik wskazuje sposób odprowadzenia ścieków (kanalizacja gminna, szambo, oczyszczalnia) i opcjonalnie źródło wody (wodociąg, studnia); kosztorys pokazuje osobną pozycję za przyłącza zewnętrzne — oddzieloną od wewnętrznej instalacji wod-kan (plumbing, obniżonej o ~10% w S-01).** — Archived 2026-06-08 → `context/archive/2026-06-10-utility-connections/`. Lesson: —.
+- **S-02: Użytkownik może wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy, czterospadowy, mansardowy, płaski) i otrzymuje kosztorys uwzględniający różnice kosztowe wynikające z wybranego typu — konstrukcja dachu, krycie, obróbki.** — Archived 2026-06-08 → `context/archive/2026-06-10-questionnaire-roof-type/`. Lesson: —.
