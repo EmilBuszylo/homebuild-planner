@@ -373,8 +373,8 @@ Brak — 6 modyfikatorów i 1 pytanie; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [ ] 2.1 `pnpm lint` passes
-- [ ] 2.2 `pnpm typecheck` passes (+ `pnpm test` regresja)
+- [x] 2.1 `pnpm lint` passes — c83b74a
+- [x] 2.2 `pnpm typecheck` passes (+ `pnpm test` regresja) — c83b74a
 
 #### Manual
 
@@ -384,7 +384,7 @@ Brak — 6 modyfikatorów i 1 pytanie; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [ ] 3.1 `pnpm lint` and `pnpm typecheck` pass after seed changes
+- [x] 3.1 `pnpm lint` and `pnpm typecheck` pass after seed changes — c83b74a
 
 #### Manual
 
@@ -394,8 +394,8 @@ Brak — 6 modyfikatorów i 1 pytanie; ten sam pipeline O(n) etapów.
 
 #### Automated
 
-- [ ] 4.1 `pnpm test` passes (GABLE 619k + HIP/MANSARD/FLAT scenarios + stacking)
-- [ ] 4.2 `pnpm build:ci` passes
+- [x] 4.1 `pnpm test` passes (GABLE 619k + HIP/MANSARD/FLAT scenarios + stacking) — c83b74a
+- [x] 4.2 `pnpm build:ci` passes — c83b74a
 
 #### Manual
 
