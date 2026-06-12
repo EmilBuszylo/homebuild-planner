@@ -3,7 +3,7 @@ project: home-build-planner
 version: 3
 status: draft
 created: 2026-06-08
-updated: 2026-06-11
+updated: 2026-06-12
 prd_version: 1
 main_goal: quality
 top_blocker: external-setup
@@ -36,7 +36,7 @@ Jeśli stawki kosztorysowe są błędne — w szczególności stan deweloperski,
 | S-05 | utility-connections | Wskazać sposób odprowadzenia ścieków (i opcjonalnie wodę) i zobaczyć osobną pozycję kosztorysu za przyłącza zewnętrzne, oddzieloną od wewnętrznej instalacji wod-kan | S-01 | FR-003, FR-004, FR-008 | done |
 | S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-05 | FR-003, FR-004, FR-008 | done |
 | S-03 | timeline-notes | Dodać notatkę lub oznaczyć etap harmonogramu jako ważny, i wrócić do niej przy kolejnej wizycie | F-01 | FR-007 | done |
-| S-04 | calendar-export | Wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do Google Calendar | F-01 | FR-010 | proposed |
+| S-04 | calendar-export | Wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do Google Calendar | F-01 | FR-010 | done |
 
 ## Streams
 
@@ -154,7 +154,7 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
   - Konfiguracja Google Cloud (projekt, OAuth client ID/secret, consent screen, redirect URI dla localhost + Vercel) — Owner: user. Block: no dla `/10x-plan`; **yes** dla `/10x-implement` bez skonfigurowanych env (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, redirect).
   - Czy użytkownik wybiera kalendarz docelowy z listy, czy zawsze `primary`? Owner: user / plan. Block: no.
 - **Risk:** OAuth i consent screen mogą opóźnić wdrożenie vs iCal; PRD §shape-notes traktuje integrację Google jako nice-to-have z zewnętrzną zależnością — akceptowane świadomie. Sekwencjonowane jako ostatni slice v3.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -165,7 +165,7 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 | S-05 | utility-connections | Przyłącza mediów (kanalizacja / woda) | no | Po S-01; `/10x-research utility-connections` przed planem |
 | S-02 | questionnaire-roof-type | Rozszerzenie ankiety: typ dachu | yes | Zarchiwizowano 2026-06-08 |
 | S-03 | timeline-notes | Notatki do etapów harmonogramu (FR-007) | no | Zaimplementowano 2026-06-08 |
-| S-04 | calendar-export | Eksport etapów do Google Calendar (FR-010) | yes | Decyzja: Google Calendar API; owner: Google Cloud OAuth przed implementacją; `/10x-plan calendar-export` |
+| S-04 | calendar-export | Eksport etapów do Google Calendar (FR-010) | — | Zarchiwizowano 2026-06-12 → `context/archive/2026-06-11-calendar-export/` |
 
 ## Open Roadmap Questions
 
@@ -194,3 +194,4 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 - **S-05: Użytkownik wskazuje sposób odprowadzenia ścieków (kanalizacja gminna, szambo, oczyszczalnia) i opcjonalnie źródło wody (wodociąg, studnia); kosztorys pokazuje osobną pozycję za przyłącza zewnętrzne — oddzieloną od wewnętrznej instalacji wod-kan (plumbing, obniżonej o ~10% w S-01).** — Archived 2026-06-08 → `context/archive/2026-06-10-utility-connections/`. Lesson: —.
 - **S-02: Użytkownik może wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy, czterospadowy, mansardowy, płaski) i otrzymuje kosztorys uwzględniający różnice kosztowe wynikające z wybranego typu — konstrukcja dachu, krycie, obróbki.** — Archived 2026-06-08 → `context/archive/2026-06-10-questionnaire-roof-type/`. Lesson: —.
 - **S-03: Użytkownik może dodać notatkę lub oznaczyć etap harmonogramu jako ważny, a treść notatki jest dostępna przy kolejnych wizytach na stronie planu — pomaga koordynować kontakt z wykonawcami.** — Archived 2026-06-11 → `context/archive/2026-06-11-timeline-notes/`. Lesson: —.
+- **S-04: Użytkownik może wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia bezpośrednio do swojego Google Calendar (po jednorazowej autoryzacji OAuth).** — Archived 2026-06-12 → `context/archive/2026-06-11-calendar-export/`. Lesson: —.
