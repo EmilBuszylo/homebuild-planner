@@ -11,6 +11,7 @@ import { PlanCostTable } from "@/components/plan/plan-cost-table";
 import { PlanTimeline } from "@/components/plan/plan-timeline";
 import { PAGE_METADATA } from "@/lib/copy/site";
 import { fetchPlanResults } from "@/lib/api/fetch-plan-results";
+import { isGoogleCalendarConnected } from "@/lib/google-calendar/google-oauth";
 import { createClient } from "@/lib/supabase/server";
 import { routes } from "@/lib/routes";
 
@@ -80,6 +81,8 @@ export default async function PlanPage({ params }: PlanPageProps) {
     );
   }
 
+  const googleCalendarConnected = await isGoogleCalendarConnected(user.id);
+
   return (
     <AppPageShell paddingY="loose" className="flex flex-col gap-8">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -102,7 +105,10 @@ export default async function PlanPage({ params }: PlanPageProps) {
 
       <div className="flex flex-col gap-8">
         <PlanCostTable results={result.data} />
-        <PlanTimeline results={result.data} />
+        <PlanTimeline
+          results={result.data}
+          googleCalendarConnected={googleCalendarConnected}
+        />
       </div>
     </AppPageShell>
   );

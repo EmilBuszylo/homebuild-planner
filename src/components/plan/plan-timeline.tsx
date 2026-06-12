@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Lightbulb } from "lucide-react";
 
+import { CalendarExportControls } from "@/components/plan/calendar-export-controls";
 import { StageNoteControls } from "@/components/plan/stage-note-controls";
 
 import {
@@ -37,6 +38,7 @@ import { cn } from "@/lib/utils";
 
 type PlanTimelineProps = {
   results: PlanResultsDto;
+  googleCalendarConnected?: boolean;
 };
 
 const TIMELINE_PX_PER_DAY_MOBILE = 8;
@@ -336,7 +338,10 @@ function TimelineChartPane({
   );
 }
 
-export function PlanTimeline({ results }: PlanTimelineProps) {
+export function PlanTimeline({
+  results,
+  googleCalendarConnected = false,
+}: PlanTimelineProps) {
   const pxPerDay = useTimelinePxPerDay();
   const [stageNotes, setStageNotes] = useState(results.stageNotes);
 
@@ -367,13 +372,20 @@ export function PlanTimeline({ results }: PlanTimelineProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Harmonogram prac</CardTitle>
-        <CardDescription>
-          Planowany przebieg etapów od {anchorLabel} (dzień 0). Każdy wiersz to
-          jeden etap; oś u góry pokazuje daty.
-          {hasAnyCoaching ? PLAN_TIMELINE_COACHING_CARD_SUFFIX : null}
-        </CardDescription>
+      <CardHeader className="gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-1.5">
+          <CardTitle>Harmonogram prac</CardTitle>
+          <CardDescription>
+            Planowany przebieg etapów od {anchorLabel} (dzień 0). Każdy wiersz to
+            jeden etap; oś u góry pokazuje daty.
+            {hasAnyCoaching ? PLAN_TIMELINE_COACHING_CARD_SUFFIX : null}
+          </CardDescription>
+        </div>
+        <CalendarExportControls
+          planId={results.planId}
+          stages={results.stages}
+          initialConnected={googleCalendarConnected}
+        />
       </CardHeader>
       <CardContent>
         {stages.length === 0 ? (

@@ -6,7 +6,7 @@ created: 2026-06-08
 updated: 2026-06-11
 prd_version: 1
 main_goal: quality
-top_blocker: decisions
+top_blocker: external-setup
 phase: v3-accuracy-and-features
 ---
 
@@ -36,7 +36,7 @@ Jeśli stawki kosztorysowe są błędne — w szczególności stan deweloperski,
 | S-05 | utility-connections | Wskazać sposób odprowadzenia ścieków (i opcjonalnie wodę) i zobaczyć osobną pozycję kosztorysu za przyłącza zewnętrzne, oddzieloną od wewnętrznej instalacji wod-kan | S-01 | FR-003, FR-004, FR-008 | done |
 | S-02 | questionnaire-roof-type | Wybrać typ dachu w ankiecie (np. dwuspadowy, kopertowy) i otrzymać kosztorys uwzględniający różnice kosztowe wynikające z typu dachu | S-05 | FR-003, FR-004, FR-008 | done |
 | S-03 | timeline-notes | Dodać notatkę lub oznaczyć etap harmonogramu jako ważny, i wrócić do niej przy kolejnej wizycie | F-01 | FR-007 | done |
-| S-04 | calendar-export | Wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do zewnętrznego kalendarza | F-01 | FR-010 | blocked |
+| S-04 | calendar-export | Wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do Google Calendar | F-01 | FR-010 | proposed |
 
 ## Streams
 
@@ -46,7 +46,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 |---|---|---|---|
 | A | Jakość kalkulacji | `F-01` → `S-01` → `S-05` → `S-02` | Kalibracja wewnętrznych stawek, potem przyłącza mediów (czytelność wod-kan), potem typ dachu |
 | B | Notatki na etapach | `S-03` | Wymaga F-01 (Stream A); niezależny od S-01/S-02 — może być realizowany równolegle z Stream A |
-| C | Eksport do kalendarza | `S-04` | Wymaga F-01 (Stream A); zablokowany decyzją o protokole (iCal vs Google Calendar API) |
+| C | Eksport do kalendarza | `S-04` | Wymaga F-01 (Stream A); protokół: **Google Calendar API** (OAuth); owner: projekt Google Cloud przed `/10x-implement` |
 
 ## Baseline
 
@@ -138,19 +138,23 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 - **Risk:** Wymaga nowej tabeli `StageNote` w schemacie Prisma — owner musi uruchomić `pnpm db:migrate`. Niezależny od kalkulacji — może być realizowany równolegle z S-01 przez osobny agent run.
 - **Status:** done
 
-### S-04: Eksport etapów do zewnętrznego kalendarza
+### S-04: Eksport etapów do Google Calendar
 
-- **Outcome:** Użytkownik może wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia do zewnętrznego kalendarza.
+- **Outcome:** Użytkownik może wyeksportować wybrane lub wszystkie etapy harmonogramu jako zdarzenia bezpośrednio do swojego Google Calendar (po jednorazowej autoryzacji OAuth).
 - **Change ID:** calendar-export
 - **PRD refs:** FR-010
 - **Prerequisites:** F-01
-- **Parallel with:** S-01, S-02, S-03
+- **Parallel with:** —
 - **Blockers:** —
+- **Decisions (locked 2026-06-11):**
+  - **Protokół:** Google Calendar API (OAuth 2.0), scope `calendar.events` — nie iCal w tym slice.
+  - **Zakres MVP:** wybrane lub wszystkie etapy z bieżącego harmonogramu planu; jeden kalendarz docelowy (primary lub wybór użytkownika — do ustalenia w `/10x-plan`).
 - **Unknowns:**
-  - iCal/ICS (plik `.ics` bez OAuth, działa z Google/Apple/Outlook po pobraniu) vs Google Calendar API (OAuth, osobny projekt Google Cloud, consent screen)? Owner: user. Block: yes — ta decyzja determinuje całą implementację, zewnętrzne zależności i zakres pracy.
-  - Jeśli Google Calendar API: wymaga Google Cloud project, OAuth 2.0 scope `calendar.events` — Owner: user (konfiguracja zewnętrzna). Block: yes — do czasu konfiguracji projektu zewnętrznego.
-- **Risk:** Jeśli iCal — bardzo szybkie do zrealizowania (bezstanowy eksport pliku, zero OAuth). Jeśli Google Calendar API — duże ryzyko opóźnienia z powodu zewnętrznych zależności i procesu weryfikacji OAuth. PRD §shape-notes potwierdza: "google calendar integrations marked nice-to-have" właśnie ze względu na tę zewnętrzną zależność. Sekwencjonowane na końcu; należy rozwiązać Unknown 1 zanim otworzy się `/10x-plan calendar-export`.
-- **Status:** blocked
+  - ~~iCal vs Google Calendar API~~ — **rozstrzygnięte:** Google Calendar API (owner, 2026-06-11).
+  - Konfiguracja Google Cloud (projekt, OAuth client ID/secret, consent screen, redirect URI dla localhost + Vercel) — Owner: user. Block: no dla `/10x-plan`; **yes** dla `/10x-implement` bez skonfigurowanych env (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, redirect).
+  - Czy użytkownik wybiera kalendarz docelowy z listy, czy zawsze `primary`? Owner: user / plan. Block: no.
+- **Risk:** OAuth i consent screen mogą opóźnić wdrożenie vs iCal; PRD §shape-notes traktuje integrację Google jako nice-to-have z zewnętrzną zależnością — akceptowane świadomie. Sekwencjonowane jako ostatni slice v3.
+- **Status:** proposed
 
 ## Backlog Handoff
 
@@ -161,11 +165,11 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 | S-05 | utility-connections | Przyłącza mediów (kanalizacja / woda) | no | Po S-01; `/10x-research utility-connections` przed planem |
 | S-02 | questionnaire-roof-type | Rozszerzenie ankiety: typ dachu | yes | Zarchiwizowano 2026-06-08 |
 | S-03 | timeline-notes | Notatki do etapów harmonogramu (FR-007) | no | Zaimplementowano 2026-06-08 |
-| S-04 | calendar-export | Eksport etapów do kalendarza (FR-010) | no | Zablokowane decyzją iCal vs Google Calendar API; rozwiąż Open Roadmap Q-1 |
+| S-04 | calendar-export | Eksport etapów do Google Calendar (FR-010) | yes | Decyzja: Google Calendar API; owner: Google Cloud OAuth przed implementacją; `/10x-plan calendar-export` |
 
 ## Open Roadmap Questions
 
-1. **iCal (.ics pobierany przez użytkownika) vs Google Calendar API (OAuth) dla FR-010?** Owner: user. Block: S-04 — bez tej decyzji `/10x-plan calendar-export` nie może ruszyć.
+1. ~~**iCal vs Google Calendar API dla FR-010?**~~ **Rozstrzygnięte 2026-06-11:** Google Calendar API (OAuth). iCal pozostaje w Parked jako ewentualny fallback bez OAuth.
 2. **Jaka nazwa projektu ma być wpisana jako `project` w PRD frontmatter?** Owner: user. Block: metadane dokumentu (z PRD §Open Questions).
 3. **Jaki jest liczbowy limit pełnych przeliczeń planu na użytkownika?** Owner: user. Block: yes — nie zmienione od PRD (z PRD §Open Questions); wpływa na NFR kosztowy.
 4. **Która data jest obligatoryjna w ankiecie?** Owner: user. Block: no (z PRD §Open Questions).
@@ -173,6 +177,7 @@ Stan codebase na **2026-06-08** (auto-researched + potwierdzony przez właścici
 
 ## Parked
 
+- **Eksport iCal (.ics) bez OAuth** — Why parked: S-04 realizuje FR-010 przez Google Calendar API; pobierany plik `.ics` może być dodany później jako fallback dla użytkowników bez konta Google.
 - **FR-011: Logowanie przez Google** — Why parked: zewnętrzna zależność (OAuth Google), poza zakresem v3; PRD §shape-notes: "google auth moved to nice-to-have".
 - **Notatki z przypomnieniami / powiadomieniami** — Why parked: FR-007 w S-03 zakrywa MVP notatek (tekst przypiany); datowane przypomnienia to osobna funkcja wymagająca job schedulera lub zewnętrznej usługi push.
 - **Regionalizacja kosztów** — Why parked: PRD §Vision wzmiankuje "100x scale"; kalibracja v3 zakrywa ogólnopolskie widełki; regionalizacja (województwo, miasto) to następna faza po zebraniu pierwszych danych od użytkowników.

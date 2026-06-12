@@ -75,6 +75,15 @@ export default defineConfig({
         storageState: "e2e/.auth/generate-user.json",
       },
     },
+    {
+      name: "risk-08",
+      testMatch: /risk-08-.*\.spec\.ts/,
+      dependencies: ["generate-user-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "e2e/.auth/generate-user.json",
+      },
+    },
   ],
   webServer: {
     command: "pnpm dev",

@@ -1,17 +1,7 @@
 import { headers } from "next/headers";
 
 import type { PlanResultsDto } from "@/lib/plan-results";
-
-function getSiteOrigin(): string {
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (siteUrl) {
-    return siteUrl.replace(/\/$/, "");
-  }
-  return "http://localhost:3000";
-}
+import { getSiteOrigin } from "@/lib/site-origin";
 
 export type FetchPlanResultsResult =
   | { status: "ok"; data: PlanResultsDto }

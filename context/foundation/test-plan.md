@@ -139,7 +139,7 @@ relevant rollout phase ships.
 | #6 Invalid questionnaire payload | `questionnaire-inputs.test.ts`, `investment-state.test.ts`, `responses-to-inputs.test.ts`, handler **400** (create + recalc) | `context/archive/2026-06-03-testing-questionnaire-hardening/MANUAL-SMOKE.md` (step 1 UI) |
 | #7 Recalc rate limit | `plan-recalc.test.ts` (policy env), `plans-route-handlers.test.ts` (**429**) | — |
 
-**Other automated (no risk row):** display sort — `src/lib/plan/sort-plan-stages-chronologically.test.ts`; stage notes (FR-007) — `stage-notes-route-handlers.test.ts`, `plan-stage-note.test.ts`, `e2e/risk-07-stage-notes.spec.ts` (full file list in §4 test-base profile).
+**Other automated (no risk row):** display sort — `src/lib/plan/sort-plan-stages-chronologically.test.ts`; stage notes (FR-007) — `stage-notes-route-handlers.test.ts`, `plan-stage-note.test.ts`, `e2e/risk-07-stage-notes.spec.ts`; calendar export (FR-010) — `calendar-export-route-handlers.test.ts`, `build-stage-events.test.ts`, `e2e/risk-08-calendar-export-ui.spec.ts` (full file list in §4 test-base profile).
 
 **Vitest constraint:** handler mocks use `vi.hoisted` in the **same file** as the test — do not extract hoisted mocks to a shared module (see §6.2).
 
