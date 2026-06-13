@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pin, StickyNote } from "lucide-react";
+import { Star, StickyNote } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,7 @@ import {
 import {
   PLAN_STAGE_NOTE_CANCEL_LABEL,
   PLAN_STAGE_NOTE_OPEN_ARIA_LABEL,
-  PLAN_STAGE_NOTE_PIN_ARIA_LABEL,
+  PLAN_STAGE_NOTE_STAR_ARIA_LABEL,
   PLAN_STAGE_NOTE_PLACEHOLDER,
   PLAN_STAGE_NOTE_SAVE_ERROR,
   PLAN_STAGE_NOTE_SAVE_LABEL,
@@ -116,7 +116,7 @@ export function StageNoteControls({
     return true;
   }
 
-  async function handlePinToggle() {
+  async function handleStarToggle() {
     const nextPinned = !isPinned;
     const previousPinned = isPinned;
     setIsPinned(nextPinned);
@@ -149,12 +149,12 @@ export function StageNoteControls({
           "flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50",
           isPinned && "text-amber-600 hover:text-amber-700 dark:text-amber-500",
         )}
-        aria-label={PLAN_STAGE_NOTE_PIN_ARIA_LABEL}
+        aria-label={PLAN_STAGE_NOTE_STAR_ARIA_LABEL}
         aria-pressed={isPinned}
         disabled={isSaving}
-        onClick={handlePinToggle}
+        onClick={handleStarToggle}
       >
-        <Pin
+        <Star
           className={cn("size-3.5", isPinned && "fill-current")}
           aria-hidden
         />

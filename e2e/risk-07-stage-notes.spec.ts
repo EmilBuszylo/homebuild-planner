@@ -1,6 +1,6 @@
 /**
  * FR-007 / S-03 — Stage notes on timeline
- * Proves: notatka etapu zapisuje się w UI i przetrwa reload; pin utrzymuje stan.
+ * Proves: notatka etapu zapisuje się w UI i przetrwa reload; gwiazdka utrzymuje stan.
  *
  * Setup jak risk-04: generate-user storageState + POST /api/plans.
  * Integration complement: stage-notes-route-handlers.test.ts.
@@ -13,7 +13,7 @@ import { goldenQuestionnairePayload } from "./fixtures/golden-questionnaire-payl
 const TEST_RUN_ID = process.env.TEST_RUN_ID ?? `${Date.now()}`;
 
 test.describe("FR-007 — Notatki etapów harmonogramu", () => {
-  test("zapis notatki i pinu na etapie przetrwa odświeżenie strony planu", async ({
+  test("zapis notatki i gwiazdki na etapie przetrwa odświeżenie strony planu", async ({
     page,
     request,
   }) => {
@@ -49,11 +49,11 @@ test.describe("FR-007 — Notatki etapów harmonogramu", () => {
     await page.getByRole("button", { name: "Zapisz notatkę" }).click();
     await expect(noteTextarea).not.toBeVisible();
 
-    const pinButton = page
-      .getByRole("button", { name: "Oznacz jako ważny etap" })
+    const starButton = page
+      .getByRole("button", { name: "Oznacz gwiazdką jako ważny etap" })
       .first();
-    await pinButton.click();
-    await expect(pinButton).toHaveAttribute("aria-pressed", "true");
+    await starButton.click();
+    await expect(starButton).toHaveAttribute("aria-pressed", "true");
 
     await page.reload();
 
@@ -61,7 +61,7 @@ test.describe("FR-007 — Notatki etapów harmonogramu", () => {
       timeout: 10_000,
     });
     await expect(
-      page.getByRole("button", { name: "Oznacz jako ważny etap" }).first(),
+      page.getByRole("button", { name: "Oznacz gwiazdką jako ważny etap" }).first(),
     ).toHaveAttribute("aria-pressed", "true");
 
     await page
