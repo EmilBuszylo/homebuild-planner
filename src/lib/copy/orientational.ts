@@ -23,6 +23,7 @@ export const KPI_LABELS = {
   totalCost: "Łączny koszt orientacyjny",
   plannedStart: "Planowany start",
   stageCount: "Etapy w planie",
+  planScope: "Zakres planu",
 } as const;
 
 export const QUESTIONNAIRE_INTRO_NEW =
@@ -40,8 +41,8 @@ export const PLAN_TIMELINE_COACHING_CARD_SUFFIX =
 export const PLAN_TIMELINE_COACHING_MARKER_ARIA_LABEL =
   "Wskazówka — dotknij, aby przeczytać";
 
-export const PLAN_STAGE_NOTE_PIN_LABEL = "Ważny etap";
-export const PLAN_STAGE_NOTE_PIN_ARIA_LABEL = "Oznacz jako ważny etap";
+export const PLAN_STAGE_NOTE_STAR_LABEL = "Ważny etap";
+export const PLAN_STAGE_NOTE_STAR_ARIA_LABEL = "Oznacz gwiazdką jako ważny etap";
 export const PLAN_STAGE_NOTE_OPEN_LABEL = "Notatka";
 export const PLAN_STAGE_NOTE_OPEN_ARIA_LABEL = "Otwórz notatkę do etapu";
 export const PLAN_STAGE_NOTE_SAVE_LABEL = "Zapisz notatkę";

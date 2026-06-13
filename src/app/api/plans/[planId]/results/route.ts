@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { formatPlanScope } from "@/lib/format/investment-state-label";
 import { loadStageNotesForPlan } from "@/lib/plan/load-plan-stage-notes";
 import { reportError } from "@/lib/observability/report-error";
 import type { PlanResultsDto } from "@/lib/plan-results";
@@ -60,6 +61,16 @@ export async function GET(_request: Request, context: RouteContext) {
 
     const keyDate =
       version.responses.find((r) => r.questionSlug === "key_date")?.value ?? "";
+    const startingState =
+      version.responses.find((r) => r.questionSlug === "starting_state")?.value ??
+      "";
+    const targetState =
+      version.responses.find((r) => r.questionSlug === "investment_state")
+        ?.value ?? "";
+    const planScopeLabel =
+      startingState && targetState
+        ? formatPlanScope(startingState, targetState)
+        : "—";
 
     const stages = version.stageResults.map((result) => {
       const def = stageBySlug.get(result.stageSlug);
@@ -79,6 +90,7 @@ export async function GET(_request: Request, context: RouteContext) {
     const payload: PlanResultsDto = {
       planId: plan.id,
       keyDate,
+      planScopeLabel,
       totalCost,
       stages,
       stageNotes,

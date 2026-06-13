@@ -22,8 +22,8 @@ const STEP_GROUPS: { name: string; slugs: (keyof QuestionnaireInputs)[] }[] = [
   {
     name: "Stan i standard budowy",
     slugs: [
-      "investment_state",
       "starting_state",
+      "investment_state",
       "build_standard",
       "insulation_level",
     ],

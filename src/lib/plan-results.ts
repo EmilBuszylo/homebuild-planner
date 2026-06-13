@@ -16,6 +16,8 @@ export type PlanStageNoteDto = {
 export type PlanResultsDto = {
   planId: string;
   keyDate: string;
+  /** Etykiety zakresu planu z odpowiedzi ankiety (start → cel). */
+  planScopeLabel: string;
   totalCost: number;
   stages: PlanResultsStageDto[];
   stageNotes: Record<string, PlanStageNoteDto>;

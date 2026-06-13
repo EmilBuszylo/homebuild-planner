@@ -17,6 +17,47 @@ describe("filterStages", () => {
     expect(slugs).toContain("water_connection");
   });
 
+  it("includes foundations and walls for FROM_SCRATCH → DEVELOPER (full plan)", () => {
+    const responses = toQuestionnaireResponsesMap(validQuestionnairePayload);
+    const slugs = filterStages(fullStagesForCalibration, responses).map(
+      (stage) => stage.slug,
+    );
+
+    expect(slugs).toContain("foundations");
+    expect(slugs).toContain("walls");
+    expect(slugs).toContain("floor_slabs");
+    expect(slugs).toContain("insulation");
+  });
+
+  it("excludes walls when target is FOUNDATIONS only (narrow scope)", () => {
+    const responses = toQuestionnaireResponsesMap({
+      ...validQuestionnairePayload,
+      investment_state: "FOUNDATIONS",
+      starting_state: "FROM_SCRATCH",
+    });
+    const slugs = filterStages(fullStagesForCalibration, responses).map(
+      (stage) => stage.slug,
+    );
+
+    expect(slugs).toContain("foundations");
+    expect(slugs).not.toContain("walls");
+  });
+
+  it("excludes foundations when starting is OPEN_SHELL even for DEVELOPER target", () => {
+    const responses = toQuestionnaireResponsesMap({
+      ...validQuestionnairePayload,
+      starting_state: "OPEN_SHELL",
+      investment_state: "DEVELOPER",
+    });
+    const slugs = filterStages(fullStagesForCalibration, responses).map(
+      (stage) => stage.slug,
+    );
+
+    expect(slugs).not.toContain("foundations");
+    expect(slugs).not.toContain("walls");
+    expect(slugs).toContain("electrical");
+  });
+
   it("excludes water_connection when water_supply is NONE", () => {
     const responses = toQuestionnaireResponsesMap({
       ...validQuestionnairePayload,

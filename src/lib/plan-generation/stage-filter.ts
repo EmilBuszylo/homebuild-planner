@@ -48,7 +48,7 @@ export function filterStages(
     const completed = stage.completedByState;
     const completedOrder = getInvestmentStateOrder(completed);
 
-    if (completed === null) {
+    if (completed == null) {
       return target === "DEVELOPER";
     }
 

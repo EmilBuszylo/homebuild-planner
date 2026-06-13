@@ -17,6 +17,7 @@ export function PlanSummaryStrip({ results }: PlanSummaryStripProps) {
         : `${stageCount} etapów`;
 
   return (
+    <div className="space-y-3">
     <div className="grid gap-4 rounded-lg border bg-muted/30 p-4 sm:grid-cols-3 sm:p-5">
       <div className="space-y-1">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -40,6 +41,11 @@ export function PlanSummaryStrip({ results }: PlanSummaryStripProps) {
         </p>
         <p className="text-lg font-medium">{stageLabel}</p>
       </div>
+    </div>
+    <p className="text-sm text-muted-foreground">
+      <span className="font-medium text-foreground">{KPI_LABELS.planScope}:</span>{" "}
+      {results.planScopeLabel}
+    </p>
     </div>
   );
 }

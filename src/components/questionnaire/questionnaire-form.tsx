@@ -28,7 +28,7 @@ import { QuestionnaireSummary } from "./questionnaire-summary";
 const TOTAL_STEPS = 5;
 
 const EMPTY_DEFAULTS: Partial<QuestionnaireInputs> = {
-  investment_state: "FOUNDATIONS",
+  investment_state: "DEVELOPER",
   starting_state: "FROM_SCRATCH",
   has_attic: false,
   roof_type: "GABLE",
