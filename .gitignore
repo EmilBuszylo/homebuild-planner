@@ -55,6 +55,11 @@ playwright/.cache/
 !.cursor/hooks/
 !.cursor/hooks/**
 
+# dependency-cruiser reports (local only)
+dependency-violation-report.html
+dependency-graph.dot
+.dependency-cruiser-known-violations.json
+
 # 10x
 .10x-cli-manifest.json
 .agents/
