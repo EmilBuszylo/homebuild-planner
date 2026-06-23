@@ -62,10 +62,13 @@ Repository → **Settings → Secrets and variables → Actions** — add:
 | `NEXT_PUBLIC_SUPABASE_URL` | yes |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | yes |
 | `SUPABASE_SECRET_KEY` | yes |
+| `GH_PKG_TOKEN` | no — optional PAT with `read:packages` for `@emilbuszylo/ai-toolkit` from GitHub Packages (see below) |
 
 Do **not** add `DATABASE_URL` / `DIRECT_URL` as secrets — the workflow sets them to the Postgres service container (`postgresql://homebuild:homebuild@localhost:5432/homebuild_planner`).
 
 Until all three Supabase secrets are configured, the `e2e` job is expected to fail on auth setup.
+
+**GitHub Packages (`@emilbuszylo/ai-toolkit`):** both `ci` and `e2e` run `pnpm install`. The committed `.npmrc` only sets the registry scope; CI injects auth via `actions/setup-node` (`NODE_AUTH_TOKEN`). Either link the package to this repo under **Package → Package settings → Manage Actions access**, or add `GH_PKG_TOKEN` (classic PAT with `read:packages`; fine-grained PATs do not support GitHub Packages).
 
 ### Supabase project settings (owner)
 
