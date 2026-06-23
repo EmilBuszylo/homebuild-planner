@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "name": "home-build-planner",
+      "path": "."
+    },
+    {
+      "name": "ai-toolkit",
+      "path": "../ai-toolkit"
+    }
+  ],
+  "settings": {}
+}
