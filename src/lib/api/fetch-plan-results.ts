@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 
+import { planResultsSchema } from "@/lib/plan-results";
 import type { PlanResultsDto } from "@/lib/plan-results";
 import { getSiteOrigin } from "@/lib/site-origin";
 
@@ -35,6 +36,11 @@ export async function fetchPlanResults(
     return { status: "error" };
   }
 
-  const data = (await response.json()) as PlanResultsDto;
-  return { status: "ok", data };
+  const json: unknown = await response.json();
+  const parsed = planResultsSchema.safeParse(json);
+  if (!parsed.success) {
+    return { status: "error" };
+  }
+
+  return { status: "ok", data: parsed.data };
 }

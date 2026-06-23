@@ -334,9 +334,9 @@ Brak oczekiwanego wpływu — refactor strukturalny bez dodatkowych query. Loade
 
 #### Automated
 
-- [ ] 1.1 `pnpm lint`
-- [ ] 1.2 `pnpm test`
-- [ ] 1.3 `pnpm build:ci`
+- [x] 1.1 `pnpm lint`
+- [x] 1.2 `pnpm test`
+- [x] 1.3 `pnpm build:ci`
 
 #### Manual
 
