@@ -374,10 +374,10 @@ Brak oczekiwanego wpływu — refactor strukturalny bez dodatkowych query. Loade
 
 #### Automated
 
-- [x] 4.1 `pnpm lint`
-- [x] 4.2 `pnpm test`
-- [x] 4.3 `pnpm build:ci`
-- [x] 4.4 `pnpm depcruise` (lokalnie)
+- [x] 4.1 `pnpm lint` — 0579f2e
+- [x] 4.2 `pnpm test` — 0579f2e
+- [x] 4.3 `pnpm build:ci` — 0579f2e
+- [x] 4.4 `pnpm depcruise` (lokalnie) — 0579f2e
 
 #### Manual
 
