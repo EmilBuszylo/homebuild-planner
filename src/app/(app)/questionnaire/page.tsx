@@ -6,6 +6,7 @@ import { QuestionnaireForm } from "@/components/questionnaire/questionnaire-form
 import { QUESTIONNAIRE_INTRO_NEW } from "@/lib/copy/orientational";
 import { PAGE_METADATA } from "@/lib/copy/site";
 import { responsesToQuestionnaireInputs } from "@/lib/questionnaire/responses-to-inputs";
+import { loadLatestPlanForUser } from "@/lib/plan/load-latest-plan-for-user";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { routes } from "@/lib/routes";
@@ -25,16 +26,7 @@ export default async function QuestionnairePage() {
     redirect(routes.login);
   }
 
-  const plan = await prisma.plan.findFirst({
-    where: { userId: user.id },
-    include: {
-      versions: {
-        orderBy: { versionNumber: "desc" },
-        take: 1,
-        include: { responses: true },
-      },
-    },
-  });
+  const plan = await loadLatestPlanForUser(user.id, "questionnaire");
 
   const latestVersion = plan?.versions[0];
   const planId = plan?.id;

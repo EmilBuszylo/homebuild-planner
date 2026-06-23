@@ -17,7 +17,7 @@ import { ORIENTATIONAL_TRUST_HEADING } from "@/lib/copy/orientational";
 import { PAGE_METADATA } from "@/lib/copy/site";
 import { fetchPlanResults } from "@/lib/api/fetch-plan-results";
 import { formatPlDate } from "@/lib/format/date";
-import { prisma } from "@/lib/prisma";
+import { loadLatestPlanForUser } from "@/lib/plan/load-latest-plan-for-user";
 import { routes } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/server";
 
@@ -36,11 +36,7 @@ export default async function DashboardPage() {
     redirect(routes.login);
   }
 
-  const plan = await prisma.plan.findFirst({
-    where: { userId: authUser.id },
-    select: { id: true, createdAt: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const plan = await loadLatestPlanForUser(authUser.id, "dashboard");
 
   const results =
     plan !== null ? await fetchPlanResults(plan.id) : null;
