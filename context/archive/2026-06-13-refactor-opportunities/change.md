@@ -1,10 +1,10 @@
 ---
 change_id: refactor-opportunities
 title: Rank refactor opportunities from technical debt analysis
-status: implemented
+status: archived
 created: 2026-06-13
 updated: 2026-06-18
-archived_at: null
+archived_at: 2026-06-18T10:00:00Z
 ---
 
 ## Notes
