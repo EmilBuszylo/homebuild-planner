@@ -1,7 +1,15 @@
+/** Kanoniczny union stanów inwestycji — wartości zgodne z Prisma enum i Zod. */
+export type DomainInvestmentState =
+  | "FROM_SCRATCH"
+  | "FOUNDATIONS"
+  | "OPEN_SHELL"
+  | "CLOSED_SHELL"
+  | "DEVELOPER";
+
 export {
-  InvestmentState,
   BuildStandard,
   InsulationLevel,
+  InvestmentState,
   QuestionType,
 } from "@prisma/client";
 

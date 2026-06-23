@@ -1,6 +1,6 @@
-import type { InvestmentState } from "@prisma/client";
+import type { DomainInvestmentState } from "@/lib/types/domain";
 
-export const investmentStateOrder: Record<InvestmentState, number> = {
+export const investmentStateOrder: Record<DomainInvestmentState, number> = {
   FROM_SCRATCH: 0,
   FOUNDATIONS: 1,
   OPEN_SHELL: 2,
@@ -30,7 +30,7 @@ export type TargetStateValue = (typeof TARGET_STATE_VALUES)[number];
 export type StartingStateValue = (typeof STARTING_STATE_VALUES)[number];
 
 export function getInvestmentStateOrder(
-  state: InvestmentState | null | undefined,
+  state: DomainInvestmentState | null | undefined,
 ): number | null {
   if (state == null) {
     return null;
@@ -42,12 +42,12 @@ export function getStateOrder(state: string | undefined): number | null {
   if (!state || !(state in investmentStateOrder)) {
     return null;
   }
-  return investmentStateOrder[state as InvestmentState];
+  return investmentStateOrder[state as DomainInvestmentState];
 }
 
 export function compareInvestmentState(
-  a: InvestmentState,
-  b: InvestmentState,
+  a: DomainInvestmentState,
+  b: DomainInvestmentState,
 ): number {
   return investmentStateOrder[a] - investmentStateOrder[b];
 }
