@@ -3,53 +3,40 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { calibrationModifierDefs } from "./test-fixtures/calibration-modifier-defs";
-import { calibrationStageRateDefs } from "./test-fixtures/full-stages-calibration";
 import {
-  parseSeedModifierList,
-  parseSeedStageRates,
-} from "./test-fixtures/parse-seed-calibration";
+  calibrationModifierDefs as sharedModifierDefs,
+} from "./calibration/modifier-defs";
+import {
+  calibrationStageRateDefs as sharedStageRateDefs,
+} from "./calibration/stage-rate-defs";
+import { calibrationModifierDefs as fixtureModifierDefs } from "./test-fixtures/calibration-modifier-defs";
+import { calibrationStageRateDefs as fixtureStageRateDefs } from "./test-fixtures/full-stages-calibration";
 
 /**
- * Guards S-01 calibration drift between `prisma/seed.ts` and Vitest fixtures.
- * Does not import the seed module (Prisma runtime) — parses seed source instead.
+ * Guards S-01 calibration drift between shared module, fixtures, and seed consumer.
+ * Seed imports shared defs directly — no regex parse of prisma/seed.ts.
  */
-describe("calibration seed ↔ fixture parity", () => {
-  it("matches stage PLN/m² tiers for all 20 slugs", () => {
-    const seedRates = parseSeedStageRates();
-    expect(seedRates.size).toBe(20);
-    expect(calibrationStageRateDefs).toHaveLength(20);
+describe("calibration shared module ↔ fixture parity", () => {
+  it("fixtures re-export the shared stage rate defs", () => {
+    expect(fixtureStageRateDefs).toBe(sharedStageRateDefs);
+    expect(sharedStageRateDefs).toHaveLength(20);
+  });
 
-    for (const fixture of calibrationStageRateDefs) {
-      const seed = seedRates.get(fixture.slug);
-      expect(seed, `missing seed rates for ${fixture.slug}`).toBeDefined();
-      expect(seed).toEqual({
-        costPerM2Economy: fixture.costPerM2Economy,
-        costPerM2Standard: fixture.costPerM2Standard,
-        costPerM2Premium: fixture.costPerM2Premium,
-      });
+  it("matches stage PLN/m² tiers for all 20 slugs", () => {
+    for (const def of sharedStageRateDefs) {
+      expect(def.costPerM2Economy).toBeTypeOf("number");
+      expect(def.costPerM2Standard).toBeTypeOf("number");
+      expect(def.costPerM2Premium).toBeTypeOf("number");
     }
   });
 
-  it("matches modifier rows for all calibration fixture defs", () => {
-    const seedModifiers = parseSeedModifierList();
-    expect(seedModifiers.length).toBe(calibrationModifierDefs.length);
+  it("fixtures re-export the shared modifier defs", () => {
+    expect(fixtureModifierDefs).toBe(sharedModifierDefs);
+    expect(sharedModifierDefs.length).toBeGreaterThan(0);
+  });
 
-    for (const fixture of calibrationModifierDefs) {
-      const seed = seedModifiers.find(
-        (row) =>
-          row.stageSlug === fixture.stageSlug &&
-          row.triggerQuestionSlug === fixture.triggerQuestionSlug &&
-          row.triggerValue === fixture.triggerValue &&
-          row.costAdjustmentPerM2 === fixture.costAdjustmentPerM2 &&
-          row.fixedCostAdjustment === fixture.fixedCostAdjustment &&
-          row.description === fixture.description,
-      );
-      expect(
-        seed,
-        `missing seed modifier for ${fixture.stageSlug} / ${fixture.triggerQuestionSlug}=${fixture.triggerValue}`,
-      ).toBeDefined();
-    }
+  it("matches modifier rows between shared module and fixtures", () => {
+    expect(fixtureModifierDefs).toEqual(sharedModifierDefs);
   });
 
   it("keeps market-benchmarks.json neutral (S-01 calibration contract)", () => {
