@@ -21,6 +21,7 @@
     "test:e2e:risk-04": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test e2e/risk-04-",
     "test:e2e:risk-07": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test e2e/risk-07-",
     "test:e2e:risk-08": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test e2e/risk-08-",
+    "preinstall": "node scripts/append-npmrc-github-auth.mjs",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

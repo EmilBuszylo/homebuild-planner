@@ -61,8 +61,9 @@ Set in **Vercel** (Project → Settings → Environment Variables) for **Preview
 | `SENTRY_ORG` | Optional | Yes | Sentry org slug | Or set in `next.config.ts` after wizard |
 | `SENTRY_PROJECT` | Optional | Yes | Sentry project slug | Or set in `next.config.ts` after wizard |
 | `SENTRY_ENABLE_TEST_ROUTE` | Optional | Optional | Set to `true` to enable smoke endpoint | Enables `GET /api/health/sentry-test` outside `development`; default off in Production |
+| `GH_PKG_TOKEN` | Yes | Yes | GitHub → classic PAT with `read:packages` | Build-time only: `preinstall` appends GitHub Packages auth to `.npmrc` for `@emilbuszylo/ai-toolkit`. Mark **Sensitive**. Same token as GitHub Actions secret `GH_PKG_TOKEN`. |
 
-Never prefix database URLs, `SENTRY_AUTH_TOKEN`, or `SUPABASE_SECRET_KEY` with `NEXT_PUBLIC_`.
+Never prefix database URLs, `SENTRY_AUTH_TOKEN`, `SUPABASE_SECRET_KEY`, or `GH_PKG_TOKEN` with `NEXT_PUBLIC_`.
 
 **Local templates:** [`/.env.example`](../../.env.example). For Docker dev use the commented `127.0.0.1:55432` URLs — do not point Vercel at Docker.
 
