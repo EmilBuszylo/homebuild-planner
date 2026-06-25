@@ -40,7 +40,7 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 - Do not add E2E (Playwright) or component test stacks without an explicit user request; extend Vitest coverage for new pure `src/lib/` logic when changing critical paths (benchmarks, rate limits, generation).
 - **Cursor agent hooks** (`.cursor/hooks.json`): after each agent `Write`, `after-file-lint.sh` runs ESLint on the edited file and `after-file-typecheck.sh` runs `pnpm typecheck` for `.ts`/`.tsx` edits. Logs: Output → Hooks. Requires trusted workspace and `chmod +x .cursor/hooks/*.sh`.
 - **Git pre-commit** (Husky + lint-staged): `.husky/pre-commit` runs ESLint with `--fix` on staged `*.{js,jsx,ts,tsx,mjs,cjs}` files, then `pnpm test`. Enabled via `prepare` → `husky` on `pnpm install`.
-- **E2E** (Playwright): `pnpm test:e2e`, `pnpm test:e2e:risk-01` (IDOR), `pnpm test:e2e:risk-02` (auth), `pnpm test:e2e:risk-04` (generate golden path). Conventions in `e2e/E2E-RULES.md` and exemplar `e2e/seed.spec.ts`. **Local:** `.env.local` (Supabase + DB), `pnpm db:docker:up`, `pnpm exec playwright install chromium`. **CI:** `e2e` job on every PR — requires GitHub Actions secrets + Supabase CI project per `e2e/E2E-RULES.md` §CI. Do not add new Playwright specs without an explicit user request.
+- **E2E** (Playwright): `pnpm test:e2e`, `pnpm test:e2e:risk-01` (IDOR), `pnpm test:e2e:risk-02` (auth), `pnpm test:e2e:risk-04` (generate golden path), `pnpm test:e2e:risk-07` (stage notes). Conventions in `e2e/E2E-RULES.md` and exemplar `e2e/seed.spec.ts`. **Local:** `.env.local` (Supabase + DB), `pnpm db:docker:up`, `pnpm exec playwright install chromium`. **CI:** `e2e` job on every PR — requires GitHub Actions secrets + Supabase CI project per `e2e/E2E-RULES.md` §CI. Do not add new Playwright specs without an explicit user request.
 
 ## UI copy and routing
 
@@ -70,3 +70,17 @@ Greenfield MVP **home-build-planner**: a Next.js web app that helps individual h
 
 - GitHub Actions: `.github/workflows/ci.yml` (`ci` + `e2e` jobs on PR and `master` push). Prefer Conventional Commits-style prefixes (`feat:`, `fix:`, `docs:`) when the user commits.
 - Keep changes minimal and aligned with the 3-week after-hours MVP in @context/foundation/tech-stack.md.
+
+<!-- BEGIN @emilbuszylo/ai-toolkit -->
+## Team AI rules (@emilbuszylo/ai-toolkit)
+
+These rules apply when working on **home-build-planner**. Full detail: repo `AGENTS.md` and `context/foundation/lessons.md`.
+
+- **Stack:** Next.js App Router, Prisma (domain data), Supabase Auth only for auth — do not query domain tables via Supabase client.
+- **Migrations:** `pnpm db:migrate` is owner-only; agents stop and ask the owner to run migrations.
+- **Plan generation:** Never persist a plan version with zero stage results; enforce INV-GEN-01 at domain boundary.
+- **Read path:** Display frozen `PlanStageResult` — no engine recompute on GET/RSC for costs/timeline.
+- **Coupling:** Keep `@prisma/client` out of UI and pure engine; use validations/DTOs at boundaries.
+- **Tests:** Extend Vitest for pure logic; do not add Playwright specs without explicit request.
+- **Copy:** Polish UI strings; English file/folder names.
+<!-- END @emilbuszylo/ai-toolkit -->

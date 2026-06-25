@@ -13,9 +13,13 @@ export const validQuestionnairePayload = {
   key_date: "2026-09-01",
   floors: 2,
   has_attic: false,
+  roof_type: "GABLE",
   garage_spots: 1,
   balcony_count: 1,
   window_count: 12,
   exterior_door_count: 2,
   terrace_door_count: 0,
+  sewage_disposal: "MUNICIPAL",
+  water_supply: "MUNICIPAL",
+  utility_distance_band: "UP_TO_50M",
 } satisfies QuestionnaireInputs;

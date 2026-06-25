@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 
+import { assemblePlanResultsDto } from "@/lib/plan/assemble-plan-results-dto";
+import { loadStageNotesForPlan } from "@/lib/plan/load-plan-stage-notes";
 import { reportError } from "@/lib/observability/report-error";
-import type { PlanResultsDto } from "@/lib/plan-results";
+import { planResultsSchema } from "@/lib/plan-results";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 
@@ -55,34 +57,18 @@ export async function GET(_request: Request, context: RouteContext) {
       where: { slug: { in: slugs } },
       select: { slug: true, name: true, category: true },
     });
-    const stageBySlug = new Map(stageDefs.map((s) => [s.slug, s]));
+    const stageDefsBySlug = new Map(stageDefs.map((s) => [s.slug, s]));
 
-    const keyDate =
-      version.responses.find((r) => r.questionSlug === "key_date")?.value ?? "";
+    const stageNotes = await loadStageNotesForPlan(plan.id, slugs);
 
-    const stages = version.stageResults.map((result) => {
-      const def = stageBySlug.get(result.stageSlug);
-      return {
-        stageSlug: result.stageSlug,
-        name: def?.name ?? result.stageSlug,
-        category: def?.category ?? "",
-        estimatedCost: result.estimatedCost,
-        startDay: result.startDay,
-        durationDays: result.durationDays,
-      };
+    const payload = assemblePlanResultsDto({
+      planId: plan.id,
+      version,
+      stageDefsBySlug,
+      stageNotes,
     });
 
-    const totalCost = stages.reduce((sum, s) => sum + s.estimatedCost, 0);
-
-    const payload: PlanResultsDto = {
-      planId: plan.id,
-      keyDate,
-      totalCost,
-      stages,
-      refinementApplied: version.refinementApplied,
-      benchmarkAsOf: version.benchmarkFetchedAt?.toISOString() ?? null,
-      benchmarkSource: version.benchmarkSourceName,
-    };
+    planResultsSchema.parse(payload);
 
     return NextResponse.json(payload);
   } catch (error) {

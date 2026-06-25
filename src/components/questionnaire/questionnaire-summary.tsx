@@ -4,7 +4,10 @@ import type { UseFormGetValues } from "react-hook-form";
 
 import { OrientationalDisclaimer } from "@/components/app/orientational-disclaimer";
 import type { QuestionDefinition } from "@/lib/types/domain";
-import type { QuestionnaireInputs } from "@/lib/validations/questionnaire";
+import {
+  needsUtilityDistanceBand,
+  type QuestionnaireInputs,
+} from "@/lib/validations/questionnaire";
 import { SummaryHintIcon } from "@/components/questionnaire/question-hint";
 import {
   Card,
@@ -19,15 +22,15 @@ const STEP_GROUPS: { name: string; slugs: (keyof QuestionnaireInputs)[] }[] = [
   {
     name: "Stan i standard budowy",
     slugs: [
-      "investment_state",
       "starting_state",
+      "investment_state",
       "build_standard",
       "insulation_level",
     ],
   },
   {
     name: "Parametry budynku",
-    slugs: ["area", "floors", "has_attic", "garage_spots", "balcony_count"],
+    slugs: ["area", "floors", "has_attic", "roof_type", "garage_spots", "balcony_count"],
   },
   {
     name: "Okna, drzwi i termin",
@@ -37,6 +40,10 @@ const STEP_GROUPS: { name: string; slugs: (keyof QuestionnaireInputs)[] }[] = [
       "terrace_door_count",
       "key_date",
     ],
+  },
+  {
+    name: "Przyłącza mediów",
+    slugs: ["sewage_disposal", "water_supply", "utility_distance_band"],
   },
 ];
 
@@ -87,6 +94,15 @@ export function QuestionnaireSummary({
           </CardHeader>
           <CardContent className="space-y-0">
             {group.slugs.map((slug) => {
+              if (
+                slug === "utility_distance_band" &&
+                !needsUtilityDistanceBand(
+                  values.sewage_disposal,
+                  values.water_supply,
+                )
+              ) {
+                return null;
+              }
               const question = questions.find((q) => q.slug === slug);
               if (!question) return null;
               const rawValue = values[slug];

@@ -23,6 +23,7 @@ export const KPI_LABELS = {
   totalCost: "Łączny koszt orientacyjny",
   plannedStart: "Planowany start",
   stageCount: "Etapy w planie",
+  planScope: "Zakres planu",
 } as const;
 
 export const QUESTIONNAIRE_INTRO_NEW =
@@ -39,3 +40,29 @@ export const PLAN_TIMELINE_COACHING_CARD_SUFFIX =
 
 export const PLAN_TIMELINE_COACHING_MARKER_ARIA_LABEL =
   "Wskazówka — dotknij, aby przeczytać";
+
+export const PLAN_STAGE_NOTE_STAR_LABEL = "Ważny etap";
+export const PLAN_STAGE_NOTE_STAR_ARIA_LABEL = "Oznacz gwiazdką jako ważny etap";
+export const PLAN_STAGE_NOTE_OPEN_LABEL = "Notatka";
+export const PLAN_STAGE_NOTE_OPEN_ARIA_LABEL = "Otwórz notatkę do etapu";
+export const PLAN_STAGE_NOTE_SAVE_LABEL = "Zapisz notatkę";
+export const PLAN_STAGE_NOTE_CANCEL_LABEL = "Anuluj";
+export const PLAN_STAGE_NOTE_PLACEHOLDER =
+  "Kontakt z wykonawcą, ustalenia…";
+export const PLAN_STAGE_NOTE_SAVE_ERROR =
+  "Nie udało się zapisać notatki. Spróbuj ponownie.";
+
+export const PLAN_CALENDAR_CONNECT_LABEL = "Połącz konto Google";
+export const PLAN_CALENDAR_EXPORT_LABEL = "Eksportuj do Google Calendar";
+export const PLAN_CALENDAR_EXPORT_SELECT_STAGES = "Wybierz etapy do eksportu";
+export const PLAN_CALENDAR_EXPORT_SUBMIT_LABEL = "Eksportuj wybrane";
+export const PLAN_CALENDAR_EXPORT_CANCEL_LABEL = "Anuluj";
+export const PLAN_CALENDAR_DISCONNECT_LABEL = "Rozłącz Google";
+export const PLAN_CALENDAR_CONNECTED_TOAST =
+  "Połączono z Google Calendar. Możesz teraz wyeksportować etapy.";
+export const PLAN_CALENDAR_EXPORT_SUCCESS =
+  "Utworzono {count} wydarzeń w Google Calendar.";
+export const PLAN_CALENDAR_EXPORT_ERROR =
+  "Nie udało się wyeksportować etapów. Spróbuj ponownie.";
+export const PLAN_CALENDAR_EXPORT_DUPLICATE_HINT =
+  "Ponowny eksport utworzy nowe wydarzenia — duplikaty możesz usunąć w kalendarzu.";

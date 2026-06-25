@@ -27,6 +27,27 @@ function modifierMatches(
   return actual !== undefined && actual === modifier.triggerValue;
 }
 
+/** Distance-band add-ons apply only when the municipal service matches the stage. */
+export function isModifierActive(
+  modifier: StageCostModifier,
+  stageSlug: string,
+  responses: QuestionnaireResponsesMap,
+): boolean {
+  if (modifier.triggerQuestionSlug !== "utility_distance_band") {
+    return true;
+  }
+
+  if (stageSlug === "sewage_connection") {
+    return responses.sewage_disposal === "MUNICIPAL";
+  }
+
+  if (stageSlug === "water_connection") {
+    return responses.water_supply === "MUNICIPAL";
+  }
+
+  return false;
+}
+
 function applyModifier(
   modifier: StageCostModifier,
   basePerM2: number,
@@ -63,7 +84,10 @@ export function computeStageCost(
   let total = basePerM2 * billingArea;
 
   for (const modifier of stage.costModifiers) {
-    if (!modifierMatches(modifier, responses)) {
+    if (
+      !modifierMatches(modifier, responses) ||
+      !isModifierActive(modifier, stage.slug, responses)
+    ) {
       continue;
     }
     total += applyModifier(modifier, basePerM2, billingArea, responses);

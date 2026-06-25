@@ -43,6 +43,10 @@ test.describe("Ryzyko #4 — Generate path: cienki golden path", () => {
     await expect(costTable).toBeVisible();
     await expect(costTable.locator("tbody tr").first()).toBeVisible();
 
+    // S-05 utility rows (requires `pnpm db:seed` with sewage/water stages).
+    await expect(costTable.getByText("Przyłącze kanalizacji")).toBeVisible();
+    await expect(costTable.getByText("Przyłącze wody")).toBeVisible();
+
     await expect(page.getByText("Harmonogram prac")).toBeVisible();
   });
 });

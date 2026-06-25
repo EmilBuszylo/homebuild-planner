@@ -8,6 +8,7 @@ const planFindUnique = vi.hoisted(() => vi.fn());
 const planFindFirst = vi.hoisted(() => vi.fn());
 const prismaTransaction = vi.hoisted(() => vi.fn());
 const constructionStageFindMany = vi.hoisted(() => vi.fn());
+const planStageNoteFindMany = vi.hoisted(() => vi.fn());
 const checkPlanRecalcLimit = vi.hoisted(() => vi.fn());
 const reportError = vi.hoisted(() => vi.fn());
 
@@ -36,6 +37,9 @@ vi.mock("@/lib/prisma", () => ({
     constructionStage: {
       findMany: constructionStageFindMany,
     },
+    planStageNote: {
+      findMany: planStageNoteFindMany,
+    },
   },
 }));
 
@@ -55,6 +59,7 @@ export const harnessMocks = {
   planFindFirst,
   prismaTransaction,
   constructionStageFindMany,
+  planStageNoteFindMany,
   checkPlanRecalcLimit,
 };
 
@@ -204,6 +209,16 @@ function mockRecalculateTransaction(planId: string) {
 function mockPlanWithStageResults(params: {
   planId: string;
   userId: string;
+  stageResults?: Array<{
+    stageSlug: string;
+    estimatedCost: number;
+    startDay: number;
+    durationDays: number;
+    sortOrder: number;
+  }>;
+  refinementApplied?: boolean;
+  benchmarkFetchedAt?: Date | null;
+  benchmarkSourceName?: string | null;
 }) {
   planFindUnique.mockResolvedValue({
     id: params.planId,
@@ -211,10 +226,10 @@ function mockPlanWithStageResults(params: {
     versions: [
       {
         versionNumber: 1,
-        refinementApplied: false,
-        benchmarkFetchedAt: null,
-        benchmarkSourceName: null,
-        stageResults: [
+        refinementApplied: params.refinementApplied ?? false,
+        benchmarkFetchedAt: params.benchmarkFetchedAt ?? null,
+        benchmarkSourceName: params.benchmarkSourceName ?? null,
+        stageResults: params.stageResults ?? [
           {
             stageSlug: "foundations",
             estimatedCost: 100_000,
@@ -223,13 +238,18 @@ function mockPlanWithStageResults(params: {
             sortOrder: 1,
           },
         ],
-        responses: [{ questionSlug: "key_date", value: "2026-09-01" }],
+        responses: [
+          { questionSlug: "key_date", value: "2026-09-01" },
+          { questionSlug: "starting_state", value: "FROM_SCRATCH" },
+          { questionSlug: "investment_state", value: "DEVELOPER" },
+        ],
       },
     ],
   });
   constructionStageFindMany.mockResolvedValue([
     { slug: "foundations", name: "Fundamenty", category: "Budowa" },
   ]);
+  planStageNoteFindMany.mockResolvedValue([]);
 }
 
 describe("plans route handlers", () => {
@@ -289,8 +309,61 @@ describe("plans route handlers", () => {
       const response = await invokeGetResults(PLAN_B);
 
       expect(response.status).toBe(200);
-      const body = await readJson<{ stages: unknown[] }>(response);
+      const body = await readJson<{
+        stages: unknown[];
+        stageNotes: object;
+        totalCost: number;
+        refinementApplied: boolean;
+        benchmarkAsOf: string | null;
+        benchmarkSource: string | null;
+        planScopeLabel: string;
+      }>(response);
       expect(body.stages.length).toBeGreaterThanOrEqual(1);
+      expect(body.stageNotes).toEqual({});
+      expect(body.totalCost).toBe(100_000);
+      expect(body.refinementApplied).toBe(false);
+      expect(body.benchmarkAsOf).toBeNull();
+      expect(body.benchmarkSource).toBeNull();
+      expect(body.planScopeLabel).toContain("→");
+    });
+
+    it("returns 404 when GET results for own plan with empty stage results", async () => {
+      asUser(USER_A);
+      mockPlanWithStageResults({
+        planId: PLAN_B,
+        userId: USER_A,
+        stageResults: [],
+      });
+
+      const response = await invokeGetResults(PLAN_B);
+
+      expect(response.status).toBe(404);
+      const body = await readJson<{ error: string }>(response);
+      expect(body.error).toBe("Brak wyników dla tego planu");
+    });
+
+    it("returns refinement and benchmark fields on GET results when set on version", async () => {
+      asUser(USER_A);
+      const benchmarkAt = new Date("2026-06-01T12:00:00.000Z");
+      mockPlanWithStageResults({
+        planId: PLAN_B,
+        userId: USER_A,
+        refinementApplied: true,
+        benchmarkFetchedAt: benchmarkAt,
+        benchmarkSourceName: "Rynek PL 2026",
+      });
+
+      const response = await invokeGetResults(PLAN_B);
+
+      expect(response.status).toBe(200);
+      const body = await readJson<{
+        refinementApplied: boolean;
+        benchmarkAsOf: string;
+        benchmarkSource: string;
+      }>(response);
+      expect(body.refinementApplied).toBe(true);
+      expect(body.benchmarkAsOf).toBe(benchmarkAt.toISOString());
+      expect(body.benchmarkSource).toBe("Rynek PL 2026");
     });
 
     it("returns 401 when unauthenticated on POST /api/plans", async () => {

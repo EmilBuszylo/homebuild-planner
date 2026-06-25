@@ -116,6 +116,20 @@ export const COACHING_HINT_DEFINITIONS: CoachingHintDefinition[] = [
     daysBeforeStageStart: 60,
     note: "Na ok. dwa miesiące przed tynkami domknij hydraulikę w ścianach (podejścia, odpływy). Po tynkach zaczynają się prace mokre na podłodze — bez sensu kucać świeże ściany.",
   },
+  {
+    id: "utilities-apply-foundations",
+    targetStageSlug: "sewage_connection",
+    anchorStageSlug: "foundations",
+    anchorProgress: 0.2,
+    note: "Na początku budowy warto złożyć wniosek o przyłącza wody i kanalizacji u operatora lub gminy — formalności i terminy często trwają kilka–kilkanaście tygodni, zanim ruszą roboty na działce.",
+  },
+  {
+    id: "utilities-water-operator",
+    targetStageSlug: "water_connection",
+    anchorStageSlug: "foundations",
+    anchorProgress: 0.25,
+    note: "Przy wodociągu gminnym upewnij się, że masz warunki techniczne i wstępną trasę — odległość od sieci wpływa na koszt robót ziemnych i materiałów.",
+  },
 ];
 
 export type TimelineCoachingMarker = {

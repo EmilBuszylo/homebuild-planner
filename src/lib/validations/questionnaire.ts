@@ -50,6 +50,30 @@ export const insulationLevelSchema = z.enum([
   "PASSIVE",
 ]);
 
+export const sewageDisposalSchema = z.enum([
+  "MUNICIPAL",
+  "SEPTIC_TANK",
+  "TREATMENT_PLANT",
+]);
+
+export const waterSupplySchema = z.enum(["MUNICIPAL", "WELL", "NONE"]);
+
+export const utilityDistanceBandSchema = z.enum([
+  "UP_TO_50M",
+  "UP_TO_100M",
+  "UP_TO_200M",
+  "OVER_200M",
+]);
+
+export const roofTypeSchema = z.enum(["GABLE", "HIP", "MANSARD", "FLAT"]);
+
+export function needsUtilityDistanceBand(
+  sewageDisposal: z.infer<typeof sewageDisposalSchema>,
+  waterSupply: z.infer<typeof waterSupplySchema>,
+): boolean {
+  return sewageDisposal === "MUNICIPAL" || waterSupply === "MUNICIPAL";
+}
+
 export const questionnaireResponseSchema = z.object({
   questionSlug: z.string().min(1, "Identyfikator pytania jest wymagany"),
   value: z.string().min(1, "Odpowiedź jest wymagana"),
@@ -75,6 +99,7 @@ export const questionnaireFormSchema = z.object({
     .min(1, "Minimalna liczba kondygnacji to 1")
     .max(3, "Maksymalna liczba kondygnacji to 3"),
   has_attic: z.boolean().optional().default(false),
+  roof_type: roofTypeSchema,
   garage_spots: z
     .number()
     .int("Liczba miejsc garażowych musi być liczbą całkowitą")
@@ -106,20 +131,43 @@ export const questionnaireFormSchema = z.object({
     .max(5, "Maksymalna liczba drzwi tarasowych to 5")
     .optional()
     .default(0),
+  sewage_disposal: sewageDisposalSchema,
+  water_supply: waterSupplySchema,
+  utility_distance_band: utilityDistanceBandSchema.optional(),
 });
 
+const UTILITY_DISTANCE_REQUIRED_MESSAGE =
+  "Podaj odległość od sieci, gdy wybrano kanalizację gminną lub wodociąg.";
+
 /** Pełna walidacja z regułą start < cel — tylko API / jawny parse przed wysyłką. */
-export const questionnaireInputsSchema = questionnaireFormSchema.refine(
-  (data) =>
-    isStartingStateBeforeTarget(data.starting_state, data.investment_state),
-  {
-    message: STATE_ORDER_ERROR_MESSAGE,
-    path: ["starting_state"],
-  },
-);
+export const questionnaireInputsSchema = questionnaireFormSchema
+  .refine(
+    (data) =>
+      isStartingStateBeforeTarget(data.starting_state, data.investment_state),
+    {
+      message: STATE_ORDER_ERROR_MESSAGE,
+      path: ["starting_state"],
+    },
+  )
+  .superRefine((data, ctx) => {
+    if (
+      needsUtilityDistanceBand(data.sewage_disposal, data.water_supply) &&
+      data.utility_distance_band === undefined
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: UTILITY_DISTANCE_REQUIRED_MESSAGE,
+        path: ["utility_distance_band"],
+      });
+    }
+  });
 
 export type BuildStandard = z.infer<typeof buildStandardSchema>;
 export type InsulationLevel = z.infer<typeof insulationLevelSchema>;
+export type SewageDisposal = z.infer<typeof sewageDisposalSchema>;
+export type WaterSupply = z.infer<typeof waterSupplySchema>;
+export type UtilityDistanceBand = z.infer<typeof utilityDistanceBandSchema>;
+export type RoofType = z.infer<typeof roofTypeSchema>;
 export type QuestionnaireResponseInput = z.infer<
   typeof questionnaireResponseSchema
 >;

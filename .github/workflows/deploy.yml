@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      GH_PKG_TOKEN: ${{ secrets.GH_PKG_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -29,6 +30,9 @@ jobs:
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Configure GitHub Packages auth
+        run: node scripts/append-npmrc-github-auth.mjs
 
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}

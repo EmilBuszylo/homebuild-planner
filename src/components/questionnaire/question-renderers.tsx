@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { Control, FieldPath } from "react-hook-form";
 import { Controller } from "react-hook-form";
 
@@ -24,6 +25,11 @@ import {
   getQuestionChoiceHint,
   hasQuestionChoiceHints,
 } from "@/lib/questionnaire/question-hints";
+import {
+  formatNumberFieldValue,
+  parseQuestionnaireNumberInput,
+  readQuestionNumberLimits,
+} from "@/lib/questionnaire/parse-number-input";
 
 type QuestionOption = { value: string; label: string };
 
@@ -135,36 +141,98 @@ function NumberField({ question, control }: QuestionFieldProps) {
     <Controller
       name={slug}
       control={control}
-      render={({ field, fieldState }) => (
-        <Field data-invalid={!!fieldState.error}>
-          <LabelWithHint question={question} htmlFor={question.slug} />
-          <div className="flex items-center gap-2">
-            <Input
-              id={question.slug}
-              type="number"
-              value={
-                field.value !== undefined && field.value !== null
-                  ? String(field.value)
-                  : ""
-              }
-              onChange={(e) => {
-                const v = e.target.valueAsNumber;
-                field.onChange(Number.isNaN(v) ? undefined : v);
-              }}
-              onBlur={field.onBlur}
-              ref={field.ref}
-              aria-invalid={!!fieldState.error}
-            />
-            {question.unit && (
-              <span className="shrink-0 text-sm text-muted-foreground">
-                {question.unit}
-              </span>
-            )}
-          </div>
-          <FieldError errors={[fieldState.error]} />
-        </Field>
+      render={({ field: { value, onChange, onBlur, ref }, fieldState }) => (
+        <NumberFieldInput
+          question={question}
+          fieldState={fieldState}
+          value={value as number | undefined}
+          onChange={onChange}
+          onBlur={onBlur}
+          inputRef={ref}
+        />
       )}
     />
+  );
+}
+
+type NumberFieldInputProps = {
+  question: QuestionDefinition;
+  fieldState: { error?: { message?: string } };
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
+  onBlur: () => void;
+  inputRef: React.Ref<HTMLInputElement>;
+};
+
+function NumberFieldInput({
+  question,
+  fieldState,
+  value,
+  onChange,
+  onBlur,
+  inputRef,
+}: NumberFieldInputProps) {
+  const limits = readQuestionNumberLimits(question.validation);
+  const [isFocused, setIsFocused] = useState(false);
+  const [draft, setDraft] = useState("");
+
+  const displayValue = isFocused ? draft : formatNumberFieldValue(value);
+
+  function handleFocus() {
+    setDraft(formatNumberFieldValue(value));
+    setIsFocused(true);
+  }
+
+  function handleChange(raw: string) {
+    setDraft(raw);
+    const parsed = parseQuestionnaireNumberInput(raw);
+    if (parsed !== undefined) {
+      onChange(parsed);
+      return;
+    }
+    if (raw === "") {
+      onChange(undefined);
+    }
+  }
+
+  function handleBlur() {
+    const parsed = parseQuestionnaireNumberInput(draft);
+    if (parsed === undefined) {
+      onChange(undefined);
+    } else {
+      onChange(parsed);
+    }
+    onBlur();
+    setIsFocused(false);
+  }
+
+  return (
+    <Field data-invalid={!!fieldState.error}>
+      <LabelWithHint question={question} htmlFor={question.slug} />
+      <div className="flex items-center gap-2">
+        <Input
+          id={question.slug}
+          type="number"
+          inputMode="numeric"
+          min={limits.min}
+          max={limits.max}
+          step={1}
+          value={displayValue}
+          onFocus={handleFocus}
+          onChange={(e) => handleChange(e.target.value)}
+          onBlur={handleBlur}
+          onWheel={(e) => e.currentTarget.blur()}
+          ref={inputRef}
+          aria-invalid={!!fieldState.error}
+        />
+        {question.unit && (
+          <span className="shrink-0 text-sm text-muted-foreground">
+            {question.unit}
+          </span>
+        )}
+      </div>
+      <FieldError errors={[fieldState.error]} />
+    </Field>
   );
 }
 

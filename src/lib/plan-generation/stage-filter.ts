@@ -34,15 +34,21 @@ export function filterStages(
     return [];
   }
 
+  const waterSupply = getResponse(responses, "water_supply");
+
   return stages.filter((stage) => {
     if (stage.slug === "garage_gate" && garageSpots <= 0) {
+      return false;
+    }
+
+    if (stage.slug === "water_connection" && waterSupply === "NONE") {
       return false;
     }
 
     const completed = stage.completedByState;
     const completedOrder = getInvestmentStateOrder(completed);
 
-    if (completed === null) {
+    if (completed == null) {
       return target === "DEVELOPER";
     }
 

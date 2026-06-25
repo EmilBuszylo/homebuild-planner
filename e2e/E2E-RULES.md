@@ -35,12 +35,13 @@ pnpm exec playwright install chromium   # once; scripts use PLAYWRIGHT_BROWSERS_
 pnpm db:docker:up                     # local Postgres
 # .env.local: NEXT_PUBLIC_SUPABASE_*, SUPABASE_SECRET_KEY, DATABASE_URL
 
-# Authenticated specs (risk-01, risk-02-session, risk-04):
+# Authenticated specs (risk-01, risk-02-session, risk-04, risk-07):
 export E2E_USER_EMAIL=you@example.com
 export E2E_USER_PASSWORD='YourP@ss1!'
 pnpm test:e2e:risk-01   # needs foreign-plan.setup (victim user + plan in DB)
 pnpm test:e2e:risk-02
 pnpm test:e2e:risk-04   # uses fresh generate-user (no existing plan)
+pnpm test:e2e:risk-07   # stage notes on timeline (same generate-user setup)
 ```
 
 Anonymous specs (`risk-02-anonymous-*`) run without credentials — they only need `pnpm dev`.
@@ -61,10 +62,13 @@ Repository → **Settings → Secrets and variables → Actions** — add:
 | `NEXT_PUBLIC_SUPABASE_URL` | yes |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | yes |
 | `SUPABASE_SECRET_KEY` | yes |
+| `GH_PKG_TOKEN` | no — optional PAT with `read:packages` for `@emilbuszylo/ai-toolkit` from GitHub Packages (see below) |
 
 Do **not** add `DATABASE_URL` / `DIRECT_URL` as secrets — the workflow sets them to the Postgres service container (`postgresql://homebuild:homebuild@localhost:5432/homebuild_planner`).
 
 Until all three Supabase secrets are configured, the `e2e` job is expected to fail on auth setup.
+
+**GitHub Packages (`@emilbuszylo/ai-toolkit`):** both `ci` and `e2e` run `pnpm install`. The committed `.npmrc` only sets the registry scope; CI injects auth via `actions/setup-node` (`NODE_AUTH_TOKEN`). Either link the package to this repo under **Package → Package settings → Manage Actions access**, or add `GH_PKG_TOKEN` (classic PAT with `read:packages`; fine-grained PATs do not support GitHub Packages).
 
 ### Supabase project settings (owner)
 

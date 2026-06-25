@@ -117,7 +117,24 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  plans Plan[]
+  plans                    Plan[]
+  googleCalendarCredential GoogleCalendarCredential?
+}
+
+/// OAuth tokens for Google Calendar export (FR-010). One connection per user; tokens stored encrypted.
+model GoogleCalendarCredential {
+  id               String   @id @default(cuid())
+  accessTokenEnc   String
+  refreshTokenEnc  String
+  expiresAt        DateTime
+  scope            String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+
+  @@index([userId])
 }
 
 model Plan {
@@ -128,7 +145,8 @@ model Plan {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  versions PlanVersion[]
+  versions    PlanVersion[]
+  stageNotes  PlanStageNote[]
 
   @@index([userId])
 }
@@ -172,4 +190,20 @@ model PlanStageResult {
   planVersionId String
 
   @@index([planVersionId])
+}
+
+/// User notes and pin flags per construction stage on a plan (FR-007). Keyed by plan, not plan version.
+model PlanStageNote {
+  id        String   @id @default(cuid())
+  stageSlug String
+  body      String   @default("")
+  isPinned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  plan   Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId String
+
+  @@unique([planId, stageSlug])
+  @@index([planId])
 }

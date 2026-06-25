@@ -5,6 +5,11 @@ import {
   generatePlanResults,
   toQuestionnaireResponsesMap,
 } from "@/lib/plan-generation";
+import {
+  CALIBRATED_GOLDEN_TOTAL_MAX,
+  CALIBRATED_GOLDEN_TOTAL_MIN,
+} from "@/lib/plan-generation/test-fixtures/calibrated-golden-expectations";
+import { fullStagesForCalibration } from "@/lib/plan-generation/test-fixtures/full-stages-calibration";
 import { minimalStagesForGeneration } from "@/lib/plan-generation/test-fixtures/minimal-stages";
 import { questionnaireInputsSchema } from "@/lib/validations/questionnaire";
 
@@ -28,5 +33,41 @@ describe("questionnaire → generation pipeline", () => {
 
     expect(results.length).toBeGreaterThanOrEqual(1);
     expect(results.every((row) => row.estimatedCost > 0)).toBe(true);
+  });
+
+  it("includes utility connection stages in full calibration results", () => {
+    const parsed = questionnaireInputsSchema.safeParse(validQuestionnairePayload);
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) {
+      return;
+    }
+
+    const responsesMap = toQuestionnaireResponsesMap(parsed.data);
+    const results = generatePlanResults(
+      fullStagesForCalibration,
+      responsesMap,
+    );
+    const slugs = results.map((row) => row.stageSlug);
+
+    expect(slugs).toContain("sewage_connection");
+    expect(slugs).toContain("water_connection");
+  });
+
+  it("full calibration fixture total stays within golden workbook band", () => {
+    const parsed = questionnaireInputsSchema.safeParse(validQuestionnairePayload);
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) {
+      return;
+    }
+
+    const responsesMap = toQuestionnaireResponsesMap(parsed.data);
+    const results = generatePlanResults(
+      fullStagesForCalibration,
+      responsesMap,
+    );
+    const total = results.reduce((sum, row) => sum + row.estimatedCost, 0);
+
+    expect(total).toBeGreaterThanOrEqual(CALIBRATED_GOLDEN_TOTAL_MIN);
+    expect(total).toBeLessThanOrEqual(CALIBRATED_GOLDEN_TOTAL_MAX);
   });
 });

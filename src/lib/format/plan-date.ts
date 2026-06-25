@@ -9,10 +9,22 @@ const plAxisDateOptions: Intl.DateTimeFormatOptions = {
   month: "short",
 };
 
-function dateFromKeyAndOffset(isoDate: string, dayOffset: number): Date {
+export function dateFromKeyAndOffset(isoDate: string, dayOffset: number): Date {
   const base = new Date(`${isoDate}T12:00:00`);
   base.setDate(base.getDate() + dayOffset);
   return base;
+}
+
+/** ISO calendar date (YYYY-MM-DD) for APIs — day 0 = keyDate. */
+export function isoDateFromKeyAndOffset(
+  isoDate: string,
+  dayOffset: number,
+): string {
+  const d = dateFromKeyAndOffset(isoDate, dayOffset);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export function formatBenchmarkAsOf(isoDate: string): string {

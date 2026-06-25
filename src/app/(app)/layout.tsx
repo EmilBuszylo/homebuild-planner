@@ -1,5 +1,5 @@
 import { AppHeader } from "@/components/app/app-header";
-import { prisma } from "@/lib/prisma";
+import { loadLatestPlanForUser } from "@/lib/plan/load-latest-plan-for-user";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AppLayout({
@@ -14,11 +14,7 @@ export default async function AppLayout({
 
   let latestPlanId: string | null = null;
   if (user) {
-    const plan = await prisma.plan.findFirst({
-      where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
-      select: { id: true },
-    });
+    const plan = await loadLatestPlanForUser(user.id, "nav");
     latestPlanId = plan?.id ?? null;
   }
 

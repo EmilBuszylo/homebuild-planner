@@ -3,9 +3,10 @@ import { InvestmentState } from "@prisma/client";
 import type { StageWithModifiers } from "../types";
 
 /**
- * Minimal STRUCTURE stages for generation oracles (Risk #3).
- * Rates and slugs align with `prisma/seed.ts` (`foundations`, `walls`).
- * Survives `filterStages` for golden payload: FROM_SCRATCH → DEVELOPER.
+ * Directional-only STRUCTURE subset for generation smoke tests (Risk #3).
+ * Rates are intentionally stale — calibrated per-stage oracles use
+ * `fullStagesForCalibration`. Survives `filterStages` for golden payload:
+ * FROM_SCRATCH → DEVELOPER.
  */
 export const minimalStagesForGeneration: StageWithModifiers[] = [
   {

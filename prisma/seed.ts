@@ -8,6 +8,14 @@ import {
   InvestmentState,
 } from "@prisma/client";
 
+import { calibrationModifierDefs } from "../src/lib/plan-generation/calibration/modifier-defs";
+import {
+  calibrationStageRateDefs,
+  type CalibrationStageRateDef,
+} from "../src/lib/plan-generation/calibration/stage-rate-defs";
+
+import { calibrationStageDescriptions } from "./calibration-stage-descriptions";
+
 const prisma = new PrismaClient();
 const seedDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -111,11 +119,26 @@ const questions = [
     unit: null,
   },
   {
+    slug: "roof_type",
+    label: "Typ dachu",
+    type: QuestionType.SINGLE_CHOICE,
+    required: true,
+    sortOrder: 8,
+    options: [
+      { value: "GABLE", label: "Dwuspadowy" },
+      { value: "HIP", label: "Kopertowy" },
+      { value: "MANSARD", label: "Mansardowy" },
+      { value: "FLAT", label: "Płaski" },
+    ],
+    validation: null,
+    unit: null,
+  },
+  {
     slug: "garage_spots",
     label: "Miejsca garażowe",
     type: QuestionType.NUMBER,
     required: false,
-    sortOrder: 8,
+    sortOrder: 9,
     options: null,
     validation: { min: 0, max: 3 },
     unit: "szt.",
@@ -125,7 +148,7 @@ const questions = [
     label: "Liczba balkonów",
     type: QuestionType.NUMBER,
     required: false,
-    sortOrder: 9,
+    sortOrder: 10,
     options: null,
     validation: { min: 0, max: 4 },
     unit: "szt.",
@@ -135,7 +158,7 @@ const questions = [
     label: "Liczba okien",
     type: QuestionType.NUMBER,
     required: true,
-    sortOrder: 10,
+    sortOrder: 11,
     options: null,
     validation: { min: 1, max: 30 },
     unit: "szt.",
@@ -145,7 +168,7 @@ const questions = [
     label: "Liczba drzwi zewnętrznych",
     type: QuestionType.NUMBER,
     required: true,
-    sortOrder: 11,
+    sortOrder: 12,
     options: null,
     validation: { min: 1, max: 5 },
     unit: "szt.",
@@ -155,17 +178,60 @@ const questions = [
     label: "Liczba drzwi tarasowych",
     type: QuestionType.NUMBER,
     required: false,
-    sortOrder: 12,
+    sortOrder: 13,
     options: null,
     validation: { min: 0, max: 5 },
     unit: "szt.",
+  },
+  {
+    slug: "sewage_disposal",
+    label: "Odprowadzenie ścieków",
+    type: QuestionType.SINGLE_CHOICE,
+    required: true,
+    sortOrder: 14,
+    options: [
+      { value: "MUNICIPAL", label: "Kanalizacja gminna" },
+      { value: "SEPTIC_TANK", label: "Szambo" },
+      { value: "TREATMENT_PLANT", label: "Oczyszczalnia" },
+    ],
+    validation: null,
+    unit: null,
+  },
+  {
+    slug: "water_supply",
+    label: "Zaopatrzenie w wodę",
+    type: QuestionType.SINGLE_CHOICE,
+    required: true,
+    sortOrder: 15,
+    options: [
+      { value: "MUNICIPAL", label: "Wodociąg gminny" },
+      { value: "WELL", label: "Studnia" },
+      { value: "NONE", label: "Bez przyłącza wody" },
+    ],
+    validation: null,
+    unit: null,
+  },
+  {
+    slug: "utility_distance_band",
+    label: "Odległość od sieci (woda / kanalizacja)",
+    type: QuestionType.SINGLE_CHOICE,
+    required: true,
+    sortOrder: 16,
+    options: [
+      { value: "UP_TO_50M", label: "Do 50 m" },
+      { value: "UP_TO_100M", label: "Do 100 m" },
+      { value: "UP_TO_200M", label: "Do 200 m" },
+      { value: "OVER_200M", label: "Powyżej 200 m" },
+    ],
+    validation: null,
+    unit: null,
   },
   {
     slug: "key_date",
     label: "Planowana data rozpoczęcia budowy",
     type: QuestionType.DATE,
     required: true,
-    sortOrder: 13,
+    sortOrder: 17,
     options: null,
     validation: null,
     unit: null,
@@ -173,544 +239,32 @@ const questions = [
 ] as const;
 
 // ---------------------------------------------------------------------------
-// Construction stages — 2025/2026 Polish market rates (PLN per m² usable area)
+// Construction stages — shared calibration module (C4) + PL descriptions
+// Workbook: context/changes/cost-calibration/calibration-rates.md
 // ---------------------------------------------------------------------------
 
-const stages = [
-  // --- STRUCTURE ---
-  {
-    slug: "foundations",
-    name: "Fundamenty",
-    description: "Wykopy, ławy/płyta fundamentowa, izolacja przeciwwilgociowa i termiczna",
-    category: "STRUCTURE",
-    sortOrder: 1,
-    completedByState: InvestmentState.FOUNDATIONS,
-    predecessorSlugs: [],
-    costPerM2Economy: 500,
-    costPerM2Standard: 690,
-    costPerM2Premium: 880,
-    durationMinDays: 14,
-    durationMaxDays: 28,
-  },
-  {
-    slug: "walls",
-    name: "Ściany nośne",
-    description: "Murowanie ścian nośnych i działowych, nadproża",
-    category: "STRUCTURE",
-    sortOrder: 2,
-    completedByState: InvestmentState.OPEN_SHELL,
-    predecessorSlugs: ["foundations"],
-    costPerM2Economy: 350,
-    costPerM2Standard: 500,
-    costPerM2Premium: 700,
-    durationMinDays: 21,
-    durationMaxDays: 42,
-  },
-  {
-    slug: "floor_slabs",
-    name: "Stropy i nadproża",
-    description: "Stropy żelbetowe, wieńce, nadproża okienne i drzwiowe",
-    category: "STRUCTURE",
-    sortOrder: 3,
-    completedByState: InvestmentState.OPEN_SHELL,
-    predecessorSlugs: ["walls"],
-    costPerM2Economy: 220,
-    costPerM2Standard: 300,
-    costPerM2Premium: 420,
-    durationMinDays: 7,
-    durationMaxDays: 21,
-  },
-  {
-    slug: "roof_structure",
-    name: "Konstrukcja dachu",
-    description: "Więźba dachowa, łacenie, folia wstępnego krycia",
-    category: "STRUCTURE",
-    sortOrder: 4,
-    completedByState: InvestmentState.OPEN_SHELL,
-    predecessorSlugs: ["floor_slabs"],
-    costPerM2Economy: 165,
-    costPerM2Standard: 235,
-    costPerM2Premium: 360,
-    durationMinDays: 10,
-    durationMaxDays: 21,
-  },
-  {
-    slug: "roof_covering",
-    name: "Pokrycie dachu",
-    description: "Dachówka lub blachodachówka, obróbki blacharskie, rynny",
-    category: "STRUCTURE",
-    sortOrder: 5,
-    completedByState: InvestmentState.CLOSED_SHELL,
-    predecessorSlugs: ["roof_structure"],
-    costPerM2Economy: 130,
-    costPerM2Standard: 185,
-    costPerM2Premium: 290,
-    durationMinDays: 7,
-    durationMaxDays: 14,
-  },
-  {
-    slug: "windows_doors",
-    name: "Okna i drzwi zewnętrzne",
-    description: "Wycena na sztuki: okna, drzwi zewnętrzne, drzwi tarasowe. Koszt bazowy = 0 (obliczany z modyfikatorów × ilości)",
-    category: "STRUCTURE",
-    sortOrder: 6,
-    completedByState: InvestmentState.CLOSED_SHELL,
-    predecessorSlugs: ["roof_covering"],
-    costPerM2Economy: 0,
-    costPerM2Standard: 0,
-    costPerM2Premium: 0,
-    durationMinDays: 3,
-    durationMaxDays: 7,
-  },
+function toPrismaInvestmentState(
+  state: CalibrationStageRateDef["completedByState"],
+): InvestmentState | null {
+  return state ?? null;
+}
 
-  // --- INSTALLATIONS ---
-  {
-    slug: "electrical",
-    name: "Instalacja elektryczna",
-    description: "Prowadzenie przewodów, puszki, rozdzielnia — stan surowy",
-    category: "INSTALLATIONS",
-    sortOrder: 7,
-    completedByState: InvestmentState.DEVELOPER,
-    predecessorSlugs: ["windows_doors"],
-    costPerM2Economy: 100,
-    costPerM2Standard: 150,
-    costPerM2Premium: 250,
-    durationMinDays: 7,
-    durationMaxDays: 14,
-  },
-  {
-    slug: "plumbing",
-    name: "Instalacja wodno-kanalizacyjna",
-    description: "Rury wodne i kanalizacyjne, podejścia pod urządzenia",
-    category: "INSTALLATIONS",
-    sortOrder: 8,
-    completedByState: InvestmentState.DEVELOPER,
-    predecessorSlugs: ["windows_doors"],
-    costPerM2Economy: 80,
-    costPerM2Standard: 130,
-    costPerM2Premium: 200,
-    durationMinDays: 7,
-    durationMaxDays: 14,
-  },
-  {
-    slug: "heating",
-    name: "Instalacja centralnego ogrzewania",
-    description:
-      "Ogrzewanie podłogowe / rozprowadzenie i grzejniki przed wylewką; montaż źródła ciepła i kotłowni zwykle po wylewce (min. ok. 2 tyg. schnięcia)",
-    category: "INSTALLATIONS",
-    sortOrder: 9,
-    completedByState: InvestmentState.DEVELOPER,
-    predecessorSlugs: ["windows_doors", "floor_slabs"],
-    costPerM2Economy: 120,
-    costPerM2Standard: 220,
-    costPerM2Premium: 400,
-    durationMinDays: 10,
-    durationMaxDays: 21,
-  },
+const stages = calibrationStageRateDefs.map((def) => ({
+  slug: def.slug,
+  name: def.name,
+  description: calibrationStageDescriptions[def.slug],
+  category: def.category,
+  sortOrder: def.sortOrder,
+  completedByState: toPrismaInvestmentState(def.completedByState),
+  predecessorSlugs: [...def.predecessorSlugs],
+  costPerM2Economy: def.costPerM2Economy,
+  costPerM2Standard: def.costPerM2Standard,
+  costPerM2Premium: def.costPerM2Premium,
+  durationMinDays: def.durationMinDays,
+  durationMaxDays: def.durationMaxDays,
+}));
 
-  // --- ENVELOPE ---
-  {
-    slug: "insulation",
-    name: "Ocieplenie",
-    description: "Termoizolacja ścian zewnętrznych (styropian/wełna), ocieplenie poddasza",
-    category: "ENVELOPE",
-    sortOrder: 10,
-    completedByState: null,
-    predecessorSlugs: ["windows_doors"],
-    costPerM2Economy: 100,
-    costPerM2Standard: 160,
-    costPerM2Premium: 250,
-    durationMinDays: 10,
-    durationMaxDays: 21,
-  },
-  {
-    slug: "facade",
-    name: "Elewacja",
-    description:
-      "Tynk elewacyjny, cokół, obróbki — często w jednym zleceniu z ociepleniem (ta sama ekipa)",
-    category: "ENVELOPE",
-    sortOrder: 11,
-    completedByState: null,
-    predecessorSlugs: ["windows_doors"],
-    costPerM2Economy: 80,
-    costPerM2Standard: 120,
-    costPerM2Premium: 200,
-    durationMinDays: 10,
-    durationMaxDays: 21,
-  },
-
-  // --- INTERIOR FINISHING ---
-  {
-    slug: "interior_plaster",
-    name: "Tynki wewnętrzne",
-    description: "Tynki gipsowe lub cementowo-wapienne",
-    category: "FINISHING",
-    sortOrder: 12,
-    completedByState: null,
-    predecessorSlugs: [
-      "electrical",
-      "plumbing",
-      "roof_covering",
-      "windows_doors",
-    ],
-    costPerM2Economy: 60,
-    costPerM2Standard: 80,
-    costPerM2Premium: 120,
-    durationMinDays: 7,
-    durationMaxDays: 14,
-  },
-  {
-    slug: "floor_screeds",
-    name: "Wylewki podłogowe",
-    description: "Wylewki cementowe lub anhydrytowe, wyrównanie posadzek",
-    category: "FINISHING",
-    sortOrder: 13,
-    completedByState: null,
-    predecessorSlugs: ["heating", "interior_plaster"],
-    costPerM2Economy: 40,
-    costPerM2Standard: 55,
-    costPerM2Premium: 80,
-    durationMinDays: 3,
-    durationMaxDays: 7,
-  },
-  {
-    slug: "flooring",
-    name: "Podłogi i posadzki",
-    description: "Panele, gres, deska — montaż z materiałem",
-    category: "FINISHING",
-    sortOrder: 14,
-    completedByState: null,
-    predecessorSlugs: ["floor_screeds"],
-    costPerM2Economy: 80,
-    costPerM2Standard: 140,
-    costPerM2Premium: 250,
-    durationMinDays: 7,
-    durationMaxDays: 14,
-  },
-  {
-    slug: "painting",
-    name: "Malowanie",
-    description: "Gruntowanie i malowanie ścian i sufitów (2 warstwy)",
-    category: "FINISHING",
-    sortOrder: 15,
-    completedByState: null,
-    predecessorSlugs: ["interior_plaster"],
-    costPerM2Economy: 18,
-    costPerM2Standard: 25,
-    costPerM2Premium: 40,
-    durationMinDays: 5,
-    durationMaxDays: 10,
-  },
-  {
-    slug: "bathroom_fixtures",
-    name: "Biały montaż",
-    description: "Umywalki, WC, wanny/brodziki, baterie, armatura",
-    category: "FINISHING",
-    sortOrder: 16,
-    completedByState: null,
-    predecessorSlugs: ["plumbing", "flooring"],
-    costPerM2Economy: 50,
-    costPerM2Standard: 90,
-    costPerM2Premium: 180,
-    durationMinDays: 5,
-    durationMaxDays: 10,
-  },
-  {
-    slug: "interior_doors",
-    name: "Drzwi wewnętrzne",
-    description: "Montaż drzwi wewnętrznych z ościeżnicami",
-    category: "FINISHING",
-    sortOrder: 17,
-    completedByState: null,
-    predecessorSlugs: ["painting"],
-    costPerM2Economy: 35,
-    costPerM2Standard: 55,
-    costPerM2Premium: 100,
-    durationMinDays: 2,
-    durationMaxDays: 5,
-  },
-
-  // --- OPTIONAL ---
-  {
-    slug: "garage_gate",
-    name: "Brama garażowa",
-    description: "Brama segmentowa z napędem (gdy garage_spots > 0)",
-    category: "OPTIONAL",
-    sortOrder: 18,
-    completedByState: null,
-    predecessorSlugs: ["walls"],
-    costPerM2Economy: 0,
-    costPerM2Standard: 0,
-    costPerM2Premium: 0,
-    durationMinDays: 1,
-    durationMaxDays: 2,
-  },
-] as const;
-
-// ---------------------------------------------------------------------------
-// Stage cost modifiers
-// ---------------------------------------------------------------------------
-
-type ModifierInput = {
-  stageSlug: string;
-  triggerQuestionSlug: string;
-  triggerValue: string;
-  costAdjustmentPerM2: number;
-  fixedCostAdjustment: number;
-  description: string;
-};
-
-const modifiers: ModifierInput[] = [
-  // Insulation level — percentage uplift on insulation-related stages (economy-tier pre-computed)
-  {
-    stageSlug: "insulation",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "ENHANCED",
-    costAdjustmentPerM2: 15,
-    fixedCostAdjustment: 0,
-    description:
-      "[PERCENT:15] Wzmocnione ocieplenie — podwyższony standard izolacji",
-  },
-  {
-    stageSlug: "foundations",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "ENHANCED",
-    costAdjustmentPerM2: 60,
-    fixedCostAdjustment: 0,
-    description:
-      "[PERCENT:15] Wzmocnione ocieplenie — izolacja fundamentów i posadzki",
-  },
-  {
-    stageSlug: "roof_structure",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "ENHANCED",
-    costAdjustmentPerM2: 30,
-    fixedCostAdjustment: 0,
-    description: "[PERCENT:15] Wzmocnione ocieplenie — ocieplenie stropu/dachu",
-  },
-  {
-    stageSlug: "heating",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "ENHANCED",
-    costAdjustmentPerM2: 18,
-    fixedCostAdjustment: 0,
-    description:
-      "[PERCENT:15] Wzmocnione ocieplenie — wyższe wymagania instalacji grzewczej",
-  },
-  {
-    stageSlug: "insulation",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "PASSIVE",
-    costAdjustmentPerM2: 30,
-    fixedCostAdjustment: 0,
-    description: "[PERCENT:30] Ocieplenie pasywne — standard izolacji pasywnej",
-  },
-  {
-    stageSlug: "foundations",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "PASSIVE",
-    costAdjustmentPerM2: 120,
-    fixedCostAdjustment: 0,
-    description:
-      "[PERCENT:30] Ocieplenie pasywne — izolacja fundamentów i posadzki",
-  },
-  {
-    stageSlug: "roof_structure",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "PASSIVE",
-    costAdjustmentPerM2: 60,
-    fixedCostAdjustment: 0,
-    description: "[PERCENT:30] Ocieplenie pasywne — ocieplenie stropu/dachu",
-  },
-  {
-    stageSlug: "heating",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "PASSIVE",
-    costAdjustmentPerM2: 36,
-    fixedCostAdjustment: 0,
-    description:
-      "[PERCENT:30] Ocieplenie pasywne — rekuperacja i pompa ciepła",
-  },
-
-  // Windows — per-unit pricing by build standard (S-02 multiplies by window_count)
-  {
-    stageSlug: "windows_doors",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "ECONOMY",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 1200,
-    description: "[PER_UNIT:window_count] Okno — standard ekonomiczny",
-  },
-  {
-    stageSlug: "windows_doors",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "STANDARD",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 2000,
-    description: "[PER_UNIT:window_count] Okno — standard standardowy",
-  },
-  {
-    stageSlug: "windows_doors",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "PREMIUM",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 3500,
-    description: "[PER_UNIT:window_count] Okno — standard premium",
-  },
-
-  // Exterior doors — per-unit pricing by build standard (S-02 multiplies by exterior_door_count)
-  {
-    stageSlug: "windows_doors",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "ECONOMY",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 2500,
-    description: "[PER_UNIT:exterior_door_count] Drzwi zewnętrzne — standard ekonomiczny",
-  },
-  {
-    stageSlug: "windows_doors",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "STANDARD",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 6500,
-    description: "[PER_UNIT:exterior_door_count] Drzwi zewnętrzne — standard standardowy",
-  },
-  {
-    stageSlug: "windows_doors",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "PREMIUM",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 7000,
-    description: "[PER_UNIT:exterior_door_count] Drzwi zewnętrzne — standard premium",
-  },
-
-  // Terrace doors — per-unit pricing by build standard
-  {
-    stageSlug: "windows_doors",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "ECONOMY",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 3000,
-    description:
-      "[PER_UNIT:terrace_door_count] Drzwi tarasowe — balkonowe zwykłe",
-  },
-  {
-    stageSlug: "windows_doors",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "STANDARD",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 10000,
-    description:
-      "[PER_UNIT:terrace_door_count] Drzwi tarasowe — przesuwne system smart",
-  },
-  {
-    stageSlug: "windows_doors",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "PREMIUM",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 15000,
-    description: "[PER_UNIT:terrace_door_count] Drzwi tarasowe — przesuwne system HS",
-  },
-
-  // Balconies — per-unit pricing by build standard
-  {
-    stageSlug: "floor_slabs",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "ECONOMY",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 8000,
-    description: "[PER_UNIT:balcony_count] Balkon — standard ekonomiczny",
-  },
-  {
-    stageSlug: "floor_slabs",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "STANDARD",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 14000,
-    description: "[PER_UNIT:balcony_count] Balkon — standard standardowy",
-  },
-  {
-    stageSlug: "floor_slabs",
-    triggerQuestionSlug: "build_standard",
-    triggerValue: "PREMIUM",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 22000,
-    description: "[PER_UNIT:balcony_count] Balkon — standard premium",
-  },
-
-  // Insulation level → garage gate (fixed cost)
-  {
-    stageSlug: "garage_gate",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "STANDARD",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 7000,
-    description: "Brama garażowa — izolacja standardowa",
-  },
-  {
-    stageSlug: "garage_gate",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "ENHANCED",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 10000,
-    description: "Brama garażowa — podwyższona izolacja",
-  },
-  {
-    stageSlug: "garage_gate",
-    triggerQuestionSlug: "insulation_level",
-    triggerValue: "PASSIVE",
-    costAdjustmentPerM2: 0,
-    fixedCostAdjustment: 13000,
-    description: "Brama garażowa — klasa pasywna",
-  },
-
-  // Attic → floor slabs
-  {
-    stageSlug: "floor_slabs",
-    triggerQuestionSlug: "has_attic",
-    triggerValue: "true",
-    costAdjustmentPerM2: 60,
-    fixedCostAdjustment: 0,
-    description: "Poddasze użytkowe — wzmocnienie stropu i schody wewnętrzne",
-  },
-
-  // Multi-story → walls
-  {
-    stageSlug: "walls",
-    triggerQuestionSlug: "floors",
-    triggerValue: "2",
-    costAdjustmentPerM2: 80,
-    fixedCostAdjustment: 0,
-    description: "Budynek dwukondygnacyjny — dodatkowa kondygnacja ścian",
-  },
-  {
-    stageSlug: "walls",
-    triggerQuestionSlug: "floors",
-    triggerValue: "3",
-    costAdjustmentPerM2: 150,
-    fixedCostAdjustment: 0,
-    description: "Budynek trzykondygnacyjny — dwie dodatkowe kondygnacje ścian",
-  },
-
-  // Multi-story → floor slabs
-  {
-    stageSlug: "floor_slabs",
-    triggerQuestionSlug: "floors",
-    triggerValue: "2",
-    costAdjustmentPerM2: 70,
-    fixedCostAdjustment: 0,
-    description: "Dodatkowy strop międzykondygnacyjny",
-  },
-  {
-    stageSlug: "floor_slabs",
-    triggerQuestionSlug: "floors",
-    triggerValue: "3",
-    costAdjustmentPerM2: 140,
-    fixedCostAdjustment: 0,
-    description: "Dwa dodatkowe stropy międzykondygnacyjne",
-  },
-
-];
+const modifiers = calibrationModifierDefs;
 
 // ---------------------------------------------------------------------------
 // Seed functions
