@@ -1,3 +1,3 @@
 {
-  "installCommand": "pnpm install"
+  "installCommand": "node scripts/append-npmrc-github-auth.mjs && pnpm install --frozen-lockfile"
 }
