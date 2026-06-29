@@ -47,10 +47,13 @@ export const PLAN_STAGE_NOTE_OPEN_LABEL = "Notatka";
 export const PLAN_STAGE_NOTE_OPEN_ARIA_LABEL = "Otwórz notatkę do etapu";
 export const PLAN_STAGE_NOTE_SAVE_LABEL = "Zapisz notatkę";
 export const PLAN_STAGE_NOTE_CANCEL_LABEL = "Anuluj";
+export const PLAN_STAGE_NOTE_DELETE_ARIA_LABEL = "Usuń notatkę";
 export const PLAN_STAGE_NOTE_PLACEHOLDER =
   "Kontakt z wykonawcą, ustalenia…";
 export const PLAN_STAGE_NOTE_SAVE_ERROR =
   "Nie udało się zapisać notatki. Spróbuj ponownie.";
+export const PLAN_STAGE_NOTE_DELETE_ERROR =
+  "Nie udało się usunąć notatki. Spróbuj ponownie.";
 
 export const PLAN_CALENDAR_CONNECT_LABEL = "Połącz konto Google";
 export const PLAN_CALENDAR_EXPORT_LABEL = "Eksportuj do Google Calendar";

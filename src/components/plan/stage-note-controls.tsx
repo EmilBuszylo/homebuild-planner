@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Star, StickyNote } from "lucide-react";
+import { Star, StickyNote, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/popover";
 import {
   PLAN_STAGE_NOTE_CANCEL_LABEL,
+  PLAN_STAGE_NOTE_DELETE_ARIA_LABEL,
+  PLAN_STAGE_NOTE_DELETE_ERROR,
   PLAN_STAGE_NOTE_OPEN_ARIA_LABEL,
   PLAN_STAGE_NOTE_STAR_ARIA_LABEL,
   PLAN_STAGE_NOTE_PLACEHOLDER,
@@ -30,15 +32,15 @@ type StageNoteControlsProps = {
   onNoteChange: (stageSlug: string, note: PlanStageNoteDto | null) => void;
 };
 
-type SaveStageNoteResponse =
-  | { deleted: true; stageSlug: string }
-  | (PlanStageNoteDto & { stageSlug: string });
+type SavedStageNoteResponse = PlanStageNoteDto & { stageSlug: string };
+
+type DeleteStageNoteResponse = { deleted: true; stageSlug: string };
 
 async function putStageNote(
   planId: string,
   payload: { stageSlug: string; body: string; isPinned: boolean },
 ): Promise<
-  | { ok: true; data: SaveStageNoteResponse }
+  | { ok: true; data: SavedStageNoteResponse }
   | { ok: false; error: string }
 > {
   const res = await fetch(`/api/plans/${planId}/stage-notes`, {
@@ -57,7 +59,34 @@ async function putStageNote(
     };
   }
 
-  const data = (await res.json()) as SaveStageNoteResponse;
+  const data = (await res.json()) as SavedStageNoteResponse;
+  return { ok: true, data };
+}
+
+async function deleteStageNote(
+  planId: string,
+  stageSlug: string,
+): Promise<
+  | { ok: true; data: DeleteStageNoteResponse }
+  | { ok: false; error: string }
+> {
+  const params = new URLSearchParams({ stageSlug });
+  const res = await fetch(
+    `/api/plans/${planId}/stage-notes?${params.toString()}`,
+    { method: "DELETE" },
+  );
+
+  if (!res.ok) {
+    const data = (await res.json().catch(() => null)) as {
+      error?: string;
+    } | null;
+    return {
+      ok: false,
+      error: data?.error ?? PLAN_STAGE_NOTE_DELETE_ERROR,
+    };
+  }
+
+  const data = (await res.json()) as DeleteStageNoteResponse;
   return { ok: true, data };
 }
 
@@ -74,7 +103,14 @@ export function StageNoteControls({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const hasNoteText = body.length > 0;
+  const hasSavedNoteText = body.length > 0;
+
+  function applyDeletedNote() {
+    setBody("");
+    setDraftBody("");
+    setIsPinned(false);
+    onNoteChange(stageSlug, null);
+  }
 
   async function persist(
     nextBody: string,
@@ -96,15 +132,7 @@ export function StageNoteControls({
       return false;
     }
 
-    if ("deleted" in result.data && result.data.deleted) {
-      setBody("");
-      setDraftBody("");
-      setIsPinned(false);
-      onNoteChange(stageSlug, null);
-      return true;
-    }
-
-    const saved = result.data as PlanStageNoteDto & { stageSlug: string };
+    const saved = result.data;
     setBody(saved.body);
     setDraftBody(saved.body);
     setIsPinned(saved.isPinned);
@@ -116,9 +144,36 @@ export function StageNoteControls({
     return true;
   }
 
+  async function removeNote(): Promise<boolean> {
+    setIsSaving(true);
+    setError(null);
+
+    const result = await deleteStageNote(planId, stageSlug);
+
+    setIsSaving(false);
+
+    if (!result.ok) {
+      setError(result.error);
+      return false;
+    }
+
+    applyDeletedNote();
+    return true;
+  }
+
   async function handleStarToggle() {
     const nextPinned = !isPinned;
     const previousPinned = isPinned;
+
+    if (!nextPinned && body.length === 0) {
+      setIsPinned(nextPinned);
+      const ok = await removeNote();
+      if (!ok) {
+        setIsPinned(previousPinned);
+      }
+      return;
+    }
+
     setIsPinned(nextPinned);
     const ok = await persist(body, nextPinned);
     if (!ok) {
@@ -127,7 +182,22 @@ export function StageNoteControls({
   }
 
   async function handleSaveNote() {
+    if (draftBody.length === 0 && !isPinned && hasSavedNoteText) {
+      const ok = await removeNote();
+      if (ok) {
+        setPopoverOpen(false);
+      }
+      return;
+    }
+
     const ok = await persist(draftBody, isPinned);
+    if (ok) {
+      setPopoverOpen(false);
+    }
+  }
+
+  async function handleDeleteNote() {
+    const ok = await removeNote();
     if (ok) {
       setPopoverOpen(false);
     }
@@ -166,7 +236,7 @@ export function StageNoteControls({
             type="button"
             className={cn(
               "flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-              hasNoteText && "text-foreground",
+              hasSavedNoteText && "text-foreground",
             )}
             aria-label={PLAN_STAGE_NOTE_OPEN_ARIA_LABEL}
           >
@@ -188,24 +258,41 @@ export function StageNoteControls({
               {error}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={isSaving}
-              onClick={() => setPopoverOpen(false)}
-            >
-              {PLAN_STAGE_NOTE_CANCEL_LABEL}
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              disabled={isSaving}
-              onClick={handleSaveNote}
-            >
-              {PLAN_STAGE_NOTE_SAVE_LABEL}
-            </Button>
+          <div className="flex items-center justify-between gap-2">
+            {hasSavedNoteText ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                className="text-muted-foreground hover:text-destructive"
+                disabled={isSaving}
+                aria-label={PLAN_STAGE_NOTE_DELETE_ARIA_LABEL}
+                onClick={handleDeleteNote}
+              >
+                <Trash2 className="size-3.5" aria-hidden />
+              </Button>
+            ) : (
+              <span aria-hidden className="size-7 shrink-0" />
+            )}
+            <div className="flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isSaving}
+                onClick={() => setPopoverOpen(false)}
+              >
+                {PLAN_STAGE_NOTE_CANCEL_LABEL}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                disabled={isSaving}
+                onClick={handleSaveNote}
+              >
+                {PLAN_STAGE_NOTE_SAVE_LABEL}
+              </Button>
+            </div>
           </div>
         </PopoverContent>
       </Popover>

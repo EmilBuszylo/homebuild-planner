@@ -1,17 +1,14 @@
 import type { Prisma } from "@prisma/client";
 
 import type { PlanStageNoteDto } from "@/lib/plan-results";
+import {
+  EmptyUnpinnedNoteError,
+  InvalidStageSlugError,
+} from "@/lib/plan/plan-stage-note-errors";
 
-export class InvalidStageSlugError extends Error {
-  constructor(stageSlug: string) {
-    super(`Invalid stage slug: ${stageSlug}`);
-    this.name = "InvalidStageSlugError";
-  }
-}
-
-export type UpsertPlanStageNoteResult =
-  | { deleted: true }
-  | { deleted: false; note: PlanStageNoteDto & { stageSlug: string } };
+export type UpsertPlanStageNoteResult = {
+  note: PlanStageNoteDto & { stageSlug: string };
+};
 
 export async function upsertPlanStageNote(
   tx: Prisma.TransactionClient,
@@ -30,10 +27,7 @@ export async function upsertPlanStageNote(
   }
 
   if (body === "" && !isPinned) {
-    await tx.planStageNote.deleteMany({
-      where: { planId, stageSlug },
-    });
-    return { deleted: true };
+    throw new EmptyUnpinnedNoteError();
   }
 
   const row = await tx.planStageNote.upsert({
@@ -53,7 +47,6 @@ export async function upsertPlanStageNote(
   });
 
   return {
-    deleted: false,
     note: {
       stageSlug: row.stageSlug,
       body: row.body,

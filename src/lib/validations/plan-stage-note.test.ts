@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { upsertPlanStageNoteSchema } from "@/lib/validations/plan-stage-note";
+import {
+  deletePlanStageNoteQuerySchema,
+  upsertPlanStageNoteSchema,
+} from "@/lib/validations/plan-stage-note";
 
 describe("upsertPlanStageNoteSchema", () => {
   it("accepts a valid payload", () => {
@@ -26,6 +29,22 @@ describe("upsertPlanStageNoteSchema", () => {
       stageSlug: "foundations",
       body: "x".repeat(2001),
       isPinned: false,
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("deletePlanStageNoteQuerySchema", () => {
+  it("accepts a valid stageSlug query param", () => {
+    const result = deletePlanStageNoteQuerySchema.safeParse({
+      stageSlug: "foundations",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects an empty stageSlug", () => {
+    const result = deletePlanStageNoteQuerySchema.safeParse({
+      stageSlug: "",
     });
     expect(result.success).toBe(false);
   });

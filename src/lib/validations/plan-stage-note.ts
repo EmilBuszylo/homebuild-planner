@@ -10,3 +10,11 @@ export const upsertPlanStageNoteSchema = z.object({
 });
 
 export type UpsertPlanStageNoteInput = z.infer<typeof upsertPlanStageNoteSchema>;
+
+export const deletePlanStageNoteQuerySchema = z.object({
+  stageSlug: z.string().min(1, "Identyfikator etapu jest wymagany"),
+});
+
+export type DeletePlanStageNoteQuery = z.infer<
+  typeof deletePlanStageNoteQuerySchema
+>;

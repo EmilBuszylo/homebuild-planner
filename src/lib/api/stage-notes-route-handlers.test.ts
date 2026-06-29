@@ -38,7 +38,10 @@ vi.mock("@/lib/prisma", () => ({
 }));
 
 import { GET as getPlanResults } from "@/app/api/plans/[planId]/results/route";
-import { PUT as putStageNote } from "@/app/api/plans/[planId]/stage-notes/route";
+import {
+  DELETE as deleteStageNote,
+  PUT as putStageNote,
+} from "@/app/api/plans/[planId]/stage-notes/route";
 
 const USER_A = "user-a";
 const USER_B = "user-b";
@@ -107,6 +110,19 @@ async function invokePutStageNote(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }),
+    { params: Promise.resolve({ planId }) },
+  );
+}
+
+async function invokeDeleteStageNote(
+  planId: string,
+  stageSlug: string,
+): Promise<Response> {
+  return deleteStageNote(
+    new Request(
+      `http://localhost/api/plans/${planId}/stage-notes?stageSlug=${encodeURIComponent(stageSlug)}`,
+      { method: "DELETE" },
+    ),
     { params: Promise.resolve({ planId }) },
   );
 }
@@ -216,16 +232,13 @@ describe("stage-notes route handlers", () => {
       expect(planStageNoteUpsert).toHaveBeenCalledOnce();
     });
 
-    it("returns 200 with deleted flag when body is empty and not pinned", async () => {
+    it("returns 400 when body is empty and not pinned", async () => {
       asUser(USER_A);
       mockOwnedPlan(PLAN_A, USER_A);
-
-      const planStageNoteDeleteMany = vi.fn().mockResolvedValue({ count: 1 });
 
       prismaTransaction.mockImplementation(async (callback) => {
         const tx = {
           planStageNote: {
-            deleteMany: planStageNoteDeleteMany,
             upsert: vi.fn(),
           },
         } as unknown as Prisma.TransactionClient;
@@ -237,6 +250,87 @@ describe("stage-notes route handlers", () => {
         body: "",
         isPinned: false,
       });
+
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body.error).toBe(
+        "Notatka wymaga treści lub oznaczenia gwiazdką",
+      );
+    });
+  });
+
+  describe("DELETE /api/plans/[planId]/stage-notes", () => {
+    it("returns 401 when unauthenticated", async () => {
+      asAnonymous();
+
+      const response = await invokeDeleteStageNote(PLAN_A, "foundations");
+
+      expect(response.status).toBe(401);
+      expect(planFindUnique).not.toHaveBeenCalled();
+    });
+
+    it("returns 404 when user does not own the plan", async () => {
+      asUser(USER_A);
+      mockOwnedPlan(PLAN_B, USER_B);
+
+      const response = await invokeDeleteStageNote(PLAN_B, "foundations");
+
+      expect(response.status).toBe(404);
+      expect(prismaTransaction).not.toHaveBeenCalled();
+    });
+
+    it("returns 400 when stageSlug is not in the current plan stages", async () => {
+      asUser(USER_A);
+      mockOwnedPlan(PLAN_A, USER_A);
+      mockActiveStages(["foundations"]);
+
+      prismaTransaction.mockImplementation(async (callback) => {
+        const tx = {
+          planStageNote: {
+            deleteMany: vi.fn(),
+          },
+        } as unknown as Prisma.TransactionClient;
+        return callback(tx);
+      });
+
+      const response = await invokeDeleteStageNote(PLAN_A, "roofing");
+
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body.error).toBe("Nieprawidłowy etap dla tego planu");
+    });
+
+    it("returns 400 when stageSlug query param is missing", async () => {
+      asUser(USER_A);
+
+      const response = await deleteStageNote(
+        new Request(
+          `http://localhost/api/plans/${PLAN_A}/stage-notes`,
+          { method: "DELETE" },
+        ),
+        { params: Promise.resolve({ planId: PLAN_A }) },
+      );
+
+      expect(response.status).toBe(400);
+      expect(planFindUnique).not.toHaveBeenCalled();
+    });
+
+    it("returns 200 with deleted flag and removes the note", async () => {
+      asUser(USER_A);
+      mockOwnedPlan(PLAN_A, USER_A);
+
+      const planStageNoteDeleteMany = vi.fn().mockResolvedValue({ count: 1 });
+
+      prismaTransaction.mockImplementation(async (callback) => {
+        const tx = {
+          planStageNote: {
+            deleteMany: planStageNoteDeleteMany,
+          },
+        } as unknown as Prisma.TransactionClient;
+        return callback(tx);
+      });
+
+      const response = await invokeDeleteStageNote(PLAN_A, "foundations");
 
       expect(response.status).toBe(200);
       const body = await response.json();
