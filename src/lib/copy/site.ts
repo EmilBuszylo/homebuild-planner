@@ -21,6 +21,8 @@ export const PAGE_METADATA = {
     title: "Ankieta",
     description:
       "Odpowiedz na pytania o dom — na końcu wygenerujesz orientacyjny kosztorys i harmonogram.",
+    emptyKnowledgeBase:
+      "Ankieta jest tymczasowo niedostępna — brak pytań w bazie danych. Jeśli jesteś administratorem, uruchom seed (pnpm db:seed) na środowisku produkcyjnym lub ponów deploy.",
   },
   plan: {
     title: "Twój plan budowy",

@@ -12,7 +12,29 @@ export async function GET() {
       create: { id: 1 },
       update: { checkedAt: new Date() },
     });
-    return NextResponse.json({ ok: true });
+
+    const [questionCount, stageCount] = await Promise.all([
+      prisma.questionDefinition.count(),
+      prisma.constructionStage.count(),
+    ]);
+
+    if (questionCount === 0 || stageCount === 0) {
+      return NextResponse.json(
+        {
+          ok: false,
+          reason: "knowledge_base_not_seeded",
+          questionCount,
+          stageCount,
+        },
+        { status: 503 },
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+      questionCount,
+      stageCount,
+    });
   } catch (error) {
     console.error("GET /api/health/db failed:", error);
     reportError(error, { route: "GET /api/health/db" });

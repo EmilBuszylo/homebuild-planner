@@ -5,7 +5,7 @@
   "packageManager": "pnpm@9.15.9",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "prisma generate && prisma migrate deploy && node scripts/run-db-seed.mjs && next build",
     "build:ci": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",

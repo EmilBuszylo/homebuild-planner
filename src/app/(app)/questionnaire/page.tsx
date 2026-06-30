@@ -38,6 +38,24 @@ export default async function QuestionnairePage() {
     orderBy: { sortOrder: "asc" },
   });
 
+  if (questions.length === 0) {
+    return (
+      <AppPageShell width="narrow">
+        <div className="mb-6 space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            Ankieta planistyczna
+          </h1>
+        </div>
+        <p
+          role="alert"
+          className="rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+        >
+          {PAGE_METADATA.questionnaire.emptyKnowledgeBase}
+        </p>
+      </AppPageShell>
+    );
+  }
+
   return (
     <AppPageShell width="narrow">
       <div className="mb-6 space-y-2">
