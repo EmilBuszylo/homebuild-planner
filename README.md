@@ -74,7 +74,9 @@ Product requirements and architecture notes live in [`context/foundation/`](cont
 | `pnpm db:migrate` | Create/apply migrations (local owner only) |
 | `pnpm db:seed` | Seed construction stages and questionnaire definitions |
 
-Optional: Google Calendar export needs `GOOGLE_*` vars in `.env.local`; Sentry is disabled when DSN vars are unset.
+Optional: Google Calendar export needs `NEXT_PUBLIC_SITE_URL`, `GOOGLE_*` vars in `.env.local` (and the same on Vercel Production). Redirect URI = `{NEXT_PUBLIC_SITE_URL}/api/integrations/google/callback` — register it in [Google Cloud Console](https://console.cloud.google.com/). Details: `.env.example` and [`context/deployment/deploy-plan.md`](context/deployment/deploy-plan.md) §3.1.
+
+Sentry is disabled when DSN vars are unset.
 
 ## Testing
 

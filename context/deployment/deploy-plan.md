@@ -50,6 +50,7 @@ Set in **Vercel** (Project → Settings → Environment Variables) for **Preview
 
 | Variable | Preview | Production | Source | Notes |
 |----------|---------|------------|--------|-------|
+| `NEXT_PUBLIC_SITE_URL` | Yes | Yes | Production: `https://homebuild-planner.vercel.app`; local: `http://localhost:3000` | OAuth redirect URI + server origin; **required** for Google Calendar on Vercel |
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Yes | Supabase → API | Client-safe |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Yes | Yes | Supabase → API keys (Publishable) | Not legacy `anon` unless docs require |
 | `SUPABASE_SECRET_KEY` | Yes | Yes | Supabase → Secret key | Server-only; for future auth |
@@ -62,10 +63,37 @@ Set in **Vercel** (Project → Settings → Environment Variables) for **Preview
 | `SENTRY_PROJECT` | Optional | Yes | Sentry project slug | Or set in `next.config.ts` after wizard |
 | `SENTRY_ENABLE_TEST_ROUTE` | Optional | Optional | Set to `true` to enable smoke endpoint | Enables `GET /api/health/sentry-test` outside `development`; default off in Production |
 | `GH_PKG_TOKEN` | Yes | Yes | GitHub → classic PAT with `read:packages` | Build-time only: `preinstall` appends GitHub Packages auth to `.npmrc` for `@emilbuszylo/ai-toolkit`. Mark **Sensitive**. Same token as GitHub Actions secret `GH_PKG_TOKEN`. |
+| `GOOGLE_CLIENT_ID` | Optional | Yes | Google Cloud → OAuth 2.0 Web client | Required for Google Calendar export (FR-010) on Production |
+| `GOOGLE_CLIENT_SECRET` | Optional | Yes | Same OAuth client | Server-only; mark **Sensitive** |
+| `GOOGLE_TOKEN_ENCRYPTION_KEY` | Optional | Yes | `openssl rand -base64 32` | Encrypts OAuth tokens at rest; same key as local |
 
-Never prefix database URLs, `SENTRY_AUTH_TOKEN`, `SUPABASE_SECRET_KEY`, or `GH_PKG_TOKEN` with `NEXT_PUBLIC_`.
+Never prefix database URLs, `SENTRY_AUTH_TOKEN`, `SUPABASE_SECRET_KEY`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_TOKEN_ENCRYPTION_KEY`, or `GH_PKG_TOKEN` with `NEXT_PUBLIC_`.
 
 **Local templates:** [`/.env.example`](../../.env.example). For Docker dev use the commented `127.0.0.1:55432` URLs — do not point Vercel at Docker.
+
+### 3.1 Google Calendar OAuth (production)
+
+Production app URL: **https://homebuild-planner.vercel.app** (panel: `/panel`).
+
+OAuth redirect URI is `{NEXT_PUBLIC_SITE_URL}/api/integrations/google/callback` ([`src/lib/site-origin.ts`](../../src/lib/site-origin.ts)). Set `NEXT_PUBLIC_SITE_URL` on Vercel **Production** — the app does not use `VERCEL_URL` (per-deployment hostname would cause `redirect_uri_mismatch`). For the current Production deployment:
+
+```text
+https://homebuild-planner.vercel.app/api/integrations/google/callback
+```
+
+**Owner checklist (fixes `Error 400: redirect_uri_mismatch` on production):**
+
+1. [Google Cloud Console](https://console.cloud.google.com/) → **APIs & Services** → **Credentials** → OAuth 2.0 **Web application** client.
+2. Under **Authorized redirect URIs**, add the production URI above (exact match — `https`, no trailing slash on path).
+3. Also add `http://localhost:3000/api/integrations/google/callback` if you test OAuth locally.
+4. Enable **Google Calendar API** for the project.
+5. Set `NEXT_PUBLIC_SITE_URL=https://homebuild-planner.vercel.app` on Vercel **Production**.
+6. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_TOKEN_ENCRYPTION_KEY` on Vercel **Production** (same client and encryption key as local).
+7. Redeploy or wait ~1 minute after saving Google Console changes, then retry **Połącz konto Google** from a plan timeline on production.
+
+**Preview deployments:** each preview gets a unique `VERCEL_URL` (e.g. `homebuild-planner-git-feature-….vercel.app`). Google does not support wildcard redirect URIs — add that preview host’s callback URL in Console, or test Calendar OAuth on Production only.
+
+**Verify:** In DevTools → Network, the redirect to `accounts.google.com` must include `redirect_uri=https%3A%2F%2Fhomebuild-planner.vercel.app%2Fapi%2Fintegrations%2Fgoogle%2Fcallback` when connecting from production.
 
 ## 4. Database migrations — prod vs local dev
 
