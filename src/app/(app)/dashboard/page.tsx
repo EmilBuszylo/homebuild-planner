@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { ORIENTATIONAL_TRUST_HEADING } from "@/lib/copy/orientational";
 import { PAGE_METADATA } from "@/lib/copy/site";
-import { fetchPlanResults } from "@/lib/api/fetch-plan-results";
+import { loadPlanResults } from "@/lib/plan/load-plan-results";
 import { formatPlDate } from "@/lib/format/date";
 import { loadLatestPlanForUser } from "@/lib/plan/load-latest-plan-for-user";
 import { routes } from "@/lib/routes";
@@ -39,7 +39,7 @@ export default async function DashboardPage() {
   const plan = await loadLatestPlanForUser(authUser.id, "dashboard");
 
   const results =
-    plan !== null ? await fetchPlanResults(plan.id) : null;
+    plan !== null ? await loadPlanResults(plan.id, authUser.id) : null;
 
   return (
     <AppPageShell>

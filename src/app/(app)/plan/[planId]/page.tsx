@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { PlanCostTable } from "@/components/plan/plan-cost-table";
 import { PlanTimeline } from "@/components/plan/plan-timeline";
 import { PAGE_METADATA } from "@/lib/copy/site";
-import { fetchPlanResults } from "@/lib/api/fetch-plan-results";
+import { loadPlanResults } from "@/lib/plan/load-plan-results";
 import { isGoogleCalendarConnected } from "@/lib/google-calendar/google-oauth";
 import { createClient } from "@/lib/supabase/server";
 import { routes } from "@/lib/routes";
@@ -63,13 +63,9 @@ export default async function PlanPage({ params }: PlanPageProps) {
     redirect(routes.login);
   }
 
-  const result = await fetchPlanResults(planId);
+  const result = await loadPlanResults(planId, user.id);
 
-  if (result.status === "unauthorized") {
-    redirect(routes.login);
-  }
-
-  if (result.status === "not_found") {
+  if (result.status === "not_found" || result.status === "no_results") {
     return (
       <PlanPageError message="Nie znaleziono planu lub brak wyników do wyświetlenia." />
     );
